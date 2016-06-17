@@ -1,0 +1,6 @@
+.git
+debian
+.travis.yml
+tidy
+cover_db
+Makefile.old
