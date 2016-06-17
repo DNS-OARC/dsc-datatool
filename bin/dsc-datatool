@@ -1,0 +1,160 @@
+#!/usr/bin/env perl
+
+use common::sense;
+
+use Getopt::Long;
+use Pod::Usage;
+use YAML::Tiny;
+
+use App::DSC::DataTool;
+use App::DSC::DataTool::Inputs;
+
+my $conf;
+my $server = 'all';
+my $node   = 'all';
+my @xml;
+my @dat;
+my @output;
+my $list;
+my $man;
+my $help;
+
+GetOptions(
+    'conf=s'   => \$conf,
+    'server=s' => \$server,
+    'node=s'   => \$node,
+    'xml=s'    => \@xml,
+    'dat=s'    => \@dat,
+    'output=s' => \@output,
+    'list:s'   => \$list,
+    'help|?'   => \$help,
+    man        => \$man,
+) or pod2usage( 2 );
+pod2usage( 1 ) if $help;
+pod2usage( -exitval => 0, -verbose => 2 ) if $man;
+
+#foreach ( @xml ) {
+#    my $xml = App::DSC::DataTool::Inputs->instance->Input( 'XML', file => $_ );
+#    while ( my $dataset = $xml->Dataset ) {
+#        say $dataset->Name;
+#    }
+#}
+
+say "Soon...";
+
+exit;
+
+__END__
+
+=head1 NAME
+
+dsc-datatool - Export DSC data into various formats and databases
+
+=head1 SYNOPSIS
+
+dsc-datatool [options]
+
+=head1 DESCRIPTION
+
+B<dsc-datatool> can be used to read DSC data in the XML and DAT format and
+export it into another format or send it to various databases, use
+B<--list> to see the list of available output plugins.
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--conf <file>>
+
+Specify the YAML configuration file to use (default to ~/.dsc-datatool.conf),
+any command line option will override the options in the configuration file.
+See B<dsc-datatool.conf(5)> for more information.
+
+=item B<--xml <file or directory>>
+
+Read DSC data from the given file or directory, can be specified multiple
+times.
+If a directory is given then all files ending with B<.xml> will be read.
+
+=item B<--dat <file or directory>>
+
+Read DSC data from the given file or directory, can be specified multiple
+times.
+If a directory is given then all files ending with B<.dat> will be
+read.
+Note that the DAT format is depended on the filename to know what type
+of data it is.
+
+=item B<--list [in|input|out|output|all]>
+
+List the available input and/or output formats.
+
+=item B<--output <separator><type>[option=value...]>
+
+Output data to B<type> and use B<separator> as an options separator, example:
+
+  --output ;carbon;host=localhost;port=2003
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
+
+=head1 FILES
+
+=over 8
+
+=item /etc/dsc/dsc-datatool.conf
+
+System wide configuration for B<dsc-datatool>.
+
+=item ~/.dsc-datatool.conf
+
+User configuration for B<dsc-datatool>.
+
+=back
+
+=head1 SEE ALSO
+
+L<App::DSC::DataTool>, dsc-datatool.conf(5)
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright (c) 2016, OARC, Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived
+   from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+=cut
