@@ -29,7 +29,7 @@ Input module factory...
 
 =over 4
 
-=item $instance = App::DSC::DataTool::Inputs->new (...)
+=item $inputs = App::DSC::DataTool::Inputs->new (...)
 
 Create a new input module factory object.
 
@@ -57,7 +57,7 @@ sub new {
     return $self;
 }
 
-=item $instance = App::DSC::DataTool::Inputs->instance
+=item $inputs = App::DSC::DataTool::Inputs->instance
 
 Return a singelton of the input module factory.
 
@@ -67,7 +67,7 @@ sub instance {
     return $INSTANCE ||= App::DSC::DataTool::Inputs->new;
 }
 
-=item $bool = $instance->Exists ( $name )
+=item $bool = $inputs->Exists ( $name )
 
 Return true(1) if an input module exists for the B<$name> otherwise false(0).
 
@@ -77,7 +77,7 @@ sub Exists {
     return $_[1] && $_[0]->{input}->{ $_[1] } ? 1 : 0;
 }
 
-=item $input = $instance->Input ( $name, ... )
+=item $input = $inputs->Input ( $name, ... )
 
 Return a new input object for the specified B<$name> or undef if that name
 does not exist.  Arguments after B<$name> will be given to the input modules

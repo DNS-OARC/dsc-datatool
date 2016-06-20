@@ -1,28 +1,182 @@
-package App::DSC::Carbon;
+package App::DSC::DataTool::Output::Carbon;
 
 use common::sense;
+use Carp;
+
+use base qw(App::DSC::DataTool::Output);
+
+use IO::Socket::INET;
 
 =encoding utf8
 
 =head1 NAME
 
-App::DSC::Carbon - Import DSC XML/dat data into Carbon
+App::DSC::DataTool::Output::Carbon - Output DSC data to Carbon
 
 =head1 VERSION
 
-Version 1.00
-
-=cut
-
-our $VERSION = '1.00';
+See L<App::DSC::DataTool> for version.
 
 =head1 SYNOPSIS
 
-...
+  ...
 
 =head1 DESCRIPTION
 
-...
+Output DSC data to Carbon...
+
+=head1 METHODS
+
+=over 4
+
+=item $output->Init (...)
+
+Initialize the Carbon output, called from the output factory.
+
+=over 4
+
+=item host
+
+=item port
+
+=item timestamp (optional)
+
+=back
+
+=cut
+
+sub Init {
+    my ( $self, %args ) = @_;
+
+    foreach ( qw(host port) ) {
+        unless ( $args{$_} ) {
+            confess $_ . ' must be given';
+        }
+        $self->{$_} = $args{$_};
+    }
+    if ( $args{timestamp} ) {
+        unless ( $args{timestamp} eq 'start'
+            or $args{timestamp} eq 'end' )
+        {
+            confess 'invalid timestamp, must be "start" or "end"';
+        }
+
+        $self->{timestamp} = $args{timestamp};
+    }
+    else {
+        $self->{timestamp} = 'start';
+    }
+
+    $self->{carbon} = IO::Socket::INET->new(
+        PeerAddr => $self->{host},
+        PeerPort => $self->{port},
+        Proto    => 'tcp'
+    );
+
+    unless ( $self->{carbon}->connected ) {
+        confess 'Unable to connect to ' . $self->{host} . '[' . $self->{port} . ']: ' . $!;
+    }
+}
+
+=item $output->Destroy
+
+Disconnect from the Carbon server and destroy the object.
+
+=cut
+
+sub Destroy {
+    $_[0]->{carbon}->shutdown( 2 );
+}
+
+=item $name = $output->Name
+
+Return the name of the module, must be overloaded.
+
+=cut
+
+sub Name {
+    'Carbon';
+}
+
+=item $output = $output->Dataset ( @datasets )
+
+Output a list of dataset objects, must be overloaded.
+
+=over 4
+
+=item @datasets
+
+A list of L<App::DSC::DataTool::Dataset> objects to be outputted.
+
+=back
+
+=cut
+
+sub Dataset {
+    my $self = shift;
+
+    foreach my $dataset ( @_ ) {
+        my $name = $dataset->Name;
+        $name =~ s/\./-/go;
+        my $timestamp =
+            $self->{timestamp} eq 'start'
+          ? $dataset->StartTime
+          : $dataset->StopTime;
+
+        foreach my $dimension ( $dataset->Dimensions ) {
+            $self->Process( $name, $timestamp, $dimension );
+        }
+    }
+
+    return $self;
+}
+
+=back
+
+=head1 PRIVATE METHODS
+
+=over 4
+
+=item Process
+
+=cut
+
+sub Process {
+    my ( $self, $name, $timestamp, $dimension ) = @_;
+
+    if ( $dimension->HaveDimensions ) {
+        my $dimension_name = $dimension->Value;
+        $dimension_name =~ s/\./-/go;
+        $name .= '.' . $dimension_name;
+
+        foreach my $dimension2 ( $dimension->Dimensions ) {
+            $self->Process( $name, $timestamp, $dimension2 );
+        }
+
+        return;
+    }
+
+    unless ( $dimension->HaveValues ) {
+        $self->AddError(
+            App::DSC::DataTool::Error->new(
+                tag     => 'NO_VALUES',
+                args    => { dimension => $dimension->Name },
+                message => 'Expected values in dimension ' . $dimension->Name
+            )
+        );
+        return;
+    }
+
+    my %value = $dimension->Values;
+    foreach my $key ( keys %value ) {
+        my $value = $value{$key};
+        $key =~ s/\./-/go;
+
+        $self->{carbon}->send( join( ' ', $name . '.' . $key, $value, $timestamp ) . "\n" );
+    }
+}
+
+=back
 
 =head1 AUTHOR
 
@@ -30,7 +184,7 @@ Jerry Lundström, C<< <lundstrom.jerry@gmail.com> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to L<https://github.com/DNS-OARC/dsc-carbon/issues>.
+Please report any bugs or feature requests to L<https://github.com/DNS-OARC/dsc-datatool/issues>.
 
 =head1 LICENSE AND COPYRIGHT
 
@@ -68,4 +222,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1;    # End of App::DSC::Carbon
+1;    # End of App::DSC::DataTool::Output

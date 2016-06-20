@@ -36,6 +36,13 @@ Create a new dimension object.
 
 =item name
 
+The name of the dimension.
+
+=item value (optional)
+
+The value of the dimension, when this is set then you can only add other
+dimensions to the dimension and no values can be added.
+
 =back
 
 =cut
@@ -49,8 +56,11 @@ sub new {
     unless ( $args{name} ) {
         confess 'name must be given';
     }
-
     $self->{name} = $args{name};
+
+    if ( defined $args{value} ) {
+        $self->{value} = $args{value};
+    }
 
     return $self;
 }
@@ -65,6 +75,16 @@ sub Name {
     return $_[0]->{name};
 }
 
+=item $value = $dimension->Value
+
+Return the value of the dimension if set.
+
+=cut
+
+sub Value {
+    return $_[0]->{value};
+}
+
 =item $dimension = $dimension->AddDimension ( <dimensions...> )
 
 Adds the dimensions to the dimension, returns itself on success or confesses.
@@ -76,6 +96,9 @@ Dimensions can not be added if values exists.
 sub AddDimension {
     my $self = shift;
 
+    unless ( defined $self->{value} ) {
+        confess 'value must be set to add dimensions';
+    }
     if ( exists $self->{values} ) {
         confess 'Values exists, can not add dimensions';
     }
@@ -100,7 +123,17 @@ Return the list of dimensions within the dimension.
 =cut
 
 sub Dimensions {
-    return exists $_[0]->{dimensions} ? $_[0]->{dimensions} : [];
+    return exists $_[0]->{dimensions} ? @{ $_[0]->{dimensions} } : ();
+}
+
+=item $bool = $dataset->HaveDimensions
+
+Return true(1) if there are dimensions otherwise false(0).
+
+=cut
+
+sub HaveDimensions {
+    return exists $_[0]->{dimensions} && scalar @{ $_[0]->{dimensions} } ? 1 : 0;
 }
 
 =item $dimension = $dimension->AddValues ( key => value, ... )
@@ -114,6 +147,9 @@ Values can not be added if dimensions exists.
 sub AddValues {
     my $self = shift;
 
+    if ( defined $self->{value} ) {
+        confess 'value must not be set to add values';
+    }
     if ( exists $self->{dimensions} ) {
         confess 'Dimensions exists, can not add values';
     }
@@ -142,8 +178,20 @@ Return the hash of values within the dimension.
 
 =cut
 
+#TODO: better handling of values
+
 sub Values {
-    return exists $_[0]->{values} ? %{ $_[0]->{values} } : {};
+    return exists $_[0]->{values} ? %{ $_[0]->{values} } : ();
+}
+
+=item $bool = $dataset->HaveValues
+
+Return true(1) if there are values otherwise false(0).
+
+=cut
+
+sub HaveValues {
+    return exists $_[0]->{values} && scalar %{ $_[0]->{values} } ? 1 : 0;
 }
 
 =back

@@ -8,6 +8,8 @@ use YAML::Tiny;
 
 use App::DSC::DataTool;
 use App::DSC::DataTool::Inputs;
+use App::DSC::DataTool::Outputs;
+use App::DSC::DataTool::Log;
 
 my $conf;
 my $server = 'all';
@@ -18,6 +20,7 @@ my @output;
 my $list;
 my $man;
 my $help;
+my $verbose = 0;
 
 GetOptions(
     'conf=s'   => \$conf,
@@ -28,19 +31,54 @@ GetOptions(
     'output=s' => \@output,
     'list:s'   => \$list,
     'help|?'   => \$help,
-    man        => \$man,
+    'man'      => \$man,
+    'verbose+' => \$verbose,
 ) or pod2usage( 2 );
 pod2usage( 1 ) if $help;
 pod2usage( -exitval => 0, -verbose => 2 ) if $man;
 
-#foreach ( @xml ) {
-#    my $xml = App::DSC::DataTool::Inputs->instance->Input( 'XML', file => $_ );
-#    while ( my $dataset = $xml->Dataset ) {
-#        say $dataset->Name;
-#    }
-#}
+my $log = App::DSC::DataTool::Log->instance;
+$log->log( 'main', 0, 'starting (verbose ', $verbose, ')' );
 
-say "Soon...";
+my @outputs;
+foreach ( @output ) {
+    my ( undef, $separator, $options ) = split( /(.)/o, $_, 2 );
+    my ( $name, @args ) = split( $separator, $options );
+    my %args;
+    foreach my $args ( @args ) {
+        if ( $args =~ /^(.+)=(.+)$/o ) {
+            $args{$1} = $2;
+            next;
+        }
+        die 'Invalid output: "' . $args . '" not in format key=value';
+    }
+
+    push( @outputs, App::DSC::DataTool::Outputs->instance->Output( $name, %args ) );
+}
+
+foreach ( @xml ) {
+    my $xml = App::DSC::DataTool::Inputs->instance->Input( 'XML', file => $_ );
+    while ( my $err = $xml->GetError ) {
+        $log->log( 'main', 0, $err );
+    }
+    while ( my $dataset = $xml->Dataset ) {
+
+        $log->log( 'main', 0, $dataset->Name );
+        while ( my $err = $xml->GetError ) {
+            $log->log( 'main', 0, $err );
+        }
+
+        foreach my $output ( @outputs ) {
+            $output->Dataset( $dataset );
+            while ( my $err = $output->GetError ) {
+                $log->log( 'main', 0, $err );
+            }
+        }
+    }
+    while ( my $err = $xml->GetError ) {
+        $log->log( 'main', 0, $err );
+    }
+}
 
 exit;
 
@@ -93,7 +131,7 @@ List the available input and/or output formats.
 
 Output data to B<type> and use B<separator> as an options separator, example:
 
-  --output ;carbon;host=localhost;port=2003
+  --output ;Carbon;host=localhost;port=2003
 
 =item B<--help>
 

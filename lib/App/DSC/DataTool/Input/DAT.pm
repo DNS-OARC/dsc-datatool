@@ -29,6 +29,8 @@ DSC DAT input...
 
 =item Init
 
+Initialize the DAT input, called from the input factory.
+
 =over 4
 
 =item file

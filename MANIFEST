@@ -7,6 +7,7 @@ lib/App/DSC/DataTool/Input/DAT.pm
 lib/App/DSC/DataTool/Input.pm
 lib/App/DSC/DataTool/Inputs.pm
 lib/App/DSC/DataTool/Input/XML.pm
+lib/App/DSC/DataTool/Log.pm
 lib/App/DSC/DataTool/Output/Carbon.pm
 lib/App/DSC/DataTool/Output.pm
 lib/App/DSC/DataTool/Outputs.pm

@@ -11,31 +11,6 @@ use App::DSC::DataTool::Dataset::Dimension;
 
 use XML::LibXML::Simple qw( XMLin );
 
-my %metric = (
-    certain_qnames_vs_qtype => 0,
-    chaos_types_and_names   => 0,
-    client_addr_vs_rcode    => 0,
-    client_port_range       => 0,
-    client_subnet           => 0,
-    client_subnet2          => 0,
-    direction_vs_ipproto    => 1,
-    do_bit                  => 1,
-    edns_bufsiz             => 1,
-    edns_version            => 1,
-    idn_qname               => 0,
-    idn_vs_tld              => 0,
-    ipv6_rsn_abusers        => 0,
-    opcode                  => 1,
-    pcap_stats              => 1,
-    qtype                   => 1,
-    qtype_vs_qnamelen       => 0,
-    qtype_vs_tld            => 0,
-    rcode                   => 1,
-    rcode_vs_replylen       => 0,
-    rd_bit                  => 1,
-    transport_vs_qtype      => 1,
-);
-
 =encoding utf8
 
 =head1 NAME
@@ -59,6 +34,8 @@ DSC XML input...
 =over 4
 
 =item Init
+
+Initialize the XML input, called from the input factory.
 
 =over 4
 
@@ -132,7 +109,22 @@ sub Dataset {
         foreach my $name ( keys %{ $root->{array} } ) {
             my $metric = $root->{array}->{$name};
 
-            next unless ( $metric{$name} );
+            if (    ref( $metric ) eq 'HASH'
+                and $metric->{start_time}
+                and ref( $metric->{dimension} ) eq 'ARRAY'
+                and defined $metric->{data}
+                and ref( $metric->{data} ) eq '' )
+            {
+                # TODO: Not a severe error
+                $self->AddError(
+                    App::DSC::DataTool::Error->new(
+                        tag     => 'EMPTY_METRIC',
+                        args    => { name => $name },
+                        message => 'Metric ' . $name . ' is empty'
+                    )
+                );
+                next;
+            }
 
             unless (ref( $metric ) eq 'HASH'
                 and $metric->{start_time}
@@ -163,7 +155,7 @@ sub Dataset {
                     App::DSC::DataTool::Error->new(
                         tag     => 'INVALID_DIMENSIONS',
                         args    => { name => $name },
-                        message => 'Invalid dimenions for ' . $name
+                        message => 'Invalid dimensions for ' . $name
                     )
                 );
                 next;
@@ -175,17 +167,9 @@ sub Dataset {
                 stop_time  => $metric->{stop_time}
             );
 
-            my @dimensions;
-            my $previous = $dataset;
-            foreach my $dimension ( sort { $a->{number} <=> $b->{number} } ( @{ $metric->{dimension} } ) ) {
-                my $obj = App::DSC::DataTool::Dataset::Dimension->new( name => $dimension->{type} );
-                $previous->AddDimension( $obj );
-                $dimension->{obj} = $obj;
-                push( @dimensions, $dimension );
-                $previous = $obj;
-            }
+            my @dimensions = sort { $a->{number} <=> $b->{number} } ( @{ $metric->{dimension} } );
 
-            $self->Process( $name, $metric->{data}, \@dimensions, 0 );
+            $self->Process( $dataset, $name, $metric->{data}, \@dimensions, 0 );
             push( @{ $self->{datasets} }, $dataset );
         }
 
@@ -206,9 +190,11 @@ sub Dataset {
 =cut
 
 sub Process {
-    my ( $self, $name, $data, $dimension, $position ) = @_;
+    my ( $self, $obj, $name, $data, $dimension, $position ) = @_;
 
     unless ( exists $dimension->[$position] ) {
+        my $obj2 = App::DSC::DataTool::Dataset::Dimension->new( name => $dimension->[ $position - 1 ]->{type} );
+
         foreach ( ref( $data ) eq 'ARRAY' ? @$data : ( $data ) ) {
             unless (ref( $_ ) eq 'HASH'
                 and defined $_->{val}
@@ -224,14 +210,16 @@ sub Process {
                 next;
             }
 
-            $dimension->[ $position - 1 ]->{obj}->AddValues( $_->{val} => $_->{count} );
+            $obj2->AddValues( $_->{val} => $_->{count} );
         }
 
+        $obj->AddDimension( $obj2 );
         return;
     }
 
     foreach ( ref( $data ) eq 'ARRAY' ? @$data : ( $data ) ) {
         next if ref( $_ ) eq 'HASH' and exists $_->{content};
+
         unless ( ref( $_ ) eq 'HASH'
             and exists $_->{ $dimension->[$position]->{type} } )
         {
@@ -245,11 +233,28 @@ sub Process {
             next;
         }
 
-        if ( $dimension->[$position]->{type} eq 'All' ) {
-            delete $_->{ $dimension->[$position]->{type} }->{val};
+        my $obj2 = $obj;
+        if ( $position > 0 ) {
+            unless ( defined $_->{val} ) {
+                $self->AddError(
+                    App::DSC::DataTool::Error->new(
+                        tag     => 'INVALID_STRUCTURE',
+                        args    => { name => $name },
+                        message => 'Invalid structure for ' . $name
+                    )
+                );
+                next;
+            }
+
+            $obj2 = App::DSC::DataTool::Dataset::Dimension->new(
+                name  => $dimension->[ $position - 1 ]->{type},
+                value => $_->{val},
+            );
+            $obj->AddDimension( $obj2 );
         }
 
         $self->Process(
+            $obj2,
             $name,
             $_->{ $dimension->[$position]->{type} },
             $dimension,

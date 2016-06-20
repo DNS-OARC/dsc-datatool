@@ -35,7 +35,9 @@ via C<Init>.
 sub new {
     my ( $this, %args ) = @_;
     my $class = ref( $this ) ? ref( $this ) : $this;
-    my $self = {};
+    my $self = {
+        errors => [],
+    };
     bless $self, $class;
 
     $self->Init( %args );
@@ -48,7 +50,7 @@ sub DESTROY {
     return;
 }
 
-=item $db->Init (...)
+=item $output->Init (...)
 
 Called upon creation of the object, arguments should be handled in the specific
 format module.
@@ -58,7 +60,7 @@ format module.
 sub Init {
 }
 
-=item $db->Destroy
+=item $output->Destroy
 
 Called upon destruction of the object.
 
@@ -67,7 +69,7 @@ Called upon destruction of the object.
 sub Destroy {
 }
 
-=item $name = $db->Name
+=item $name = $output->Name
 
 Return the name of the module, must be overloaded.
 
@@ -75,6 +77,88 @@ Return the name of the module, must be overloaded.
 
 sub Name {
     confess 'Name is not overloaded';
+}
+
+=item $output = $output->Dataset ( @datasets )
+
+Output a list of dataset objects, must be overloaded.
+
+=over 4
+
+=item @datasets
+
+A list of L<App::DSC::DataTool::Dataset> objects to be outputted.
+
+=back
+
+=cut
+
+sub Dataset {
+    confess 'Dataset is not overloaded';
+}
+
+=item $input = $input->AddError ( $error )
+
+Add an output processing error, this should be used internally within the
+output modules to reports errors during processing.
+
+=over 4
+
+=item $error
+
+An App::DSC::DataTool::Error object describing the processing error.
+
+=back
+
+=cut
+
+sub AddError {
+    my ( $self, $error ) = @_;
+
+    unless ( blessed $error and $error->isa( 'App::DSC::DataTool::Error' ) ) {
+        confess '$error is not App::DSC::DataTool::Error';
+    }
+
+    push( @{ $self->{errors} }, $error );
+
+    return $self;
+}
+
+=item $error = $input->GetError
+
+Remove one error from the list of errors and return it, may return undef if
+there are no errors.
+
+=over 4
+
+=item $error
+
+An App::DSC::DataTool::Error object describing the processing error.
+
+=back
+
+=cut
+
+sub GetError {
+    return shift @{ $_[0]->{errors} };
+}
+
+=item @errors = $input->Errors
+
+Return a list of errors if any, this does not reset errors.
+
+=over 4
+
+=item @errors
+
+A list of App::DSC::DataTool::Error objects.
+
+=back
+
+=cut
+
+sub Errors {
+    return @{ $_[0]->{errors} };
 }
 
 =back

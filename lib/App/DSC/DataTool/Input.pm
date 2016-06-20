@@ -38,7 +38,6 @@ sub new {
     my ( $this, %args ) = @_;
     my $class = ref( $this ) ? ref( $this ) : $this;
     my $self = {
-        file   => undef,
         errors => [],
     };
     bless $self, $class;
@@ -120,9 +119,28 @@ sub AddError {
     return $self;
 }
 
+=item $error = $input->GetError
+
+Remove one error from the list of errors and return it, may return undef if
+there are no errors.
+
+=over 4
+
+=item $error
+
+An App::DSC::DataTool::Error object describing the processing error.
+
+=back
+
+=cut
+
+sub GetError {
+    return shift @{ $_[0]->{errors} };
+}
+
 =item @errors = $input->Errors
 
-Return a list of errors if any.
+Return a list of errors if any, this does not reset errors.
 
 =over 4
 

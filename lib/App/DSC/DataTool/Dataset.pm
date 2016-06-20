@@ -123,7 +123,17 @@ Return the list of dimensions within the dataset.
 =cut
 
 sub Dimensions {
-    return $_[0]->{dimensions};
+    return @{ $_[0]->{dimensions} };
+}
+
+=item $bool = $dataset->HaveDimensions
+
+Return true(1) if there are dimensions otherwise false(0).
+
+=cut
+
+sub HaveDimensions {
+    return scalar @{ $_[0]->{dimensions} } ? 1 : 0;
 }
 
 =back

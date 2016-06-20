@@ -1,17 +1,18 @@
-package App::DSC::DataTool::Error;
+package App::DSC::DataTool::Log;
 
 use common::sense;
 use Carp;
 
 use Scalar::Util qw( blessed );
+use POSIX;
 
-#TODO: SEVERITIES
+our $INSTANCE;
 
 =encoding utf8
 
 =head1 NAME
 
-App::DSC::DataTool::Error - Object used to describe an error
+App::DSC::DataTool::Log - Log various things for App::DSC::DataTool
 
 =head1 VERSION
 
@@ -23,38 +24,25 @@ See L<App::DSC::DataTool> for version.
 
 =head1 DESCRIPTION
 
-Object used to describe an error...
+Log various things for App::DSC::DataTool...
 
 =head1 METHODS
 
 =over 4
 
-=item $error = App::DSC::DataTool::Error->new ( key => value ... )
+=item $log = App::DSC::DataTool::Input->new ( key => value ... )
 
-Create a new error object.
+Create a new log object.
 
 =over 4
 
-=item severity (optional)
+=item verbose (optional)
 
-Level of error severity, see SEVERITIES. Default to 'err'.
+Only display/output logging up to and including this verbose level, default 0.
 
-=item reporter (optional)
+=item timestamp (optional)
 
-The module that reported the error, if a reference is given L<ref()> will be
-used to set the name. Default to the caller.
-
-=item tag (optional)
-
-A custom error tag that is defined by the reporter. Default to 'ERROR'.
-
-=item args (optional)
-
-A hash of the arguments relative to the error.
-
-=item message
-
-The error message.
+Add timestamp to the begining of each log message, default true(1).
 
 =back
 
@@ -64,97 +52,90 @@ sub new {
     my ( $this, %args ) = @_;
     my $class = ref( $this ) ? ref( $this ) : $this;
     my $self = {
-        severity => 'ERROR',
-        reporter => ( caller )[0],
-        tag      => 'UNKNOWN',
-        args     => {},
-        message  => undef,
+        verbose   => 0,
+        timestamp => 1,
     };
     bless $self, $class;
 
-    if ( $args{severity} ) {
-
-        #TODO
-    }
-    if ( $args{reporter} ) {
-        $self->{reporter} = ref( $args{reporter} ) ? ref( $args{reporter} ) : $args{reporter};
-    }
-    if ( $args{tag} ) {
-        $self->{tag} = $args{tag};
-    }
-    if ( $args{args} ) {
-        unless ( ref( $args{args} ) eq 'HASH' ) {
-            confess 'args is not HASH';
+    foreach ( qw( verbose timestamp ) ) {
+        if ( $args{$_} ) {
+            $self->{$_} = $args{$_};
         }
-        $self->{args} = $args{args};
     }
-    unless ( $args{message} ) {
-        confess 'message must be set';
-    }
-    $self->{message} = $args{message};
+
+    #TODO: config output
 
     return $self;
 }
 
-=item $severity = $error->Severity
+=item $inputs = App::DSC::DataTool::Log->instance ( key => values ... )
 
-Return the severity of the error.
-
-=cut
-
-sub Severity {
-    return $_[0]->{severity};
-}
-
-=item $reporter = $error->Reporter
-
-Return the reporter of the error.
+Return a singelton of the log module. Arguments are passed to B<new()> only
+the first time it's called and that should be done during program
+initialization to setup the default instance of logging.
 
 =cut
 
-sub Reporter {
-    return $_[0]->{reporter};
+sub instance {
+    shift;
+    return $INSTANCE ||= App::DSC::DataTool::Log->new( @_ );
 }
 
-=item $tag = $error->Tag
+=item $verbose = $log->Verbose
 
-Return the tag of the error.
+Return the verbose level.
 
 =cut
 
-sub Tag {
-    return $_[0]->{tag};
+sub Verbose {
+    return $_[0]->{verbose};
 }
 
-=item $args = $error->Args
+=item $log = $log->log( $class, $verbose, < @messages | $error > )
 
-Return the arguments of the error.
+Log a message.
+
+TODO: documentation
+
+=over 4
+
+=item $class
+
+=item $verbose
+
+=item @messages
+
+=item $error
+
+=back
 
 =cut
 
-sub Args {
-    return $_[0]->{args};
+sub log {
+    my ( $self, $class, $verbose, @messages ) = @_;
+
+    unless ( $verbose <= $self->{verbose} ) {
+        return $self;
+    }
+
+    #TODO: check class
+
+    if ( scalar @messages == 1 and blessed $messages[0] and $messages[0]->isa( 'App::DSC::DataTool::Error' ) ) {
+        @messages = ( $messages[0]->to_string );
+    }
+
+    say STDERR
+      ( $self->{timestamp} ? strftime( '%Y-%m-%d %H:%M:%S ', localtime ) : '' ),
+      $class, ': ', @messages;
+
+    return $self;
 }
 
-=item $message = $error->Message
-
-Return the message of the error.
-
-=cut
-
-sub Message {
-    return $_[0]->{message};
-}
-
-=item $string = $error->to_string
-
-Return an string representation of the error.
-
-=cut
-
-sub to_string {
-    return '[' . $_[0]->{reporter} . ']' . ' ' . $_[0]->{tag} . ' ' . $_[0]->{severity} . ': ' . $_[0]->{message};
-}
+#TODO: sub debug
+#TODO: sub info
+#TODO: sub warning
+#TODO: sub error
+#TODO: sub critical
 
 =back
 
@@ -202,4 +183,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1;    # End of App::DSC::DataTool::Error
+1;    # End of App::DSC::DataTool::Log
