@@ -9,6 +9,7 @@ use YAML::Tiny;
 use App::DSC::DataTool;
 use App::DSC::DataTool::Inputs;
 use App::DSC::DataTool::Outputs;
+use App::DSC::DataTool::Transformers;
 use App::DSC::DataTool::Log;
 
 my $conf;
@@ -17,28 +18,55 @@ my $node   = 'all';
 my @xml;
 my @dat;
 my @output;
+my @transform;
 my $list;
 my $man;
 my $help;
 my $verbose = 0;
 
 GetOptions(
-    'conf=s'   => \$conf,
-    'server=s' => \$server,
-    'node=s'   => \$node,
-    'xml=s'    => \@xml,
-    'dat=s'    => \@dat,
-    'output=s' => \@output,
-    'list:s'   => \$list,
-    'help|?'   => \$help,
-    'man'      => \$man,
-    'verbose+' => \$verbose,
+    'conf=s'      => \$conf,
+    'server=s'    => \$server,
+    'node=s'      => \$node,
+    'xml=s'       => \@xml,
+    'dat=s'       => \@dat,
+    'output=s'    => \@output,
+    'transform=s' => \@transform,
+    'list:s'      => \$list,
+    'help|?'      => \$help,
+    'man'         => \$man,
+    'verbose+'    => \$verbose,
 ) or pod2usage( 2 );
 pod2usage( 1 ) if $help;
 pod2usage( -exitval => 0, -verbose => 2 ) if $man;
 
 my $log = App::DSC::DataTool::Log->instance;
 $log->log( 'main', 0, 'starting (verbose ', $verbose, ')' );
+
+my %transformer = ( '*' => [] );
+foreach ( @transform ) {
+    my ( undef, $separator, $options ) = split( /(.)/o, $_, 2 );
+    if ( $separator eq ',' ) {
+        die 'Invalid separator used for transform: ' . $_;
+    }
+    my ( $name, $datasets, @args ) = split( $separator, $options );
+    my %args;
+    foreach my $args ( @args ) {
+        if ( $args =~ /^(.+)=(.+)$/o ) {
+            $args{$1} = $2;
+            next;
+        }
+        die 'Invalid transform: "' . $args . '" not in format key=value';
+    }
+
+    my $transformer = App::DSC::DataTool::Transformers->instance->Transformer( $name, %args );
+    unless ( defined $transformer ) {
+        die 'Transformer failed';
+    }
+    foreach my $dataset ( split( /,/o, $datasets ) ) {
+        push( @{ $transformer{$dataset} }, $transformer );
+    }
+}
 
 my @outputs;
 foreach ( @output ) {
@@ -53,19 +81,43 @@ foreach ( @output ) {
         die 'Invalid output: "' . $args . '" not in format key=value';
     }
 
-    push( @outputs, App::DSC::DataTool::Outputs->instance->Output( $name, %args ) );
+    my $output = App::DSC::DataTool::Transformers->instance->Output( $name, %args );
+    unless ( defined $output ) {
+        die 'Output failed';
+    }
+    push( @outputs, $output );
 }
 
 foreach ( @xml ) {
     my $xml = App::DSC::DataTool::Inputs->instance->Input( 'XML', file => $_ );
+    unless ( defined $xml ) {
+        die 'XML Input failed';
+    }
     while ( my $err = $xml->GetError ) {
         $log->log( 'main', 0, $err );
     }
-    while ( my $dataset = $xml->Dataset ) {
 
+    while ( my $dataset = $xml->Dataset ) {
         $log->log( 'main', 0, $dataset->Name );
         while ( my $err = $xml->GetError ) {
             $log->log( 'main', 0, $err );
+        }
+
+        foreach my $transformer ( @{ $transformer{'*'} } ) {
+            $log->log( 'main', 0, 'transforming with ', $transformer->Name );
+            $dataset = $transformer->Dataset( $dataset );
+            while ( my $err = $transformer->GetError ) {
+                $log->log( 'main', 0, $err );
+            }
+        }
+        if ( exists $transformer{ $dataset->Name } ) {
+            foreach my $transformer ( @{ $transformer{ $dataset->Name } } ) {
+                $log->log( 'main', 0, 'transforming with ', $transformer->Name );
+                $dataset = $transformer->Dataset( $dataset );
+                while ( my $err = $transformer->GetError ) {
+                    $log->log( 'main', 0, $err );
+                }
+            }
         }
 
         foreach my $output ( @outputs ) {
@@ -123,15 +175,37 @@ read.
 Note that the DAT format is depended on the filename to know what type
 of data it is.
 
-=item B<--list [in|input|out|output|all]>
+=item B<--list [tr|transform|in|input|out|output|all]>
 
-List the available input and/or output formats.
+List the available transformers, input and output formats.
 
-=item B<--output <separator><type>[option=value...]>
+=item B<--output <sep><type>[<sep>option=value...]>
 
 Output data to B<type> and use B<separator> as an options separator, example:
 
   --output ;Carbon;host=localhost;port=2003
+
+To see a full list of options, check the man-page of the output module:
+
+  man App:DSC::DataTool::Output::NAME
+
+=item B<--transform <sep><type><sep><datasets>[<sep>option=value...]>
+
+Use the transformer B<type> to change the list of datasets in B<datasets>,
+example:
+
+  --transform ;GroupRange;rcode_vs_replylen;type=sum;range=/128
+
+B<datasets> is a comma separated list of datasets to run the tranformer on,
+because of this do not use comma (,) as a separator.  B<*> in B<datasets> will
+make the tranformer run on all datasets.
+
+To see a full list of options, check the man-page of the transformer module:
+
+  man App:DSC::DataTool::Transformer::NAME
+
+For a list of datasets see the DSC configuration that created the data files
+and the documentation for the Presenter.
 
 =item B<--help>
 

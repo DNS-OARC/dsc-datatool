@@ -1,9 +1,7 @@
-package App::DSC::DataTool::Input;
+package App::DSC::DataTool::Errors;
 
 use common::sense;
 use Carp;
-
-use base qw(App::DSC::DataTool::Errors);
 
 use Scalar::Util qw( blessed );
 
@@ -11,7 +9,7 @@ use Scalar::Util qw( blessed );
 
 =head1 NAME
 
-App::DSC::DataTool::Input - Base class for input formats
+App::DSC::DataTool::Errors - Error container
 
 =head1 VERSION
 
@@ -23,75 +21,74 @@ See L<App::DSC::DataTool> for version.
 
 =head1 DESCRIPTION
 
-Base class for input formats...
+Error container...
 
 =head1 METHODS
 
 =over 4
 
-=item $input = App::DSC::DataTool::Input->new (...)
+=item $input = $input->AddError ( $error )
 
-Create a new input object, arguments are passed to the specific format module
-via C<Init>.
+Add an error, this should be used internally within modules to reports errors
+during processing.
+
+=over 4
+
+=item $error
+
+An App::DSC::DataTool::Error object describing the processing error.
+
+=back
 
 =cut
 
-sub new {
-    my ( $this, %args ) = @_;
-    my $class = ref( $this ) ? ref( $this ) : $this;
-    my $self = {
-        errors => [],
-    };
-    bless $self, $class;
+sub AddError {
+    my ( $self, $error ) = @_;
 
-    $self->Init( %args );
+    unless ( blessed $error and $error->isa( 'App::DSC::DataTool::Error' ) ) {
+        confess '$error is not App::DSC::DataTool::Error';
+    }
+
+    push( @{ $self->{errors} }, $error );
 
     return $self;
 }
 
-sub DESTROY {
-    $_[0]->Destroy;
-    return;
-}
+=item $error = $input->GetError
 
-=item $input->Init (...)
+Remove one error from the list of errors and return it, may return undef if
+there are no errors.
 
-Called upon creation of the object, arguments should be handled in the specific
-format module.
+=over 4
 
-=cut
+=item $error
 
-sub Init {
-}
+An App::DSC::DataTool::Error object describing the processing error.
 
-=item $input->Destroy
-
-Called upon destruction of the object.
+=back
 
 =cut
 
-sub Destroy {
+sub GetError {
+    return shift @{ $_[0]->{errors} };
 }
 
-=item $name = $input->Name
+=item @errors = $input->Errors
 
-Return the name of the module, must be overloaded.
+Return a list of errors if any, this does not reset errors.
+
+=over 4
+
+=item @errors
+
+A list of App::DSC::DataTool::Error objects.
+
+=back
 
 =cut
 
-sub Name {
-    confess 'Name is not overloaded';
-}
-
-=item $dataset = $input->Dataset
-
-Read input and return a L<App::DSC::DataTool::Dataset> object or undef if there
-is no more input, must be overloaded.
-
-=cut
-
-sub Dataset {
-    confess 'Dataset is not overloaded';
+sub Errors {
+    return @{ $_[0]->{errors} };
 }
 
 =back
@@ -140,4 +137,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1;    # End of App::DSC::DataTool::Input
+1;    # End of App::DSC::DataTool::Errors

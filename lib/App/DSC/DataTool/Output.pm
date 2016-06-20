@@ -3,6 +3,8 @@ package App::DSC::DataTool::Output;
 use common::sense;
 use Carp;
 
+use base qw(App::DSC::DataTool::Errors);
+
 =encoding utf8
 
 =head1 NAME
@@ -27,8 +29,8 @@ Base class for output formats...
 
 =item $output = App::DSC::DataTool::Output->new (...)
 
-Create a new output object, arguments are passed to the specific format module
-via C<Init>.
+Create a new output object, arguments are passed to the specific module via
+C<Init>.
 
 =cut
 
@@ -53,7 +55,7 @@ sub DESTROY {
 =item $output->Init (...)
 
 Called upon creation of the object, arguments should be handled in the specific
-format module.
+module.
 
 =cut
 
@@ -95,70 +97,6 @@ A list of L<App::DSC::DataTool::Dataset> objects to be outputted.
 
 sub Dataset {
     confess 'Dataset is not overloaded';
-}
-
-=item $input = $input->AddError ( $error )
-
-Add an output processing error, this should be used internally within the
-output modules to reports errors during processing.
-
-=over 4
-
-=item $error
-
-An App::DSC::DataTool::Error object describing the processing error.
-
-=back
-
-=cut
-
-sub AddError {
-    my ( $self, $error ) = @_;
-
-    unless ( blessed $error and $error->isa( 'App::DSC::DataTool::Error' ) ) {
-        confess '$error is not App::DSC::DataTool::Error';
-    }
-
-    push( @{ $self->{errors} }, $error );
-
-    return $self;
-}
-
-=item $error = $input->GetError
-
-Remove one error from the list of errors and return it, may return undef if
-there are no errors.
-
-=over 4
-
-=item $error
-
-An App::DSC::DataTool::Error object describing the processing error.
-
-=back
-
-=cut
-
-sub GetError {
-    return shift @{ $_[0]->{errors} };
-}
-
-=item @errors = $input->Errors
-
-Return a list of errors if any, this does not reset errors.
-
-=over 4
-
-=item @errors
-
-A list of App::DSC::DataTool::Error objects.
-
-=back
-
-=cut
-
-sub Errors {
-    return @{ $_[0]->{errors} };
 }
 
 =back

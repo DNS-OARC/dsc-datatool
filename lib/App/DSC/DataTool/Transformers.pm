@@ -1,11 +1,9 @@
-package App::DSC::DataTool::Inputs;
+package App::DSC::DataTool::Transformers;
 
 use common::sense;
 use Carp;
 
 use Module::Find;
-use App::DSC::DataTool::Log;
-use App::DSC::DataTool::Error;
 
 our $INSTANCE;
 
@@ -13,7 +11,7 @@ our $INSTANCE;
 
 =head1 NAME
 
-App::DSC::DataTool::Inputs - Input module factory
+App::DSC::DataTool::Transformers - Transformer module factory
 
 =head1 VERSION
 
@@ -25,15 +23,15 @@ See L<App::DSC::DataTool> for version.
 
 =head1 DESCRIPTION
 
-Input module factory...
+Transformer module factory...
 
 =head1 METHODS
 
 =over 4
 
-=item $inputs = App::DSC::DataTool::Inputs->new (...)
+=item $transformers = App::DSC::DataTool::Transformers->new (...)
 
-Create a new input module factory object.
+Create a new transformer module factory object.
 
 =cut
 
@@ -41,17 +39,17 @@ sub new {
     my ( $this, %args ) = @_;
     my $class = ref( $this ) ? ref( $this ) : $this;
     my $self = {
-        input => {},
+        transformer => {},
     };
     bless $self, $class;
 
-    foreach ( findsubmod App::DSC::DataTool::Input ) {
+    foreach ( findsubmod App::DSC::DataTool::Transformer ) {
         eval 'require ' . $_ . ';';
 
         # TODO: log better
         if ( $@ ) {
             App::DSC::DataTool::Log->instance->log(
-                'Inputs',
+                'Transformers',
                 0,
                 App::DSC::DataTool::Error->new(
                     reporter => $_,
@@ -62,54 +60,57 @@ sub new {
             next;
         }
 
-        $self->{input}->{ $_->Name } = $_;
+        unless ( $@ ) {
+            $self->{transformer}->{ $_->Name } = $_;
+        }
     }
 
     return $self;
 }
 
-=item $inputs = App::DSC::DataTool::Inputs->instance
+=item $transformers = App::DSC::DataTool::Transformers->instance
 
-Return a singelton of the input module factory.
+Return a singelton of the transformer module factory.
 
 =cut
 
 sub instance {
-    return $INSTANCE ||= App::DSC::DataTool::Inputs->new;
+    return $INSTANCE ||= App::DSC::DataTool::Transformers->new;
 }
 
-=item $bool = $inputs->Exists ( $name )
+=item $bool = $transformers->Exists ( $name )
 
-Return true(1) if an input module exists for the B<$name> otherwise false(0).
+Return true(1) if an transformer module exists for the B<$name> otherwise
+false(0).
 
 =cut
 
 sub Exists {
-    return $_[1] && $_[0]->{input}->{ $_[1] } ? 1 : 0;
+    return $_[1] && $_[0]->{transformer}->{ $_[1] } ? 1 : 0;
 }
 
-=item $input = $inputs->Input ( $name, ... )
+=item $transformer = $transformers->Transformer ( $name, ... )
 
-Return a new input object for the specified B<$name> or undef if that name
-does not exist.  Arguments after B<$name> will be given to the input modules
-B<new> call.
+Return a new transformer object for the specified B<$name> or undef if that
+name does not exist.  Arguments after B<$name> will be given to the
+transformer modules B<new> call.
 
 =cut
 
-sub Input {
+sub Transformer {
     my ( $self, $name, %args ) = @_;
-    my $input;
+    my $transformer;
 
-    if ( $name and $self->{input}->{$name} ) {
-        eval { $input = $self->{input}->{$name}->new( %args ); };
+    if ( $name and $self->{transformer}->{$name} ) {
+        eval { $transformer = $self->{transformer}->{$name}->new( %args ); };
 
         # TODO: log better
         if ( $@ ) {
             App::DSC::DataTool::Log->instance->log(
-                'Inputs',
+                'Transformers',
                 0,
                 App::DSC::DataTool::Error->new(
-                    reporter => $self->{input}->{$name},
+                    reporter => $self->{transformer}->{$name},
                     tag      => 'NEW_FAILED',
                     message  => $@
                 )
@@ -118,7 +119,7 @@ sub Input {
         }
     }
 
-    return $input;
+    return $transformer;
 }
 
 =back
@@ -167,4 +168,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1;    # End of App::DSC::DataTool::Inputs
+1;    # End of App::DSC::DataTool::Transformers

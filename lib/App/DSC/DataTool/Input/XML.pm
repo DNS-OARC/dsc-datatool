@@ -51,15 +51,17 @@ sub Init {
     my ( $self, %args ) = @_;
 
     unless ( $args{file} ) {
-        confess 'file must be given';
+        croak 'file must be given';
     }
     unless ( -r $args{file} ) {
-        confess 'file can not be read';
+        croak 'file can not be read';
     }
     $self->{file} = $args{file};
 
     $self->{root}     = undef;
     $self->{datasets} = [];
+
+    return $self;
 }
 
 =item Destroy

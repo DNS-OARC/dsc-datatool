@@ -46,8 +46,19 @@ sub new {
     foreach ( findsubmod App::DSC::DataTool::Output ) {
         eval 'require ' . $_ . ';';
 
-        # TODO: log this?
-        warn $@ if $@;
+        # TODO: log better
+        if ( $@ ) {
+            App::DSC::DataTool::Log->instance->log(
+                'Outputs',
+                0,
+                App::DSC::DataTool::Error->new(
+                    reporter => $_,
+                    tag      => 'REQUIRE_FAILED',
+                    message  => $@
+                )
+            );
+            next;
+        }
 
         unless ( $@ ) {
             $self->{output}->{ $_->Name } = $_;
@@ -87,10 +98,27 @@ B<new> call.
 
 sub Output {
     my ( $self, $name, %args ) = @_;
+    my $output;
 
-    return $name && $self->{output}->{$name}
-      ? $self->{output}->{$name}->new( %args )
-      : undef;
+    if ( $name and $self->{output}->{$name} ) {
+        eval { $output = $self->{output}->{$name}->new( %args ); };
+
+        # TODO: log better
+        if ( $@ ) {
+            App::DSC::DataTool::Log->instance->log(
+                'Outputs',
+                0,
+                App::DSC::DataTool::Error->new(
+                    reporter => $self->{output}->{$name},
+                    tag      => 'NEW_FAILED',
+                    message  => $@
+                )
+            );
+            return;
+        }
+    }
+
+    return $output;
 }
 
 =back

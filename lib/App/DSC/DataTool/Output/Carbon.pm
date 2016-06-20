@@ -50,7 +50,7 @@ sub Init {
 
     foreach ( qw(host port) ) {
         unless ( $args{$_} ) {
-            confess $_ . ' must be given';
+            croak $_ . ' must be given';
         }
         $self->{$_} = $args{$_};
     }
@@ -58,7 +58,7 @@ sub Init {
         unless ( $args{timestamp} eq 'start'
             or $args{timestamp} eq 'end' )
         {
-            confess 'invalid timestamp, must be "start" or "end"';
+            croak 'invalid timestamp, must be "start" or "end"';
         }
 
         $self->{timestamp} = $args{timestamp};
@@ -72,10 +72,11 @@ sub Init {
         PeerPort => $self->{port},
         Proto    => 'tcp'
     );
-
     unless ( $self->{carbon}->connected ) {
-        confess 'Unable to connect to ' . $self->{host} . '[' . $self->{port} . ']: ' . $!;
+        croak 'Unable to connect to ' . $self->{host} . '[' . $self->{port} . ']: ' . $!;
     }
+
+    return $self;
 }
 
 =item $output->Destroy
@@ -86,6 +87,7 @@ Disconnect from the Carbon server and destroy the object.
 
 sub Destroy {
     $_[0]->{carbon}->shutdown( 2 );
+    return;
 }
 
 =item $name = $output->Name
@@ -174,6 +176,8 @@ sub Process {
 
         $self->{carbon}->send( join( ' ', $name . '.' . $key, $value, $timestamp ) . "\n" );
     }
+
+    return;
 }
 
 =back
