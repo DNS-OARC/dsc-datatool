@@ -1,19 +1,17 @@
-package App::DSC::DataTool::Inputs;
+package App::DSC::DataTool::Transformer;
 
 use common::sense;
 use Carp;
 
-use Module::Find;
-use App::DSC::DataTool::Log;
-use App::DSC::DataTool::Error;
+use base qw(App::DSC::DataTool::Errors);
 
-our $INSTANCE;
+use Scalar::Util qw( blessed );
 
 =encoding utf8
 
 =head1 NAME
 
-App::DSC::DataTool::Inputs - Input module factory
+App::DSC::DataTool::Transformer - Base class for data transformers
 
 =head1 VERSION
 
@@ -25,15 +23,16 @@ See L<App::DSC::DataTool> for version.
 
 =head1 DESCRIPTION
 
-Input module factory...
+Base class for data transformers...
 
 =head1 METHODS
 
 =over 4
 
-=item $inputs = App::DSC::DataTool::Inputs->new (...)
+=item $transformer = App::DSC::DataTool::Transformer->new (...)
 
-Create a new input module factory object.
+Create a new transformer object, arguments are passed to the specific module
+via C<Init>.
 
 =cut
 
@@ -41,84 +40,58 @@ sub new {
     my ( $this, %args ) = @_;
     my $class = ref( $this ) ? ref( $this ) : $this;
     my $self = {
-        input => {},
+        errors => [],
     };
     bless $self, $class;
 
-    foreach ( findsubmod App::DSC::DataTool::Input ) {
-        eval 'require ' . $_ . ';';
-
-        # TODO: log better
-        if ( $@ ) {
-            App::DSC::DataTool::Log->instance->log(
-                'Inputs',
-                0,
-                App::DSC::DataTool::Error->new(
-                    reporter => $_,
-                    tag      => 'REQUIRE_FAILED',
-                    message  => $@
-                )
-            );
-            next;
-        }
-
-        $self->{input}->{ $_->Name } = $_;
-    }
+    $self->Init( %args );
 
     return $self;
 }
 
-=item $inputs = App::DSC::DataTool::Inputs->instance
-
-Return a singelton of the input module factory.
-
-=cut
-
-sub instance {
-    return $INSTANCE ||= App::DSC::DataTool::Inputs->new;
+sub DESTROY {
+    $_[0]->Destroy;
+    return;
 }
 
-=item $bool = $inputs->Exists ( $name )
+=item $transformer->Init (...)
 
-Return true(1) if an input module exists for the B<$name> otherwise false(0).
+Called upon creation of the object, arguments should be handled in the specific
+module.
 
 =cut
 
-sub Exists {
-    return $_[1] && $_[0]->{input}->{ $_[1] } ? 1 : 0;
+sub Init {
 }
 
-=item $input = $inputs->Input ( $name, ... )
+=item $transformer->Destroy
 
-Return a new input object for the specified B<$name> or undef if that name
-does not exist.  Arguments after B<$name> will be given to the input modules
-B<new> call.
+Called upon destruction of the object.
 
 =cut
 
-sub Input {
-    my ( $self, $name, %args ) = @_;
-    my $input;
+sub Destroy {
+}
 
-    if ( $name and $self->{input}->{$name} ) {
-        eval { $input = $self->{input}->{$name}->new( %args ); };
+=item $name = $transformer->Name
 
-        # TODO: log better
-        if ( $@ ) {
-            App::DSC::DataTool::Log->instance->log(
-                'Inputs',
-                0,
-                App::DSC::DataTool::Error->new(
-                    reporter => $self->{input}->{$name},
-                    tag      => 'NEW_FAILED',
-                    message  => $@
-                )
-            );
-            return;
-        }
-    }
+Return the name of the module, must be overloaded.
 
-    return $input;
+=cut
+
+sub Name {
+    confess 'Name is not overloaded';
+}
+
+=item $dataset = $transformer->Dataset ( $dataset )
+
+Make transformation on the given L<App::DSC::DataTool::Dataset> object, the
+object returned will be used. Must be overloaded.
+
+=cut
+
+sub Dataset {
+    confess 'Dataset is not overloaded';
 }
 
 =back
@@ -167,4 +140,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1;    # End of App::DSC::DataTool::Inputs
+1;    # End of App::DSC::DataTool::Transformer

@@ -3,6 +3,8 @@ package App::DSC::DataTool::Output;
 use common::sense;
 use Carp;
 
+use base qw(App::DSC::DataTool::Errors);
+
 =encoding utf8
 
 =head1 NAME
@@ -27,15 +29,17 @@ Base class for output formats...
 
 =item $output = App::DSC::DataTool::Output->new (...)
 
-Create a new output object, arguments are passed to the specific format module
-via C<Init>.
+Create a new output object, arguments are passed to the specific module via
+C<Init>.
 
 =cut
 
 sub new {
     my ( $this, %args ) = @_;
     my $class = ref( $this ) ? ref( $this ) : $this;
-    my $self = {};
+    my $self = {
+        errors => [],
+    };
     bless $self, $class;
 
     $self->Init( %args );
@@ -48,17 +52,17 @@ sub DESTROY {
     return;
 }
 
-=item $db->Init (...)
+=item $output->Init (...)
 
 Called upon creation of the object, arguments should be handled in the specific
-format module.
+module.
 
 =cut
 
 sub Init {
 }
 
-=item $db->Destroy
+=item $output->Destroy
 
 Called upon destruction of the object.
 
@@ -67,7 +71,7 @@ Called upon destruction of the object.
 sub Destroy {
 }
 
-=item $name = $db->Name
+=item $name = $output->Name
 
 Return the name of the module, must be overloaded.
 
@@ -75,6 +79,24 @@ Return the name of the module, must be overloaded.
 
 sub Name {
     confess 'Name is not overloaded';
+}
+
+=item $output = $output->Dataset ( @datasets )
+
+Output a list of dataset objects, must be overloaded.
+
+=over 4
+
+=item @datasets
+
+A list of L<App::DSC::DataTool::Dataset> objects to be outputted.
+
+=back
+
+=cut
+
+sub Dataset {
+    confess 'Dataset is not overloaded';
 }
 
 =back

@@ -3,14 +3,19 @@ Changes
 lib/App/DSC/DataTool/Dataset/Dimension.pm
 lib/App/DSC/DataTool/Dataset.pm
 lib/App/DSC/DataTool/Error.pm
+lib/App/DSC/DataTool/Errors.pm
 lib/App/DSC/DataTool/Input/DAT.pm
 lib/App/DSC/DataTool/Input.pm
 lib/App/DSC/DataTool/Inputs.pm
 lib/App/DSC/DataTool/Input/XML.pm
+lib/App/DSC/DataTool/Log.pm
 lib/App/DSC/DataTool/Output/Carbon.pm
 lib/App/DSC/DataTool/Output.pm
 lib/App/DSC/DataTool/Outputs.pm
 lib/App/DSC/DataTool.pm
+lib/App/DSC/DataTool/Transformer/GroupRange.pm
+lib/App/DSC/DataTool/Transformer.pm
+lib/App/DSC/DataTool/Transformers.pm
 
 bin/dsc-datatool
 

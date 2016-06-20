@@ -29,7 +29,7 @@ Output module factory...
 
 =over 4
 
-=item $instance = App::DSC::DataTool::Outputs->new (...)
+=item $outputs = App::DSC::DataTool::Outputs->new (...)
 
 Create a new output module factory object.
 
@@ -46,8 +46,19 @@ sub new {
     foreach ( findsubmod App::DSC::DataTool::Output ) {
         eval 'require ' . $_ . ';';
 
-        # TODO: log this?
-        warn $@ if $@;
+        # TODO: log better
+        if ( $@ ) {
+            App::DSC::DataTool::Log->instance->log(
+                'Outputs',
+                0,
+                App::DSC::DataTool::Error->new(
+                    reporter => $_,
+                    tag      => 'REQUIRE_FAILED',
+                    message  => $@
+                )
+            );
+            next;
+        }
 
         unless ( $@ ) {
             $self->{output}->{ $_->Name } = $_;
@@ -57,7 +68,7 @@ sub new {
     return $self;
 }
 
-=item $instance = App::DSC::DataTool::Outputs->instance
+=item $outputs = App::DSC::DataTool::Outputs->instance
 
 Return a singelton of the output module factory.
 
@@ -67,7 +78,7 @@ sub instance {
     return $INSTANCE ||= App::DSC::DataTool::Outputs->new;
 }
 
-=item $bool = $instance->Exists ( $name )
+=item $bool = $outputs->Exists ( $name )
 
 Return true(1) if an output module exists for the B<$name> otherwise false(0).
 
@@ -77,7 +88,7 @@ sub Exists {
     return $_[1] && $_[0]->{output}->{ $_[1] } ? 1 : 0;
 }
 
-=item $output = $instance->Output ( $name, ... )
+=item $output = $outputs->Output ( $name, ... )
 
 Return a new output object for the specified B<$name> or undef if that name
 does not exist.  Arguments after B<$name> will be given to the output modules
@@ -87,10 +98,27 @@ B<new> call.
 
 sub Output {
     my ( $self, $name, %args ) = @_;
+    my $output;
 
-    return $name && $self->{output}->{$name}
-      ? $self->{output}->{$name}->new( %args )
-      : undef;
+    if ( $name and $self->{output}->{$name} ) {
+        eval { $output = $self->{output}->{$name}->new( %args ); };
+
+        # TODO: log better
+        if ( $@ ) {
+            App::DSC::DataTool::Log->instance->log(
+                'Outputs',
+                0,
+                App::DSC::DataTool::Error->new(
+                    reporter => $self->{output}->{$name},
+                    tag      => 'NEW_FAILED',
+                    message  => $@
+                )
+            );
+            return;
+        }
+    }
+
+    return $output;
 }
 
 =back

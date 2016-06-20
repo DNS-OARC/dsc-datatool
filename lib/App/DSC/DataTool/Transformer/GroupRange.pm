@@ -1,17 +1,15 @@
-package App::DSC::DataTool::Input;
+package App::DSC::DataTool::Transformer::GroupRange;
 
 use common::sense;
 use Carp;
 
-use base qw(App::DSC::DataTool::Errors);
-
-use Scalar::Util qw( blessed );
+use base qw( App::DSC::DataTool::Transformer );
 
 =encoding utf8
 
 =head1 NAME
 
-App::DSC::DataTool::Input - Base class for input formats
+App::DSC::DataTool::Transformer::GroupRange - Group data according to ranges
 
 =head1 VERSION
 
@@ -23,75 +21,54 @@ See L<App::DSC::DataTool> for version.
 
 =head1 DESCRIPTION
 
-Base class for input formats...
+Group data according to ranges...
 
 =head1 METHODS
 
 =over 4
 
-=item $input = App::DSC::DataTool::Input->new (...)
+=item Init
 
-Create a new input object, arguments are passed to the specific format module
-via C<Init>.
-
-=cut
-
-sub new {
-    my ( $this, %args ) = @_;
-    my $class = ref( $this ) ? ref( $this ) : $this;
-    my $self = {
-        errors => [],
-    };
-    bless $self, $class;
-
-    $self->Init( %args );
-
-    return $self;
-}
-
-sub DESTROY {
-    $_[0]->Destroy;
-    return;
-}
-
-=item $input->Init (...)
-
-Called upon creation of the object, arguments should be handled in the specific
-format module.
+Initialize the transformer, called from the input factory.
 
 =cut
 
 sub Init {
+    my ( $self, %args ) = @_;
+
+    foreach ( qw( type range ) ) {
+        unless ( defined $args{$_} ) {
+            croak $_ . ' must be given';
+        }
+        $self->{$_} = $args{$_};
+    }
+
+    return $self;
 }
 
-=item $input->Destroy
-
-Called upon destruction of the object.
+=item Destroy
 
 =cut
 
 sub Destroy {
 }
 
-=item $name = $input->Name
-
-Return the name of the module, must be overloaded.
+=item Name
 
 =cut
 
 sub Name {
-    confess 'Name is not overloaded';
+    return 'GroupRange';
 }
 
-=item $dataset = $input->Dataset
-
-Read input and return a L<App::DSC::DataTool::Dataset> object or undef if there
-is no more input, must be overloaded.
+=item Dataset
 
 =cut
 
 sub Dataset {
-    confess 'Dataset is not overloaded';
+    my ( $self, $dataset ) = @_;
+
+    return $dataset;
 }
 
 =back
@@ -140,4 +117,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1;    # End of App::DSC::DataTool::Input
+1;    # End of App::DSC::DataTool::Transformer::GroupRange
