@@ -35,6 +35,10 @@ Create a new dataset object.
 
 =item name
 
+=item server
+
+=item node
+
 =item start_time
 
 =item stop_time
@@ -48,13 +52,15 @@ sub new {
     my $class = ref( $this ) ? ref( $this ) : $this;
     my $self = {
         name       => undef,
+        server     => undef,
+        node       => undef,
         start_time => undef,
         stop_time  => undef,
         dimensions => [],
     };
     bless $self, $class;
 
-    foreach ( qw( name start_time stop_time ) ) {
+    foreach ( qw( name server node start_time stop_time ) ) {
         unless ( $args{$_} ) {
             confess $_ . ' must be given';
         }
@@ -72,6 +78,26 @@ Return the name of the dataset.
 
 sub Name {
     return $_[0]->{name};
+}
+
+=item $server = $dataset->Server
+
+Return the server of the dataset.
+
+=cut
+
+sub Server {
+    return $_[0]->{server};
+}
+
+=item $node = $dataset->Node
+
+Return the node of the dataset.
+
+=cut
+
+sub Node {
+    return $_[0]->{node};
 }
 
 =item $start_time = $dataset->StartTime

@@ -13,8 +13,8 @@ use App::DSC::DataTool::Transformers;
 use App::DSC::DataTool::Log;
 
 my $conf;
-my $server = 'all';
-my $node   = 'all';
+my $server;
+my $node;
 my @xml;
 my @dat;
 my @output;
@@ -41,8 +41,14 @@ GetOptions(
 ) or pod2usage( 2 );
 pod2usage( 1 ) if $help;
 pod2usage( -exitval => 0, -verbose => 2 ) if $man;
+unless ( $server and $node and ( scalar @xml or scalar @dat ) ) {
+    pod2usage(
+        -msg     => '--server, --node and either a --xml or --dat must be given',
+        -verbose => 0
+    );
+}
 
-my $log = App::DSC::DataTool::Log->instance;
+my $log = App::DSC::DataTool::Log->instance( verbose => $verbose );
 $log->log( 'main', 0, 'starting (verbose ', $verbose, ')' );
 
 my %dataset;
@@ -90,7 +96,7 @@ foreach ( @output ) {
         die 'Invalid output: "' . $args . '" not in format key=value';
     }
 
-    my $output = App::DSC::DataTool::Transformers->instance->Output( $name, %args );
+    my $output = App::DSC::DataTool::Outputs->instance->Output( $name, %args );
     unless ( defined $output ) {
         die 'Output failed';
     }
@@ -98,7 +104,12 @@ foreach ( @output ) {
 }
 
 foreach ( @xml ) {
-    my $xml = App::DSC::DataTool::Inputs->instance->Input( 'XML', file => $_ );
+    my $xml = App::DSC::DataTool::Inputs->instance->Input(
+        'XML',
+        server => $server,
+        node   => $node,
+        file   => $_
+    );
     unless ( defined $xml ) {
         die 'XML Input failed';
     }
@@ -156,7 +167,7 @@ dsc-datatool - Export DSC data into various formats and databases
 
 =head1 SYNOPSIS
 
-dsc-datatool [options]
+dsc-datatool --server name --node name <--xml|--dat> [options]
 
 =head1 DESCRIPTION
 
@@ -174,13 +185,21 @@ Specify the YAML configuration file to use (default to ~/.dsc-datatool.conf),
 any command line option will override the options in the configuration file.
 See B<dsc-datatool.conf(5)> for more information.
 
-=item B<--xml <file or directory>>
+=item B<--server <name>> (required)
+
+Specify the server for where the data comes from.
+
+=item B<--node <name>> (required)
+
+Specify the node for where the data comes from.
+
+=item B<--xml <file or directory>> (suggested)
 
 Read DSC data from the given file or directory, can be specified multiple
 times.
 If a directory is given then all files ending with B<.xml> will be read.
 
-=item B<--dat <file or directory>>
+=item B<--dat <file or directory>> (suggested)
 
 Read DSC data from the given file or directory, can be specified multiple
 times.
@@ -240,6 +259,10 @@ Print a brief help message and exits.
 =item B<--man>
 
 Prints the manual page and exits.
+
+=item B<--verbose>
+
+Increase the verbose level, can be given multiple times.
 
 =back
 

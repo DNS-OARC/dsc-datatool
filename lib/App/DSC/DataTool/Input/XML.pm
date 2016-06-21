@@ -39,6 +39,14 @@ Initialize the XML input, called from the input factory.
 
 =over 4
 
+=item server
+
+The server where the input comes from.
+
+=item node
+
+The node where the input comes from.
+
 =item file
 
 File to read input from.
@@ -50,13 +58,15 @@ File to read input from.
 sub Init {
     my ( $self, %args ) = @_;
 
-    unless ( $args{file} ) {
-        croak 'file must be given';
+    foreach ( qw( server node file ) ) {
+        unless ( $args{$_} ) {
+            croak $_ . ' must be given';
+        }
+        $self->{$_} = $args{$_};
     }
-    unless ( -r $args{file} ) {
+    unless ( -r $self->{file} ) {
         croak 'file can not be read';
     }
-    $self->{file} = $args{file};
 
     $self->{root}     = undef;
     $self->{datasets} = [];
@@ -165,6 +175,8 @@ sub Dataset {
 
             my $dataset = App::DSC::DataTool::Dataset->new(
                 name       => $name,
+                server     => $self->{server},
+                node       => $self->{node},
                 start_time => $metric->{start_time},
                 stop_time  => $metric->{stop_time}
             );

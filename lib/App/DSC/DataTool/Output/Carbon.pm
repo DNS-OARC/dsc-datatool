@@ -41,6 +41,8 @@ Initialize the Carbon output, called from the output factory.
 
 =item timestamp (optional)
 
+=item prefix (optional)
+
 =back
 
 =cut
@@ -54,6 +56,11 @@ sub Init {
         }
         $self->{$_} = $args{$_};
     }
+    foreach ( qw(prefix) ) {
+        if ( defined $args{$_} ) {
+            $self->{$_} = $args{$_};
+        }
+    }
     if ( $args{timestamp} ) {
         unless ( $args{timestamp} eq 'start'
             or $args{timestamp} eq 'end' )
@@ -65,6 +72,9 @@ sub Init {
     }
     else {
         $self->{timestamp} = 'start';
+    }
+    if ( $self->{prefix} ) {
+        $self->{prefix} = $self->nodots( $self->{prefix} );
     }
 
     $self->{carbon} = IO::Socket::INET->new(
@@ -118,8 +128,7 @@ sub Dataset {
     my $self = shift;
 
     foreach my $dataset ( @_ ) {
-        my $name = $dataset->Name;
-        $name =~ s/\./-/go;
+        my $name = ( $self->{prefix} ? $self->{prefix} . '.' : '' ) . $self->nodots( $dataset->Server ) . '.' . $self->nodots( $dataset->Node ) . '.' . $self->nodots( $dataset->Name );
         my $timestamp =
             $self->{timestamp} eq 'start'
           ? $dataset->StartTime
@@ -147,9 +156,7 @@ sub Process {
     my ( $self, $name, $timestamp, $dimension ) = @_;
 
     if ( $dimension->HaveDimensions ) {
-        my $dimension_name = $dimension->Value;
-        $dimension_name =~ s/\./-/go;
-        $name .= '.' . $dimension_name;
+        $name .= '.' . $self->nodots( $dimension->Value );
 
         foreach my $dimension2 ( $dimension->Dimensions ) {
             $self->Process( $name, $timestamp, $dimension2 );
@@ -171,13 +178,19 @@ sub Process {
 
     my %value = $dimension->Values;
     foreach my $key ( keys %value ) {
-        my $value = $value{$key};
-        $key =~ s/\./-/go;
-
-        $self->{carbon}->send( join( ' ', $name . '.' . $key, $value, $timestamp ) . "\n" );
+        $self->{carbon}->send( join( ' ', $name . '.' . $self->nodots( $key ), $value{$key}, $timestamp ) . "\n" );
     }
 
     return;
+}
+
+=item nodots
+
+=cut
+
+sub nodots {
+    $_[1] =~ s/\./-/go;
+    return $_[1];
 }
 
 =back
