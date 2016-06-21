@@ -4,3 +4,6 @@ debian
 tidy
 cover_db
 Makefile.old
+contrib/test-site/dsc-grafana-dashboard.json
+contrib/test-site/load.sh
+contrib/test-site/README.md
