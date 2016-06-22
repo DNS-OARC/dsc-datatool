@@ -12,6 +12,26 @@
     {
       "collapse": false,
       "editable": true,
+      "height": "25px",
+      "panels": [
+        {
+          "content": "These graphs presents some of the data gathered by [DSC](https://www.dns-oarc.net/oarc/data/dsc). [This wiki article](https://github.com/DNS-OARC/dsc-datatool/wiki/Setting-up-a-test-Grafana) explains how this was set up.",
+          "editable": true,
+          "error": false,
+          "id": 7,
+          "isNew": true,
+          "links": [],
+          "mode": "markdown",
+          "span": 12,
+          "title": "",
+          "type": "text"
+        }
+      ],
+      "title": "New row"
+    },
+    {
+      "collapse": false,
+      "editable": true,
       "height": "300px",
       "panels": [
         {
@@ -43,9 +63,9 @@
             "values": true
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
-          "nullPointMode": "connected",
+          "nullPointMode": "null as zero",
           "percentage": false,
           "pointradius": 5,
           "points": false,
@@ -117,9 +137,9 @@
             "values": true
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
-          "nullPointMode": "connected",
+          "nullPointMode": "null as zero",
           "percentage": false,
           "pointradius": 5,
           "points": false,
@@ -198,7 +218,7 @@
           "lines": true,
           "linewidth": 1,
           "links": [],
-          "nullPointMode": "connected",
+          "nullPointMode": "null as zero",
           "percentage": false,
           "pointradius": 5,
           "points": false,
@@ -261,6 +281,8 @@
           "legend": {
             "avg": false,
             "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
             "max": false,
             "min": false,
             "rightSide": false,
@@ -271,7 +293,7 @@
           "lines": true,
           "linewidth": 1,
           "links": [],
-          "nullPointMode": "connected",
+          "nullPointMode": "null as zero",
           "percentage": false,
           "pointradius": 5,
           "points": false,
@@ -343,6 +365,8 @@
             "alignAsTable": false,
             "avg": false,
             "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
             "max": false,
             "min": false,
             "show": true,
@@ -352,7 +376,7 @@
           "lines": true,
           "linewidth": 1,
           "links": [],
-          "nullPointMode": "connected",
+          "nullPointMode": "null as zero",
           "percentage": true,
           "pointradius": 5,
           "points": false,
@@ -402,8 +426,8 @@
     }
   ],
   "time": {
-    "from": "now-1h",
-    "to": "now"
+    "from": "now-3h",
+    "to": "now-5m"
   },
   "timepicker": {
     "now": true,
@@ -439,6 +463,6 @@
   },
   "refresh": "30s",
   "schemaVersion": 12,
-  "version": 12,
+  "version": 17,
   "links": []
 }
