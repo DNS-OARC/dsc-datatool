@@ -1,15 +1,15 @@
-package App::DSC::DataTool::Input::DAT;
+package App::DSC::DataTool::Transformer::Labler;
 
 use common::sense;
 use Carp;
 
-use base qw( App::DSC::DataTool::Input );
+use base qw( App::DSC::DataTool::Transformer );
 
 =encoding utf8
 
 =head1 NAME
 
-App::DSC::DataTool::Input::DAT - DSC DAT input
+App::DSC::DataTool::Transformer::Labler - Set/change labels on dimensions
 
 =head1 VERSION
 
@@ -21,7 +21,7 @@ See L<App::DSC::DataTool> for version.
 
 =head1 DESCRIPTION
 
-DSC DAT input...
+Set/change labels on dimensions...
 
 =head1 METHODS
 
@@ -29,41 +29,19 @@ DSC DAT input...
 
 =item Init
 
-Initialize the DAT input, called from the input factory.
-
-=over 4
-
-=item server
-
-The server where the input comes from.
-
-=item node
-
-The node where the input comes from.
-
-=item file
-
-File to read input from.
-
-=back
+Initialize the transformer, called from the input factory.
 
 =cut
 
 sub Init {
     my ( $self, %args ) = @_;
 
-    foreach ( qw( server node file ) ) {
-        unless ( $args{$_} ) {
+    foreach ( qw( file ) ) {
+        unless ( defined $args{$_} ) {
             croak $_ . ' must be given';
         }
         $self->{$_} = $args{$_};
     }
-    unless ( -r $self->{file} ) {
-        croak 'file can not be read';
-    }
-
-    $self->{root}     = undef;
-    $self->{datasets} = [];
 
     return $self;
 }
@@ -80,7 +58,7 @@ sub Destroy {
 =cut
 
 sub Name {
-    return 'DAT';
+    return 'Labler';
 }
 
 =item Dataset
@@ -137,4 +115,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1;    # End of App::DSC::DataTool::Input::DAT
+1;    # End of App::DSC::DataTool::Transformer::Labler

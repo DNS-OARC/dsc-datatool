@@ -24,23 +24,29 @@ my $list;
 my $man;
 my $help;
 my $verbose = 0;
+my $version;
 
 GetOptions(
-    'conf=s'      => \$conf,
-    'server=s'    => \$server,
-    'node=s'      => \$node,
-    'xml=s'       => \@xml,
-    'dat=s'       => \@dat,
-    'dataset=s'   => \@dataset,
-    'output=s'    => \@output,
-    'transform=s' => \@transform,
-    'list:s'      => \$list,
-    'help|?'      => \$help,
-    'man'         => \$man,
-    'verbose+'    => \$verbose,
+    'conf=s'       => \$conf,
+    'server=s'     => \$server,
+    'node=s'       => \$node,
+    'xml=s'        => \@xml,
+    'dataset|ds=s' => \@dataset,
+    'dat|d=s'      => \@dat,
+    'output=s'     => \@output,
+    'transform=s'  => \@transform,
+    'list:s'       => \$list,
+    'help|?'       => \$help,
+    'man'          => \$man,
+    'version|V'    => \$version,
+    'verbose|v+'   => \$verbose,
 ) or pod2usage( 2 );
 pod2usage( 1 ) if $help;
 pod2usage( -exitval => 0, -verbose => 2 ) if $man;
+if ( $version ) {
+    say 'dsc-datatool version ', App::DSC::DataTool->VERSION;
+    exit 0;
+}
 unless ( $server and $node and ( scalar @xml or scalar @dat ) ) {
     pod2usage(
         -msg     => '--server, --node and either a --xml or --dat must be given',
@@ -179,27 +185,27 @@ B<--list> to see the list of available output plugins.
 
 =over 8
 
-=item B<--conf <file>>
+=item B<[ -c | --conf ] <file>>
 
 Specify the YAML configuration file to use (default to ~/.dsc-datatool.conf),
 any command line option will override the options in the configuration file.
 See B<dsc-datatool.conf(5)> for more information.
 
-=item B<--server <name>> (required)
+=item B<[ -s | --server ] <name>> (required)
 
 Specify the server for where the data comes from.
 
-=item B<--node <name>> (required)
+=item B<[ -n | --node ] <name>> (required)
 
 Specify the node for where the data comes from.
 
-=item B<--xml <file or directory>> (suggested)
+=item B<[ -x | --xml ] <file or directory>> (suggested)
 
 Read DSC data from the given file or directory, can be specified multiple
 times.
 If a directory is given then all files ending with B<.xml> will be read.
 
-=item B<--dat <file or directory>> (suggested)
+=item B<[ -d | --dat ] <file or directory>> (suggested)
 
 Read DSC data from the given file or directory, can be specified multiple
 times.
@@ -208,12 +214,12 @@ read.
 Note that the DAT format is depended on the filename to know what type
 of data it is.
 
-=item B<--dataset <list of datasets>>
+=item B<[ -ds | --dataset ] <list of datasets>>
 
 Specify that only the list of datasets will be processed, the list is comma
 separated and the option can be given multiple times.
 
-=item B<--output <sep><type>[<sep>option=value...]>
+=item B<[ -o | --output ] <sep><type>[<sep>option=value...]>
 
 Output data to B<type> and use B<separator> as an options separator, example:
 
@@ -225,12 +231,12 @@ To see a full list of options, check the man-page of the output module:
 
   man App:DSC::DataTool::Output::NAME
 
-=item B<--transform <sep><type><sep><datasets>[<sep>option=value...]>
+=item B<[ -t | --transform ] <sep><type><sep><datasets>[<sep>option=value...]>
 
 Use the transformer B<type> to change the list of datasets in B<datasets>,
 example:
 
-  --transform ;GroupRange;rcode_vs_replylen;type=sum;range=/128
+  --transform ;ReRanger;rcode_vs_replylen;type=sum;range=/128
 
 B<datasets> is a comma separated list of datasets to run the tranformer on,
 because of this do not use comma (,) as a separator.  B<*> in B<datasets> will
@@ -248,21 +254,25 @@ To see a full list of options, check the man-page of the transformer module:
 For a list of datasets see the DSC configuration that created the data files
 and the documentation for the Presenter.
 
-=item B<--list [tr|transform|in|input|out|output|all]>
+=item B<[ -l | --list ] [tr|transform|in|input|out|output|all]>
 
 List the available transformers, input and output formats.
 
-=item B<--help>
+=item B<-h | --help>
 
 Print a brief help message and exits.
 
-=item B<--man>
+=item B<-m | --man>
 
 Prints the manual page and exits.
 
-=item B<--verbose>
+=item B<-v | --verbose>
 
 Increase the verbose level, can be given multiple times.
+
+=item B<-V | --version>
+
+Display version and exit.
 
 =back
 
