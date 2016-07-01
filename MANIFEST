@@ -13,7 +13,8 @@ lib/App/DSC/DataTool/Output/Carbon.pm
 lib/App/DSC/DataTool/Output.pm
 lib/App/DSC/DataTool/Outputs.pm
 lib/App/DSC/DataTool.pm
-lib/App/DSC/DataTool/Transformer/GroupRange.pm
+lib/App/DSC/DataTool/Transformer/Labler.pm
+lib/App/DSC/DataTool/Transformer/ReRanger.pm
 lib/App/DSC/DataTool/Transformer.pm
 lib/App/DSC/DataTool/Transformers.pm
 

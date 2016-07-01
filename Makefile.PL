@@ -37,28 +37,58 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     NAME          => 'App::DSC::DataTool',
+    DISTNAME      => 'p5-App-DSC-DataTool',
     AUTHOR        => q{Jerry Lundström <lundstrom.jerry@gmail.com>},
     VERSION_FROM  => 'lib/App/DSC/DataTool.pm',
-    ABSTRACT_FROM => 'lib/App/DSC/DataTool.pm',
+    ABSTRACT      => 'Export DSC data to other formats and/or databases',
     EXE_FILES     => ['bin/dsc-datatool'],
     (
         !eval { ExtUtils::MakeMaker->VERSION( 6.3002 ) }
         ? ()
-        : ( LICENSE => 'perl' )
+        : ( LICENSE => 'bsd' )
     ),
     (
-        PREREQ_PM => {
-            'Test::More'          => 0,
-            'common::sense'       => 3,
-            'XML::LibXML::Simple' => 0.93,
-            'IO::Socket::INET'    => 1.31,
-            'Time::HiRes'         => 0,
-            'Getopt::Long'        => 0,
-            'YAML::Tiny'          => 0,
-            'Pod::Usage'          => 0,
-            'Scalar::Util'        => 0,
-            'Module::Find'        => 0,
-        }
+        eval { ExtUtils::MakeMaker->VERSION( 6.5503 ) }
+        ? (
+            BUILD_REQUIRES => {
+                'Test::More'          => 0,
+                'Test::CheckManifest' => 0.9,
+                'common::sense'       => 3,
+                'XML::LibXML::Simple' => 0.93,
+                'IO::Socket::INET'    => 1.31,
+                'Time::HiRes'         => 0,
+                'Getopt::Long'        => 0,
+                'YAML::Tiny'          => 0,
+                'Pod::Usage'          => 0,
+                'Scalar::Util'        => 0,
+                'Module::Find'        => 0,
+            },
+            PREREQ_PM => {
+                'common::sense'       => 3,
+                'XML::LibXML::Simple' => 0.93,
+                'IO::Socket::INET'    => 1.31,
+                'Time::HiRes'         => 0,
+                'Getopt::Long'        => 0,
+                'YAML::Tiny'          => 0,
+                'Pod::Usage'          => 0,
+                'Scalar::Util'        => 0,
+                'Module::Find'        => 0,
+            }
+          )
+        : (
+            PREREQ_PM => {
+                'Test::More'          => 0,
+                'common::sense'       => 3,
+                'XML::LibXML::Simple' => 0.93,
+                'IO::Socket::INET'    => 1.31,
+                'Time::HiRes'         => 0,
+                'Getopt::Long'        => 0,
+                'YAML::Tiny'          => 0,
+                'Pod::Usage'          => 0,
+                'Scalar::Util'        => 0,
+                'Module::Find'        => 0,
+            }
+        )
     ),
     (
         !eval { ExtUtils::MakeMaker->VERSION( 6.46 ) }
@@ -74,5 +104,5 @@ WriteMakefile(
         )
     ),
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean => { FILES    => 'App-DSC-DataTool-*' },
+    clean => { FILES    => 'p5-App-DSC-DataTool-*' },
 );

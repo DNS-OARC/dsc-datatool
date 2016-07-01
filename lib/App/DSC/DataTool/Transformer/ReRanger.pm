@@ -1,4 +1,4 @@
-package App::DSC::DataTool::Transformer::GroupRange;
+package App::DSC::DataTool::Transformer::ReRanger;
 
 use common::sense;
 use Carp;
@@ -9,7 +9,7 @@ use base qw( App::DSC::DataTool::Transformer );
 
 =head1 NAME
 
-App::DSC::DataTool::Transformer::GroupRange - Group data according to ranges
+App::DSC::DataTool::Transformer::ReRanger - (Re)Group data according to ranges
 
 =head1 VERSION
 
@@ -21,7 +21,7 @@ See L<App::DSC::DataTool> for version.
 
 =head1 DESCRIPTION
 
-Group data according to ranges...
+(Re)Group data according to ranges...
 
 =head1 METHODS
 
@@ -58,7 +58,7 @@ sub Destroy {
 =cut
 
 sub Name {
-    return 'GroupRange';
+    return 'ReRanger';
 }
 
 =item Dataset
@@ -66,9 +66,7 @@ sub Name {
 =cut
 
 sub Dataset {
-    my ( $self, $dataset ) = @_;
-
-    return $dataset;
+    croak 'Not implemented yet!';
 }
 
 =back
@@ -117,4 +115,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1;    # End of App::DSC::DataTool::Transformer::GroupRange
+1;    # End of App::DSC::DataTool::Transformer::ReRanger
