@@ -12,7 +12,7 @@ script:
   - make
   - make dist
   - tar zxvf *.tar.gz
-  - cd p5-App-DSC-DataTool-[0-9]*
+  - cd p5-App-DSC-DataTool-*[0-9]
   - perl Makefile.PL
   - make
-  - make test
+  - RELEASE_TESTING=1 make test
