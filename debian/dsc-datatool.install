@@ -1,0 +1,3 @@
+usr/bin/dsc-datatool
+usr/share/man/man1/dsc-datatool.1p
+contrib/test-site /usr/share/dsc-datatool/
