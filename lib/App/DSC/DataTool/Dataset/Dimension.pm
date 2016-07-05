@@ -172,6 +172,31 @@ sub AddValues {
     return $self;
 }
 
+=item $dimension = $dimension->SetValues ( key => value, ... )
+
+Set the values for the dimension, returns itself on success or confesses.
+
+Values can not be set if dimensions exists.
+
+=cut
+
+#TODO: better handling of values
+
+sub SetValues {
+    my $self = shift;
+
+    if ( defined $self->{value} ) {
+        confess 'value must not be set to add values';
+    }
+    if ( exists $self->{dimensions} ) {
+        confess 'Dimensions exists, can not add values';
+    }
+
+    $self->{values} = {@_};
+
+    return $self;
+}
+
 =item %value = $dimension->Values
 
 Return the hash of values within the dimension.

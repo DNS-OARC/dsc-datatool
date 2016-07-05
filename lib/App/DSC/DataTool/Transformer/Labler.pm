@@ -3,6 +3,10 @@ package App::DSC::DataTool::Transformer::Labler;
 use common::sense;
 use Carp;
 
+use YAML::Tiny;
+use App::DSC::DataTool::Log;
+use App::DSC::DataTool::Error;
+
 use base qw( App::DSC::DataTool::Transformer );
 
 =encoding utf8
@@ -31,16 +35,46 @@ Set/change labels on dimensions...
 
 Initialize the transformer, called from the input factory.
 
+#TODO: documentation
+
 =cut
 
 sub Init {
     my ( $self, %args ) = @_;
 
-    foreach ( qw( file ) ) {
+    foreach ( qw( yaml ) ) {
         unless ( defined $args{$_} ) {
             croak $_ . ' must be given';
         }
         $self->{$_} = $args{$_};
+    }
+
+    my $yaml = YAML::Tiny->new;
+    unless ( ( $self->{label} = $yaml->read( $self->{yaml} ) ) ) {
+        App::DSC::DataTool::Log->instance->log(
+            'Labler',
+            0,
+            App::DSC::DataTool::Error->new(
+                reporter => $self,
+                tag      => 'YAML_LOAD',
+                message  => $yaml->errstr
+            )
+        );
+    }
+
+    $self->{label} = $self->{label}->[0];
+
+    if ( defined $self->{label} and ref( $self->{label} ) ne 'HASH' ) {
+        App::DSC::DataTool::Log->instance->log(
+            'Labler',
+            0,
+            App::DSC::DataTool::Error->new(
+                reporter => $self,
+                tag      => 'YAML',
+                message  => 'YAML is invalid, must be a HASH'
+            )
+        );
+        delete $self->{label};
     }
 
     return $self;
@@ -66,7 +100,34 @@ sub Name {
 =cut
 
 sub Dataset {
-    croak 'Not implemented yet!';
+    my ( $self, $dataset ) = @_;
+
+    unless ( $self->{label} ) {
+        return;
+    }
+    unless ( $self->{label}->{ $dataset->Name } ) {
+        return;
+    }
+
+    my @dimensions = $dataset->Dimensions;
+    while ( my $dimension = shift( @dimensions ) ) {
+        my $label = $self->{label}->{ $dataset->Name }->{ $dimension->Name };
+        if ( $label and $dimension->HaveValues ) {
+            my %value = $dimension->Values;
+            my %new_value;
+
+            foreach my $key ( keys %value ) {
+                $new_value{ exists $label->{$key} ? $label->{$key} : $key } = $value{$key};
+            }
+
+            $dimension->SetValues( %new_value );
+        }
+        else {
+            push( @dimensions, $dimension->Dimensions );
+        }
+    }
+
+    return $dataset;
 }
 
 =back

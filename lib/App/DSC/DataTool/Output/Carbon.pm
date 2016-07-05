@@ -6,6 +6,7 @@ use Carp;
 use base qw(App::DSC::DataTool::Output);
 
 use IO::Socket::INET;
+use IO::File;
 
 =encoding utf8
 
@@ -39,6 +40,10 @@ Initialize the Carbon output, called from the output factory.
 
 =item port
 
+=item file
+
+=item append (optional)
+
 =item timestamp (optional)
 
 =item prefix (optional)
@@ -50,13 +55,18 @@ Initialize the Carbon output, called from the output factory.
 sub Init {
     my ( $self, %args ) = @_;
 
-    foreach ( qw(host port) ) {
-        unless ( $args{$_} ) {
-            croak $_ . ' must be given';
-        }
-        $self->{$_} = $args{$_};
+    if ( $args{file} ) {
+        $self->{file} = $args{file};
     }
-    foreach ( qw(prefix) ) {
+    else {
+        foreach ( qw(host port) ) {
+            unless ( $args{$_} ) {
+                croak $_ . ' must be given';
+            }
+            $self->{$_} = $args{$_};
+        }
+    }
+    foreach ( qw(append prefix) ) {
         if ( defined $args{$_} ) {
             $self->{$_} = $args{$_};
         }
@@ -77,13 +87,21 @@ sub Init {
         $self->{prefix} = $self->nodots( $self->{prefix} );
     }
 
-    $self->{carbon} = IO::Socket::INET->new(
-        PeerAddr => $self->{host},
-        PeerPort => $self->{port},
-        Proto    => 'tcp'
-    );
-    unless ( $self->{carbon}->connected ) {
-        croak 'Unable to connect to ' . $self->{host} . '[' . $self->{port} . ']: ' . $!;
+    if ( $self->{file} ) {
+        $self->{file_handle} = IO::File->new;
+        unless ( $self->{file_handle}->open( $self->{file}, $self->{append} ? '>>' : '>' ) ) {
+            croak 'Unable to open file ' . $self->{file} . ': ' . $!;
+        }
+    }
+    else {
+        $self->{carbon} = IO::Socket::INET->new(
+            PeerAddr => $self->{host},
+            PeerPort => $self->{port},
+            Proto    => 'tcp'
+        );
+        unless ( $self->{carbon}->connected ) {
+            croak 'Unable to connect to ' . $self->{host} . '[' . $self->{port} . ']: ' . $!;
+        }
     }
 
     return $self;
@@ -177,8 +195,15 @@ sub Process {
     }
 
     my %value = $dimension->Values;
-    foreach my $key ( keys %value ) {
-        $self->{carbon}->send( join( ' ', $name . '.' . $self->nodots( $key ), $value{$key}, $timestamp ) . "\n" );
+    if ( $self->{file_handle} ) {
+        foreach my $key ( keys %value ) {
+            $self->{file_handle}->say( join( ' ', $name . '.' . $self->nodots( $key ), $value{$key}, $timestamp ) );
+        }
+    }
+    else {
+        foreach my $key ( keys %value ) {
+            $self->{carbon}->send( join( ' ', $name . '.' . $self->nodots( $key ), $value{$key}, $timestamp ) . "\n" );
+        }
     }
 
     return;

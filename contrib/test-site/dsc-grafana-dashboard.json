@@ -15,7 +15,7 @@
       "height": "25px",
       "panels": [
         {
-          "content": "These graphs presents some of the data gathered by [DSC](https://www.dns-oarc.net/oarc/data/dsc). [This wiki article](https://github.com/DNS-OARC/dsc-datatool/wiki/Setting-up-a-test-Grafana) explains how this was set up.",
+          "content": "These graphs presents some of the data gathered by [DSC](https://www.dns-oarc.net/oarc/data/dsc). Read [this wiki article](https://github.com/DNS-OARC/dsc-datatool/wiki/Setting-up-a-test-Grafana) how to set up this yourself.",
           "editable": true,
           "error": false,
           "id": 7,
@@ -77,7 +77,7 @@
           "targets": [
             {
               "refId": "A",
-              "target": "aliasByNode(dsc.oarc.oarc.pcap_stats.*.*, 4, -1)"
+              "target": "groupByNode(dsc.$dsc_host.$dsc_node.pcap_stats.*.*, 5, 'sum')"
             }
           ],
           "timeFrom": null,
@@ -151,7 +151,7 @@
           "targets": [
             {
               "refId": "A",
-              "target": "groupByNode(dsc.oarc.oarc.transport_vs_qtype.*.*, 4, 'sum')"
+              "target": "groupByNode(dsc.$dsc_host.$dsc_node.transport_vs_qtype.*.*, 4, 'sum')"
             }
           ],
           "timeFrom": null,
@@ -211,7 +211,7 @@
             "current": false,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": false
           },
@@ -231,7 +231,7 @@
             {
               "hide": false,
               "refId": "A",
-              "target": "aliasByNode(dsc.oarc.oarc.rcode.*.*, 5)"
+              "target": "groupByNode(dsc.$dsc_host.$dsc_node.rcode.*.*, 5, 'sum')"
             }
           ],
           "timeFrom": null,
@@ -304,9 +304,10 @@
           "steppedLine": false,
           "targets": [
             {
+              "hide": false,
               "refId": "A",
-              "target": "sortByName(aliasByNode(dsc.oarc.oarc.qtype.*.*, 5), True)",
-              "textEditor": true
+              "target": "groupByNode(dsc.$dsc_host.$dsc_node.qtype.*.*, 5, 'sum')",
+              "textEditor": false
             }
           ],
           "timeFrom": null,
@@ -314,7 +315,7 @@
           "title": "QTYPE",
           "tooltip": {
             "msResolution": false,
-            "shared": true,
+            "shared": false,
             "value_type": "cumulative"
           },
           "type": "graph",
@@ -388,7 +389,7 @@
           "targets": [
             {
               "refId": "A",
-              "target": "aliasByNode(sortByName(dsc.oarc.oarc.edns_bufsiz.*.*, 'True'), 5)",
+              "target": "groupByNode(sortByName(dsc.$dsc_host.$dsc_node.edns_bufsiz.*.*, 'True'), 5, 'sum')",
               "textEditor": false
             }
           ],
@@ -456,13 +457,64 @@
     ]
   },
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "tags": [],
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Host",
+        "multi": true,
+        "name": "dsc_host",
+        "options": [
+          {
+            "text": "All",
+            "value": "$__all",
+            "selected": true
+          }
+        ],
+        "query": "dsc.*",
+        "refresh": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "tags": [],
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Node",
+        "multi": true,
+        "name": "dsc_node",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          }
+        ],
+        "query": "dsc.$dsc_host.*",
+        "refresh": 1,
+        "type": "query"
+      }
+    ]
   },
   "annotations": {
     "list": []
   },
   "refresh": "30s",
   "schemaVersion": 12,
-  "version": 17,
+  "version": 18,
   "links": []
 }

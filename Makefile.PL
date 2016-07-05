@@ -36,12 +36,12 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    NAME          => 'App::DSC::DataTool',
-    DISTNAME      => 'p5-App-DSC-DataTool',
-    AUTHOR        => q{Jerry Lundström <lundstrom.jerry@gmail.com>},
-    VERSION_FROM  => 'lib/App/DSC/DataTool.pm',
-    ABSTRACT      => 'Export DSC data to other formats and/or databases',
-    EXE_FILES     => ['bin/dsc-datatool'],
+    NAME         => 'App::DSC::DataTool',
+    DISTNAME     => 'p5-App-DSC-DataTool',
+    AUTHOR       => q{Jerry Lundström <lundstrom.jerry@gmail.com>},
+    VERSION_FROM => 'lib/App/DSC/DataTool.pm',
+    ABSTRACT     => 'Export DSC data to other formats and/or databases',
+    EXE_FILES    => ['bin/dsc-datatool'],
     (
         !eval { ExtUtils::MakeMaker->VERSION( 6.3002 ) }
         ? ()

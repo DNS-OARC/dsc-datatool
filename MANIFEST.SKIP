@@ -7,3 +7,4 @@ Makefile.old
 contrib/test-site/dsc-grafana-dashboard.json
 contrib/test-site/load.sh
 contrib/test-site/README.md
+contrib/iana-dns-parameters/fetch-yaml-for-labler.pl
