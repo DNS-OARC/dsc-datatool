@@ -5,6 +5,7 @@ use common::sense;
 use Getopt::Long;
 use Pod::Usage;
 use YAML::Tiny;
+use Scalar::Util qw( blessed );
 
 use App::DSC::DataTool;
 use App::DSC::DataTool::Inputs;
@@ -136,9 +137,12 @@ foreach ( @xml ) {
 
         foreach my $transformer ( @{ $transformer{'*'} } ) {
             $log->log( 'main', 0, 'transforming with ', $transformer->Name );
-            $dataset = $transformer->Dataset( $dataset );
+            my $new_dataset = $transformer->Dataset( $dataset );
             while ( my $err = $transformer->GetError ) {
                 $log->log( 'main', 0, $err );
+            }
+            if ( blessed $new_dataset and $new_dataset->isa( 'App::DSC::DataTool::Dataset' ) ) {
+                $dataset = $new_dataset;
             }
         }
         if ( exists $transformer{ $dataset->Name } ) {
