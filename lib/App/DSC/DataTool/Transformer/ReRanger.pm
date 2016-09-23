@@ -36,11 +36,37 @@ Initialize the transformer, called from the input factory.
 sub Init {
     my ( $self, %args ) = @_;
 
-    foreach ( qw( type range ) ) {
+    $args{key} ||= 'mid';
+    $args{func} ||= 'sum';
+    $args{pad_with} ||= '0';
+    $args{allow_invalid_keys} ||= 0;
+
+    foreach ( qw( key func range ) ) {
         unless ( defined $args{$_} ) {
             croak $_ . ' must be given';
         }
         $self->{$_} = $args{$_};
+    }
+    foreach ( qw( pad_with pad_to allow_invalid_keys ) ) {
+        if ( defined $args{$_} ) {
+            $self->{$_} = $args{$_};
+        }
+    }
+
+    if ( $self->{range} =~ /^\/(\d+)$/o ) {
+        $self->{split_by} = $1;
+    }
+    else {
+        croak 'invalid range: ' . $self->{range};
+    }
+
+    if ( $args{pad_to} ) {
+        unless ( exists $args{pad_with} ) {
+            croak 'pad_with is needed for pad_to';
+        }
+        unless ( length( $args{pad_with} ) == 1 ) {
+            croak 'length of pad_with must be 1';
+        }
     }
 
     return $self;
@@ -66,7 +92,92 @@ sub Name {
 =cut
 
 sub Dataset {
-    croak 'Not implemented yet!';
+    my ( $self, $dataset ) = @_;
+
+    my @dimensions = $dataset->Dimensions;
+    while ( my $dimension = shift( @dimensions ) ) {
+        if ( $dimension->HaveValues ) {
+            my (%range, $low, $high, $nkey);
+
+            my %value = $dimension->Values;
+            foreach my $key ( keys %value ) {
+                if ( $key =~ /^(\d+)$/o ) {
+                    $low = $high = $1;
+                }
+                elsif ( $key =~ /^(\d+)-(\d+)$/o ) {
+                    $low = $1;
+                    $high = $2;
+                }
+                elsif ( $key eq $self->{skipped_key} ) {
+                    next;
+                }
+                elsif ( $key eq $self->{skipped_sum_key} ) {
+                    $range{skipped} += $value{$key};
+                    next;
+                }
+                else {
+                    if ( $self->{allow_invalid_keys} ) {
+                        $range{$key} = $value{$key};
+                        next;
+                    }
+                    croak 'invalid key: ' . $key;
+                }
+
+                if ( $self->{key} eq 'low' ) {
+                    $nkey = $low;
+                }
+                elsif ( $self->{key} eq 'mid' ) {
+                    $nkey = $low + ( ( $high - $low ) / 2 );
+                }
+                elsif ( $self->{key} eq 'high' ) {
+                    $nkey = $high;
+                }
+                else {
+                    croak 'invalid key setting: ' . $self->{key};
+                }
+
+                if ( exists $self->{split_by} ) {
+                    $nkey = int( $nkey / $self->{split_by} ) * $self->{split_by};
+                    $low = $nkey;
+                    $high = $nkey + $self->{split_by} - 1;
+                }
+                else {
+                    croak 'invalid range setting';
+                }
+
+                # Make sure Perl treats these as strings
+                $low .= '';
+                $high .= '';
+                $nkey .= '';
+
+                if ( $self->{pad_to} ) {
+                    if ( length($low) < $self->{pad_to} ) {
+                        $low = ( $self->{pad_with} x ( $self->{pad_to} - length($low) ) ) . $low;
+                    }
+                    if ( length($high) < $self->{pad_to} ) {
+                        $high = ( $self->{pad_with} x ( $self->{pad_to} - length($high) ) ) . $high;
+                    }
+                    if ( length($nkey) < $self->{pad_to} ) {
+                        $nkey = ( $self->{pad_with} x ( $self->{pad_to} - length($nkey) ) ) . $nkey;
+                    }
+                }
+
+                if ( $self->{func} eq 'sum' ) {
+                    $range{ $low ne $high ? $low . '-' . $high : $nkey } += $value{$key};
+                }
+                else {
+                    croak 'invalid func: ' . $self->{func};
+                }
+            }
+
+            $dimension->SetValues( %range );
+        }
+        else {
+            push( @dimensions, $dimension->Dimensions );
+        }
+    }
+
+    return $dataset;
 }
 
 =back

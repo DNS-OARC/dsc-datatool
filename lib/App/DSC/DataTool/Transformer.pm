@@ -44,6 +44,10 @@ sub new {
     };
     bless $self, $class;
 
+    foreach ( qw(skipped_key skipped_sum_key) ) {
+        $self->{$_} = delete $args{$_};
+    }
+
     $self->Init( %args );
 
     return $self;

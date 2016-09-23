@@ -21,22 +21,28 @@ my @dat;
 my @output;
 my @transform;
 my @dataset;
+my @skip_dataset;
 my $list;
 my $man;
 my $help;
 my $verbose = 0;
 my $version;
+my $skipped_key = '-:SKIPPED:-';
+my $skipped_sum_key = '-:SKIPPED_SUM:-';
 
 GetOptions(
     'conf=s'       => \$conf,
     'server=s'     => \$server,
     'node=s'       => \$node,
-    'xml=s'        => \@xml,
-    'dataset|ds=s' => \@dataset,
-    'dat|d=s'      => \@dat,
-    'output=s'     => \@output,
-    'transform=s'  => \@transform,
+    'xml=s@'       => \@xml,
+    'dataset|ds=s@' => \@dataset,
+    'skip-dataset|sds=s@' => \@skip_dataset,
+    'dat|d=s@'     => \@dat,
+    'output=s@'    => \@output,
+    'transform=s@' => \@transform,
     'list:s'       => \$list,
+    'skipped-key=s' => \$skipped_key,
+    'skipped-sum-key=s' => \$skipped_sum_key,
     'help|?'       => \$help,
     'man'          => \$man,
     'version|V'    => \$version,
@@ -64,6 +70,12 @@ foreach ( @dataset ) {
         $dataset{$dataset} = 1;
     }
 }
+my %skip_dataset;
+foreach ( @skip_dataset ) {
+    foreach my $dataset ( split( /,/o, $_ ) ) {
+        $skip_dataset{$dataset} = 1;
+    }
+}
 
 my %transformer = ( '*' => [] );
 foreach ( @transform ) {
@@ -81,7 +93,12 @@ foreach ( @transform ) {
         die 'Invalid transform: "' . $args . '" not in format key=value';
     }
 
-    my $transformer = App::DSC::DataTool::Transformers->instance->Transformer( $name, %args );
+    my $transformer = App::DSC::DataTool::Transformers->instance->Transformer(
+        $name,
+        skipped_key => $skipped_key,
+        skipped_sum_key => $skipped_sum_key,
+        %args
+    );
     unless ( defined $transformer ) {
         die 'Transformer failed';
     }
@@ -126,6 +143,10 @@ foreach ( @xml ) {
 
     while ( my $dataset = $xml->Dataset ) {
         if ( scalar %dataset and !exists $dataset{ $dataset->Name } ) {
+            $log->log( 'main', 0, 'skipping ', $dataset->Name );
+            next;
+        }
+        if ( scalar %skip_dataset and exists $skip_dataset{ $dataset->Name } ) {
             $log->log( 'main', 0, 'skipping ', $dataset->Name );
             next;
         }
@@ -261,6 +282,14 @@ and the documentation for the Presenter.
 =item B<[ -l | --list ] [tr|transform|in|input|out|output|all]>
 
 List the available transformers, input and output formats.
+
+=item B<--skipped-key "text">
+
+Set the special DSC skipped key, default to "-:SKIPPED:-".
+
+=item B<--skipped-sum-key "text">
+
+Set the special DSC skipped sum key, default to "-:SKIPPED_SUM:-".
 
 =item B<-h | --help>
 

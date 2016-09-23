@@ -61,47 +61,60 @@ p | priming
 
 # Graphs
 
-Name | Type | Dataset | Y-axis | X-axis | Labels
----- | ---- | --------- | ------ | ------ | ------
-bynode | trace | qtype | time | sum(node) | nodes
-qtype | trace | qtype | time | sum(qtype) | qtypes
-dnssec_qtype | trace | dnssec_qtype | time | cnt(rr) | rrs
-rcode | trace | rcode | time | sum(rcode) | rcodes
-opcode | trace | opcode | time | sum(opcode) | opcodes
-cnet_accum | accum1d | cnet_accum | qps(subnet) | subnet/country | rirs
-cnet | trace | cnet | time | subnets
-cnet2_accum | accum2d | cnet2_accum | qps(subnet) | subnet | qclassifs
-cnet2_trace | trace | cnet2_trace | time | cnt(qclassif) | qclassifs
-cnet2_count | trace | cnet2_count | time | cnt(subnet) | qclassifs
-qvat | accum2d | qvt | qps(tld) | tld | qtypes
-qvit | accum2d | qvt | qps(itld) | itld | qtypes
-qvvt | accum2d | qvt | qps(vtld) | vtld | qtypes
-qvnt | accum2d | qvt | qps(ntld) | ntld | qtypes
-dvi | trace | dvi(recv) | time | pps(proto) | protos
-div | trace | div | time | qps(ipv) | ipvs
-div_vs_qtype | accum2d | div_vs_qtype | qps(ipv) | ipv | qtypes
-tvq | trace | tvq | time | qps(proto) | protos
-dvi_sent | trace | dvi(sent) | time | pps(proto) | protos
-direction | trace | dvi | time | pps(sent/recv) | sent/recv
-idn_qname | trace | idn_qname | time | sum(idn(q))
-rd_bit | trace | rd_bit | time | sum(rd_bit(q))
-tc_bit | trace | tc_bit | time | sum(tc_bit(q))
-do_bit | trace | do_bit | time | sum(do_bit(q))
-edns_version | trace | edns_version | time | cnt(version) | versions
-qvq | hist2d | qvq | bytes | qcnt | qtypes
-rvr | hist2d | rvr | bytes | qcnt | rcodes
-cavra | accum2d | cavra | qps(ip) | ip | rcodes
-iraa | accum1d | iraa | qps(ip) | ip | hostids
-ctan | trace | ctan | time | cnt(dnsid) | dnsids
-cps_count | trace | cps | time | cnt(uniq(port))
-cp_range | trace | cps | time | pcnt(range) | ranges
-edns_bufsiz | trace | edns_bufsiz | time | pcnt(range) | ranges
-second_lvra | accum2d | second_lvra | qps(2ld) | 2ld | rcodes
-third_lvra | accum2d | third_lvra | qps(3ld) | 3ld | rcodes
-pcap_stats | trace | pcap_stats | time | pps(stat) | stats
-p_queries | trace | p_queries | time | cnt(proto) | protos
-p_responses | trace | p_responses | time | min/mean/max(size)
-qr_aa_bits | trace | qr_aa_bits | time | cnt(qraa,qrAA,QRaa,QRAA)
+ ?  | Name | Type | Dataset | Y-axis | X-axis | Labels
+--- | ---- | ---- | --------- | ------ | ------ | ------
+OK | bynode | trace | qtype | time | qps(node) | nodes
+OK | qtype | trace | qtype | time | qps(qtype) | qtypes
+ok | dnssec_qtype | trace | dnssec_qtype | time | cnt(rr) | rrs
+OK | rcode | trace | rcode | time | qps(rcode) | rcodes
+OK | opcode | trace | opcode | time | qps(opcode) | opcodes
+CD | cnet_accum | accum1d | cnet_accum | qps(subnet) | subnet/country | rirs
+OK | cnet | trace | cnet | time | subnets
+CD | cnet2_accum | accum2d | cnet2_accum | qps(subnet) | subnet | qclassifs
+OK | cnet2_trace | trace | cnet2_trace | time | cnt(qclassif) | qclassifs
+OK | cnet2_count | trace | cnet2_count | time | cnt(subnet) | qclassifs
+OK | qvat | accum2d | qvt | qps(tld) | tld | qtypes
+CD | qvit | accum2d | qvt | qps(itld) | itld | qtypes
+CD | qvvt | accum2d | qvt | qps(vtld) | vtld | qtypes
+CD | qvnt | accum2d | qvt | qps(ntld) | ntld | qtypes
+OK | dvi | trace | dvi(recv) | time | pps(proto) | protos
+ND | div | trace | div | time | qps(ipv) | ipvs
+OK | div_vs_qtype | accum2d | div_vs_qtype | qps(ipv) | ipv | qtypes
+OK | tvq | trace | tvq | time | qps(proto) | protos
+OK | dvi_sent | trace | dvi(sent) | time | pps(proto) | protos
+OK | direction | trace | dvi | time | pps(sent/recv) | sent/recv
+OK | idn_qname | trace | idn_qname | time | sum(idn(q))
+OK | rd_bit | trace | rd_bit | time | sum(rd_bit(q))
+NX | tc_bit | trace | tc_bit | time | sum(tc_bit(q))
+OK | do_bit | trace | do_bit | time | sum(do_bit(q))
+OK | edns_version | trace | edns_version | time | qps(version) | versions
+OK | qvq | hist2d | qvq | bytes | qcnt | qtypes
+OK | rvr | hist2d | rvr | bytes | qcnt | rcodes
+OK | cavra | accum2d | cavra | qps(ip) | ip | rcodes
+OK | iraa | accum1d | iraa | qps(ip) | ip | hostids
+OK | ctan | trace | ctan | time | cnt(dnsid) | dnsids
+CD | cps_count | trace | cps | time | cnt(uniq(port))
+OK | cp_range | trace | cps | time | pcnt(range) | ranges
+OK | edns_bufsiz | trace | edns_bufsiz | time | pcnt(range) | ranges
+NX | second_lvra | accum2d | second_lvra | qps(2ld) | 2ld | rcodes
+NX | third_lvra | accum2d | third_lvra | qps(3ld) | 3ld | rcodes
+OK | pcap_stats | trace | pcap_stats | time | pps(stat) | stats
+OK | p_queries | trace | p_queries | time | cnt(proto) | protos
+OK | p_responses | trace | p_responses | time | min/mean/max(size)
+OK | qr_aa_bits | trace | qr_aa_bits | time | cnt(qraa,qrAA,QRaa,QRAA)
+
+Legends:
+- OK: Graphs is done
+- ok: Graph can be created from other data
+- CD: Need to create data
+- ND: Had no data to create graph on
+- NX: No data exists for this at all
+
+# InfluxDB
+
+```
+--output ";InfluxDB" --transform ";Labler;*;yaml=$HOME/labler.yaml" --transform ";ReRanger;rcode_vs_replylen;range=/64;pad_to=5" --transform ";ReRanger;qtype_vs_qnamelen;range=/16;pad_to=3" --transform ";ReRanger;client_port_range;key=low;range=/2048;pad_to=5" --transform ";ReRanger;edns_bufsiz,priming_queries;key=low;range=/512;pad_to=5;allow_invalid_keys=1" --transform ";ReRanger;priming_responses;key=low;range=/128;pad_to=4" --transform ";NetRemap;client_subnet,client_subnet2,client_addr_vs_rcode,ipv6_rsn_abusers;net=8"
+```
 
 # TODO
 
