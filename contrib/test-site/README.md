@@ -68,15 +68,15 @@ OK | qtype | trace | qtype | time | qps(qtype) | qtypes
 ok | dnssec_qtype | trace | dnssec_qtype | time | cnt(rr) | rrs
 OK | rcode | trace | rcode | time | qps(rcode) | rcodes
 OK | opcode | trace | opcode | time | qps(opcode) | opcodes
-CD | cnet_accum | accum1d | cnet_accum | qps(subnet) | subnet/country | rirs
+OK | cnet_accum | accum1d | cnet_accum | qps(subnet) | subnet/country | rirs
 OK | cnet | trace | cnet | time | subnets
-CD | cnet2_accum | accum2d | cnet2_accum | qps(subnet) | subnet | qclassifs
+ok | cnet2_accum | accum2d | cnet2_accum | qps(subnet) | subnet | qclassifs
 OK | cnet2_trace | trace | cnet2_trace | time | cnt(qclassif) | qclassifs
 OK | cnet2_count | trace | cnet2_count | time | cnt(subnet) | qclassifs
 OK | qvat | accum2d | qvt | qps(tld) | tld | qtypes
-CD | qvit | accum2d | qvt | qps(itld) | itld | qtypes
-CD | qvvt | accum2d | qvt | qps(vtld) | vtld | qtypes
-CD | qvnt | accum2d | qvt | qps(ntld) | ntld | qtypes
+k? | qvit | accum2d | qvt | qps(itld) | itld | qtypes
+k? | qvvt | accum2d | qvt | qps(vtld) | vtld | qtypes
+k? | qvnt | accum2d | qvt | qps(ntld) | ntld | qtypes
 OK | dvi | trace | dvi(recv) | time | pps(proto) | protos
 ND | div | trace | div | time | qps(ipv) | ipvs
 OK | div_vs_qtype | accum2d | div_vs_qtype | qps(ipv) | ipv | qtypes
@@ -93,7 +93,7 @@ OK | rvr | hist2d | rvr | bytes | qcnt | rcodes
 OK | cavra | accum2d | cavra | qps(ip) | ip | rcodes
 OK | iraa | accum1d | iraa | qps(ip) | ip | hostids
 OK | ctan | trace | ctan | time | cnt(dnsid) | dnsids
-CD | cps_count | trace | cps | time | cnt(uniq(port))
+NX | cps_count | trace | cps | time | cnt(uniq(port))
 OK | cp_range | trace | cps | time | pcnt(range) | ranges
 OK | edns_bufsiz | trace | edns_bufsiz | time | pcnt(range) | ranges
 NX | second_lvra | accum2d | second_lvra | qps(2ld) | 2ld | rcodes
@@ -106,6 +106,7 @@ OK | qr_aa_bits | trace | qr_aa_bits | time | cnt(qraa,qrAA,QRaa,QRAA)
 Legends:
 - OK: Graphs is done
 - ok: Graph can be created from other data
+- k?: Graph can be created but is it needed?
 - CD: Need to create data
 - ND: Had no data to create graph on
 - NX: No data exists for this at all
@@ -119,3 +120,34 @@ Legends:
 # TODO
 
 certain_qnames_vs_qtype
+
+# Install take 2
+
+Debian Jessie
+
+```
+sudo apt-get install -y apt-transport-https
+
+wget -O - https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+echo "deb https://repos.influxdata.com/debian jessie stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+
+wget -O - https://packagecloud.io/gpg.key | sudo apt-key add -
+echo "deb https://packagecloud.io/grafana/stable/debian/ jessie main" | sudo tee /etc/apt/sources.list.d/grafana.list
+
+wget -O - https://jelu.github.io/package.gpg | sudo apt-key add -
+echo "deb http://jelu.github.io/zonemaster/debian jessie main" | sudo tee /etc/apt/sources.list.d/jelu.github.io.zonemaster.list
+
+sudo apt-get update
+sudo apt-get install -y influxdb grafana
+
+sudo service influxdb start
+
+sudo systemctl daemon-reload
+sudo systemctl enable grafana-server
+sudo systemctl start grafana-server
+
+sudo grafana-cli plugins install grafana-piechart-panel
+sudo service grafana-server restart
+
+sudo apt-get install -y libcommon-sense-perl libyaml-tiny-perl libxml-libxml-simple-perl libmodule-find-perl libnetaddr-ip-perl libip-country-perl
+```
