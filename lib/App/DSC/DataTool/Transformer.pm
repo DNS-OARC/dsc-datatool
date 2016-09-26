@@ -5,8 +5,6 @@ use Carp;
 
 use base qw(App::DSC::DataTool::Errors);
 
-use Scalar::Util qw( blessed );
-
 =encoding utf8
 
 =head1 NAME

@@ -76,7 +76,7 @@ sub Dataset {
     my @dimensions = $dataset->Dimensions;
     while ( my $dimension = shift( @dimensions ) ) {
         if ( $dimension->HaveValues ) {
-            my (%range, $ip);
+            my ( %range, $ip );
 
             my %value = $dimension->Values;
             foreach my $key ( keys %value ) {
@@ -88,17 +88,17 @@ sub Dataset {
                     $key = 0;
                 }
 
-                unless ( ($ip = NetAddr::IP->new( $key ) ) ) {
+                unless ( ( $ip = NetAddr::IP->new( $key ) ) ) {
                     croak 'key is not an IP: ' . $key;
                 }
 
                 if ( $ip->version == 4 ) {
-                    unless ( ($ip = NetAddr::IP->new( $ip->addr . '/' . $self->{v4net} )) ) {
+                    unless ( ( $ip = NetAddr::IP->new( $ip->addr . '/' . $self->{v4net} ) ) ) {
                         croak 'failed to remap net: ' . $key . '/' . $self->{v4net};
                     }
                 }
                 elsif ( $ip->version == 6 ) {
-                    unless ( ($ip = NetAddr::IP->new( $ip->addr . '/' . $self->{v6net} )) ) {
+                    unless ( ( $ip = NetAddr::IP->new( $ip->addr . '/' . $self->{v6net} ) ) ) {
                         croak 'failed to remap net: ' . $key . '/' . $self->{v6net};
                     }
                 }

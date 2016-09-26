@@ -36,9 +36,9 @@ Initialize the transformer, called from the input factory.
 sub Init {
     my ( $self, %args ) = @_;
 
-    $args{key} ||= 'mid';
-    $args{func} ||= 'sum';
-    $args{pad_with} ||= '0';
+    $args{key}                ||= 'mid';
+    $args{func}               ||= 'sum';
+    $args{pad_with}           ||= '0';
     $args{allow_invalid_keys} ||= 0;
 
     foreach ( qw( key func range ) ) {
@@ -97,7 +97,7 @@ sub Dataset {
     my @dimensions = $dataset->Dimensions;
     while ( my $dimension = shift( @dimensions ) ) {
         if ( $dimension->HaveValues ) {
-            my (%range, $low, $high, $nkey);
+            my ( %range, $low, $high, $nkey );
 
             my %value = $dimension->Values;
             foreach my $key ( keys %value ) {
@@ -105,7 +105,7 @@ sub Dataset {
                     $low = $high = $1;
                 }
                 elsif ( $key =~ /^(\d+)-(\d+)$/o ) {
-                    $low = $1;
+                    $low  = $1;
                     $high = $2;
                 }
                 elsif ( $key eq $self->{skipped_key} ) {
@@ -138,7 +138,7 @@ sub Dataset {
 
                 if ( exists $self->{split_by} ) {
                     $nkey = int( $nkey / $self->{split_by} ) * $self->{split_by};
-                    $low = $nkey;
+                    $low  = $nkey;
                     $high = $nkey + $self->{split_by} - 1;
                 }
                 else {
@@ -146,19 +146,19 @@ sub Dataset {
                 }
 
                 # Make sure Perl treats these as strings
-                $low .= '';
+                $low  .= '';
                 $high .= '';
                 $nkey .= '';
 
                 if ( $self->{pad_to} ) {
-                    if ( length($low) < $self->{pad_to} ) {
-                        $low = ( $self->{pad_with} x ( $self->{pad_to} - length($low) ) ) . $low;
+                    if ( length( $low ) < $self->{pad_to} ) {
+                        $low = ( $self->{pad_with} x ( $self->{pad_to} - length( $low ) ) ) . $low;
                     }
-                    if ( length($high) < $self->{pad_to} ) {
-                        $high = ( $self->{pad_with} x ( $self->{pad_to} - length($high) ) ) . $high;
+                    if ( length( $high ) < $self->{pad_to} ) {
+                        $high = ( $self->{pad_with} x ( $self->{pad_to} - length( $high ) ) ) . $high;
                     }
-                    if ( length($nkey) < $self->{pad_to} ) {
-                        $nkey = ( $self->{pad_with} x ( $self->{pad_to} - length($nkey) ) ) . $nkey;
+                    if ( length( $nkey ) < $self->{pad_to} ) {
+                        $nkey = ( $self->{pad_with} x ( $self->{pad_to} - length( $nkey ) ) ) . $nkey;
                     }
                 }
 
