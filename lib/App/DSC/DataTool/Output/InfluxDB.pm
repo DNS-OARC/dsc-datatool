@@ -5,7 +5,6 @@ use Carp;
 
 use base qw(App::DSC::DataTool::Output);
 
-use IO::Socket::INET;
 use IO::File;
 
 =encoding utf8
@@ -36,10 +35,6 @@ Initialize the InfluxDB output, called from the output factory.
 
 =over 4
 
-=item host
-
-=item port
-
 =item file
 
 =item append (optional)
@@ -53,21 +48,8 @@ Initialize the InfluxDB output, called from the output factory.
 sub Init {
     my ( $self, %args ) = @_;
 
-    #    if ( $args{file} ) {
-    #        $self->{file} = $args{file};
-    #    }
-    #    else {
-    #        foreach ( qw(host port) ) {
-    #            unless ( $args{$_} ) {
-    #                croak $_ . ' must be given';
-    #            }
-    #            $self->{$_} = $args{$_};
-    #        }
-    #    }
-    foreach ( qw(append) ) {
-        if ( defined $args{$_} ) {
-            $self->{$_} = $args{$_};
-        }
+    unless ( $args{file} ) {
+        croak 'file must be given';
     }
     if ( $args{timestamp} ) {
         unless ( $args{timestamp} eq 'start'
@@ -82,36 +64,14 @@ sub Init {
         $self->{timestamp} = 'start';
     }
 
-    #    if ( $self->{file} ) {
-    #        $self->{file_handle} = IO::File->new;
-    #        unless ( $self->{file_handle}->open( $self->{file}, $self->{append} ? '>>' : '>' ) ) {
-    #            croak 'Unable to open file ' . $self->{file} . ': ' . $!;
-    #        }
-    #    }
-    #    else {
-    #        $self->{influxdb} = IO::Socket::INET->new(
-    #            PeerAddr => $self->{host},
-    #            PeerPort => $self->{port},
-    #            Proto    => 'udp'
-    #        );
-    #        unless ( $self->{influxdb}->connected ) {
-    #            croak 'Unable to connect to ' . $self->{host} . '[' . $self->{port} . ']: ' . $!;
-    #        }
-    #    }
+    unless ( $args{file} eq '-' ) {
+        $self->{handle} = IO::File->new;
+        unless ( $self->{handle}->open( $args{file}, $args{append} ? '>>' : '>' ) ) {
+            croak 'Unable to open file ' . $args{file} . ': ' . $!;
+        }
+    }
 
     return $self;
-}
-
-=item $output->Destroy
-
-Disconnect from the InfluxDB server and destroy the object.
-
-=cut
-
-sub Destroy {
-
-    #    $_[0]->{influxdb}->shutdown( 2 );
-    return;
 }
 
 =item $name = $output->Name
@@ -195,24 +155,16 @@ sub Process {
 
     my %value = $dimension->Values;
     $tags .= ',' . _quote( lc( $dimension->Name ) ) . '=';
-    foreach ( keys %value ) {
-        say $tags, _quote( $_ ), ' value=', $value{$_}, ' ', $timestamp;
+    if ( $self->{handle} ) {
+        foreach ( keys %value ) {
+            $self->{handle}->say( $tags, _quote( $_ ), ' value=', $value{$_}, ' ', $timestamp );
+        }
     }
-
-    #    say $tags, ' ', join( ',', map { _quote( $_ ) . '=' . _quote( $value{$_} ) } keys %value ), ' ', $timestamp;
-
-    #    my %value = $dimension->Values;
-    #    if ( $self->{file_handle} ) {
-    #        foreach my $key ( keys %value ) {
-    #            say $tags, ' ', _quote( $key ), '=', _quote( $value{$key} ), ' ', $timestamp;
-    #            $self->{file_handle}->say( join( ' ', $name . '.' . $self->nodots( $key ), $value{$key}, $timestamp ) );
-    #        }
-    #    }
-    #    else {
-    #        foreach my $key ( keys %value ) {
-    #            $self->{influxdb}->send( join( ' ', $name . '.' . $self->nodots( $key ), $value{$key}, $timestamp ) . "\n" );
-    #        }
-    #    }
+    else {
+        foreach ( keys %value ) {
+            say $tags, _quote( $_ ), ' value=', $value{$_}, ' ', $timestamp;
+        }
+    }
 
     return;
 }
@@ -223,11 +175,8 @@ sub Process {
 
 sub _quote {
     my ( $key ) = @_;
-    $key =~ s/([,=\s])/\\$1/go;
 
-    #    unless ( $_[0] =~ /^[a-zA-Z0-9_:\.-]+$/o ) {
-    #        croak 'illegal character(s) in: ' . $_[0];
-    #    }
+    $key =~ s/([,=\s])/\\$1/go;
 
     return $key;
 }
