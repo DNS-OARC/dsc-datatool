@@ -53,17 +53,17 @@ Initialize the InfluxDB output, called from the output factory.
 sub Init {
     my ( $self, %args ) = @_;
 
-#    if ( $args{file} ) {
-#        $self->{file} = $args{file};
-#    }
-#    else {
-#        foreach ( qw(host port) ) {
-#            unless ( $args{$_} ) {
-#                croak $_ . ' must be given';
-#            }
-#            $self->{$_} = $args{$_};
-#        }
-#    }
+    #    if ( $args{file} ) {
+    #        $self->{file} = $args{file};
+    #    }
+    #    else {
+    #        foreach ( qw(host port) ) {
+    #            unless ( $args{$_} ) {
+    #                croak $_ . ' must be given';
+    #            }
+    #            $self->{$_} = $args{$_};
+    #        }
+    #    }
     foreach ( qw(append) ) {
         if ( defined $args{$_} ) {
             $self->{$_} = $args{$_};
@@ -82,22 +82,22 @@ sub Init {
         $self->{timestamp} = 'start';
     }
 
-#    if ( $self->{file} ) {
-#        $self->{file_handle} = IO::File->new;
-#        unless ( $self->{file_handle}->open( $self->{file}, $self->{append} ? '>>' : '>' ) ) {
-#            croak 'Unable to open file ' . $self->{file} . ': ' . $!;
-#        }
-#    }
-#    else {
-#        $self->{influxdb} = IO::Socket::INET->new(
-#            PeerAddr => $self->{host},
-#            PeerPort => $self->{port},
-#            Proto    => 'udp'
-#        );
-#        unless ( $self->{influxdb}->connected ) {
-#            croak 'Unable to connect to ' . $self->{host} . '[' . $self->{port} . ']: ' . $!;
-#        }
-#    }
+    #    if ( $self->{file} ) {
+    #        $self->{file_handle} = IO::File->new;
+    #        unless ( $self->{file_handle}->open( $self->{file}, $self->{append} ? '>>' : '>' ) ) {
+    #            croak 'Unable to open file ' . $self->{file} . ': ' . $!;
+    #        }
+    #    }
+    #    else {
+    #        $self->{influxdb} = IO::Socket::INET->new(
+    #            PeerAddr => $self->{host},
+    #            PeerPort => $self->{port},
+    #            Proto    => 'udp'
+    #        );
+    #        unless ( $self->{influxdb}->connected ) {
+    #            croak 'Unable to connect to ' . $self->{host} . '[' . $self->{port} . ']: ' . $!;
+    #        }
+    #    }
 
     return $self;
 }
@@ -109,7 +109,8 @@ Disconnect from the InfluxDB server and destroy the object.
 =cut
 
 sub Destroy {
-#    $_[0]->{influxdb}->shutdown( 2 );
+
+    #    $_[0]->{influxdb}->shutdown( 2 );
     return;
 }
 
@@ -141,9 +142,7 @@ sub Dataset {
     my $self = shift;
 
     foreach my $dataset ( @_ ) {
-        my $tags = _quote( lc($dataset->Name) )
-            . ',server=' . _quote( $dataset->Server )
-            . ',node=' . _quote( $dataset->Node );
+        my $tags = _quote( lc( $dataset->Name ) ) . ',server=' . _quote( $dataset->Server ) . ',node=' . _quote( $dataset->Node );
         my $timestamp =
             $self->{timestamp} eq 'start'
           ? $dataset->StartTime
@@ -173,7 +172,7 @@ sub Process {
 
     if ( $dimension->HaveDimensions ) {
         unless ( $dimension->Name eq 'All' and $dimension->Value eq 'ALL' ) {
-            $tags .= ',' . _quote( lc($dimension->Name) ) . '=' . _quote( $dimension->Value );
+            $tags .= ',' . _quote( lc( $dimension->Name ) ) . '=' . _quote( $dimension->Value );
         }
 
         foreach my $dimension2 ( $dimension->Dimensions ) {
@@ -195,24 +194,25 @@ sub Process {
     }
 
     my %value = $dimension->Values;
-    $tags .= ',' . _quote( lc($dimension->Name) ) . '=';
+    $tags .= ',' . _quote( lc( $dimension->Name ) ) . '=';
     foreach ( keys %value ) {
         say $tags, _quote( $_ ), ' value=', $value{$_}, ' ', $timestamp;
     }
-#    say $tags, ' ', join( ',', map { _quote( $_ ) . '=' . _quote( $value{$_} ) } keys %value ), ' ', $timestamp;
 
-#    my %value = $dimension->Values;
-#    if ( $self->{file_handle} ) {
-#        foreach my $key ( keys %value ) {
-#            say $tags, ' ', _quote( $key ), '=', _quote( $value{$key} ), ' ', $timestamp;
-#            $self->{file_handle}->say( join( ' ', $name . '.' . $self->nodots( $key ), $value{$key}, $timestamp ) );
-#        }
-#    }
-#    else {
-#        foreach my $key ( keys %value ) {
-#            $self->{influxdb}->send( join( ' ', $name . '.' . $self->nodots( $key ), $value{$key}, $timestamp ) . "\n" );
-#        }
-#    }
+    #    say $tags, ' ', join( ',', map { _quote( $_ ) . '=' . _quote( $value{$_} ) } keys %value ), ' ', $timestamp;
+
+    #    my %value = $dimension->Values;
+    #    if ( $self->{file_handle} ) {
+    #        foreach my $key ( keys %value ) {
+    #            say $tags, ' ', _quote( $key ), '=', _quote( $value{$key} ), ' ', $timestamp;
+    #            $self->{file_handle}->say( join( ' ', $name . '.' . $self->nodots( $key ), $value{$key}, $timestamp ) );
+    #        }
+    #    }
+    #    else {
+    #        foreach my $key ( keys %value ) {
+    #            $self->{influxdb}->send( join( ' ', $name . '.' . $self->nodots( $key ), $value{$key}, $timestamp ) . "\n" );
+    #        }
+    #    }
 
     return;
 }
@@ -222,13 +222,14 @@ sub Process {
 =cut
 
 sub _quote {
-    $_[0] =~ s/([,=\s])/\\$1/go;
+    my ( $key ) = @_;
+    $key =~ s/([,=\s])/\\$1/go;
 
-#    unless ( $_[0] =~ /^[a-zA-Z0-9_:\.-]+$/o ) {
-#        croak 'illegal character(s) in: ' . $_[0];
-#    }
+    #    unless ( $_[0] =~ /^[a-zA-Z0-9_:\.-]+$/o ) {
+    #        croak 'illegal character(s) in: ' . $_[0];
+    #    }
 
-    return $_[0];
+    return $key;
 }
 
 =back

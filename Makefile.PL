@@ -62,6 +62,9 @@ WriteMakefile(
                 'Pod::Usage'          => 0,
                 'Scalar::Util'        => 0,
                 'Module::Find'        => 0,
+                'NetAddr::IP'         => 0,
+                'IP::Authority'       => 0,
+                'IP::Country::Fast'   => 0,
             },
             PREREQ_PM => {
                 'common::sense'       => 3,
@@ -73,6 +76,9 @@ WriteMakefile(
                 'Pod::Usage'          => 0,
                 'Scalar::Util'        => 0,
                 'Module::Find'        => 0,
+                'NetAddr::IP'         => 0,
+                'IP::Authority'       => 0,
+                'IP::Country::Fast'   => 0,
             }
           )
         : (
@@ -87,6 +93,9 @@ WriteMakefile(
                 'Pod::Usage'          => 0,
                 'Scalar::Util'        => 0,
                 'Module::Find'        => 0,
+                'NetAddr::IP'         => 0,
+                'IP::Authority'       => 0,
+                'IP::Country::Fast'   => 0,
             }
         )
     ),
