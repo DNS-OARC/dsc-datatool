@@ -1,19 +1,19 @@
-package App::DSC::DataTool::Transformer::Labler;
+package App::DSC::DataTool::Generator::client_subnet_country;
 
 use common::sense;
-use Carp;
 
-use YAML::Tiny;
-use App::DSC::DataTool::Log;
-use App::DSC::DataTool::Error;
+use IP::Country::Fast;
 
-use base qw( App::DSC::DataTool::Transformer );
+use App::DSC::DataTool::Dataset;
+use App::DSC::DataTool::Dataset::Dimension;
+
+use base qw( App::DSC::DataTool::Generator );
 
 =encoding utf8
 
 =head1 NAME
 
-App::DSC::DataTool::Transformer::Labler - Set/change labels on dimensions
+App::DSC::DataTool::Generator::client_subnet_country - Generate country based on subnet
 
 =head1 VERSION
 
@@ -25,7 +25,7 @@ See L<App::DSC::DataTool> for version.
 
 =head1 DESCRIPTION
 
-Set/change labels on dimensions...
+...
 
 =head1 METHODS
 
@@ -33,58 +33,12 @@ Set/change labels on dimensions...
 
 =item Init
 
-Initialize the transformer, called from the input factory.
-
-#TODO: documentation
-
 =cut
 
 sub Init {
-    my ( $self, %args ) = @_;
+    $_[0]->{fast} = IP::Country::Fast->new;
 
-    foreach ( qw( yaml ) ) {
-        unless ( defined $args{$_} ) {
-            croak $_ . ' must be given';
-        }
-        $self->{$_} = $args{$_};
-    }
-
-    my $yaml = YAML::Tiny->new;
-    unless ( ( $self->{label} = $yaml->read( $self->{yaml} ) ) ) {
-        App::DSC::DataTool::Log->instance->log(
-            'Labler',
-            0,
-            App::DSC::DataTool::Error->new(
-                reporter => $self,
-                tag      => 'YAML_LOAD',
-                message  => $yaml->errstr
-            )
-        );
-    }
-
-    $self->{label} = $self->{label}->[0];
-
-    if ( defined $self->{label} and ref( $self->{label} ) ne 'HASH' ) {
-        App::DSC::DataTool::Log->instance->log(
-            'Labler',
-            0,
-            App::DSC::DataTool::Error->new(
-                reporter => $self,
-                tag      => 'YAML',
-                message  => 'YAML is invalid, must be a HASH'
-            )
-        );
-        delete $self->{label};
-    }
-
-    return $self;
-}
-
-=item Destroy
-
-=cut
-
-sub Destroy {
+    return $_[0];
 }
 
 =item Name
@@ -92,7 +46,7 @@ sub Destroy {
 =cut
 
 sub Name {
-    return 'Labler';
+    return 'client_subnet_country';
 }
 
 =item Dataset
@@ -102,40 +56,48 @@ sub Name {
 sub Dataset {
     my ( $self, $dataset ) = @_;
 
-    unless ( $self->{label} ) {
+    unless ( $dataset->Name eq 'client_subnet' ) {
         return;
     }
-    unless ( $self->{label}->{ $dataset->Name } ) {
-        return;
-    }
+
+    my ( %subnet, %country );
 
     my @dimensions = $dataset->Dimensions;
     while ( my $dimension = shift( @dimensions ) ) {
-        my $label = $self->{label}->{ $dataset->Name }->{ $dimension->Name };
-        if ( $dimension->HaveValues ) {
-            unless ( $label ) {
-                next;
-            }
-
+        if ( $dimension->Name eq 'ClientSubnet' and $dimension->HaveValues ) {
             my %value = $dimension->Values;
-            my %new_value;
-
             foreach my $key ( keys %value ) {
-                $new_value{ exists $label->{$key} ? $label->{$key} : $key } = $value{$key};
-            }
+                if ( $key eq $self->{skipped_key} or $key eq $self->{skipped_sum_key} ) {
+                    $country{'__'} += $value{$key};
+                    next;
+                }
 
-            $dimension->SetValues( %new_value );
+                $subnet{$key} += $value{$key};
+            }
         }
         else {
-            if ( $label and exists $label->{ $dimension->Value } ) {
-                $dimension->SetValue( $label->{ $dimension->Value } );
-            }
-
             push( @dimensions, $dimension->Dimensions );
         }
     }
 
-    return $dataset;
+    foreach ( keys %subnet ) {
+        my $cc = $self->{fast}->inet_atocc( $_ );
+        $cc ||= '??';
+
+        $country{$cc} += $subnet{$_};
+    }
+
+    my $dimension = App::DSC::DataTool::Dataset::Dimension->new( name => 'ClientCountry' )->SetValues( %country );
+
+    my $country = App::DSC::DataTool::Dataset->new(
+        name       => 'client_subnet_country',
+        server     => $dataset->Server,
+        node       => $dataset->Node,
+        start_time => $dataset->StartTime,
+        stop_time  => $dataset->StopTime,
+    )->AddDimension( $dimension );
+
+    return $country;
 }
 
 =back
@@ -184,4 +146,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1;    # End of App::DSC::DataTool::Transformer::Labler
+1;    # End of App::DSC::DataTool::Generator::client_subnet_country

@@ -1,11 +1,9 @@
-package App::DSC::DataTool::Transformer::Labler;
+package App::DSC::DataTool::Transformer::NetRemap;
 
 use common::sense;
 use Carp;
 
-use YAML::Tiny;
-use App::DSC::DataTool::Log;
-use App::DSC::DataTool::Error;
+use NetAddr::IP ();
 
 use base qw( App::DSC::DataTool::Transformer );
 
@@ -13,7 +11,7 @@ use base qw( App::DSC::DataTool::Transformer );
 
 =head1 NAME
 
-App::DSC::DataTool::Transformer::Labler - Set/change labels on dimensions
+App::DSC::DataTool::Transformer::NetRemap - (Re)Group data according to IP ranges
 
 =head1 VERSION
 
@@ -25,7 +23,7 @@ See L<App::DSC::DataTool> for version.
 
 =head1 DESCRIPTION
 
-Set/change labels on dimensions...
+(Re)Group data according to IP ranges...
 
 =head1 METHODS
 
@@ -35,46 +33,19 @@ Set/change labels on dimensions...
 
 Initialize the transformer, called from the input factory.
 
-#TODO: documentation
-
 =cut
 
 sub Init {
     my ( $self, %args ) = @_;
 
-    foreach ( qw( yaml ) ) {
+    $args{v4net} ||= $args{net};
+    $args{v6net} ||= $args{net};
+
+    foreach ( qw( v4net v6net ) ) {
         unless ( defined $args{$_} ) {
             croak $_ . ' must be given';
         }
         $self->{$_} = $args{$_};
-    }
-
-    my $yaml = YAML::Tiny->new;
-    unless ( ( $self->{label} = $yaml->read( $self->{yaml} ) ) ) {
-        App::DSC::DataTool::Log->instance->log(
-            'Labler',
-            0,
-            App::DSC::DataTool::Error->new(
-                reporter => $self,
-                tag      => 'YAML_LOAD',
-                message  => $yaml->errstr
-            )
-        );
-    }
-
-    $self->{label} = $self->{label}->[0];
-
-    if ( defined $self->{label} and ref( $self->{label} ) ne 'HASH' ) {
-        App::DSC::DataTool::Log->instance->log(
-            'Labler',
-            0,
-            App::DSC::DataTool::Error->new(
-                reporter => $self,
-                tag      => 'YAML',
-                message  => 'YAML is invalid, must be a HASH'
-            )
-        );
-        delete $self->{label};
     }
 
     return $self;
@@ -92,7 +63,7 @@ sub Destroy {
 =cut
 
 sub Name {
-    return 'Labler';
+    return 'NetRemap';
 }
 
 =item Dataset
@@ -102,35 +73,45 @@ sub Name {
 sub Dataset {
     my ( $self, $dataset ) = @_;
 
-    unless ( $self->{label} ) {
-        return;
-    }
-    unless ( $self->{label}->{ $dataset->Name } ) {
-        return;
-    }
-
     my @dimensions = $dataset->Dimensions;
     while ( my $dimension = shift( @dimensions ) ) {
-        my $label = $self->{label}->{ $dataset->Name }->{ $dimension->Name };
         if ( $dimension->HaveValues ) {
-            unless ( $label ) {
-                next;
-            }
+            my ( %range, $ip );
 
             my %value = $dimension->Values;
-            my %new_value;
-
             foreach my $key ( keys %value ) {
-                $new_value{ exists $label->{$key} ? $label->{$key} : $key } = $value{$key};
+                if ( $key eq $self->{skipped_key} ) {
+                    next;
+                }
+                if ( $key eq $self->{skipped_sum_key} ) {
+                    $value{0} = $value{$key};
+                    $key = 0;
+                }
+
+                unless ( ( $ip = NetAddr::IP->new( $key ) ) ) {
+                    croak 'key is not an IP: ' . $key;
+                }
+
+                if ( $ip->version == 4 ) {
+                    unless ( ( $ip = NetAddr::IP->new( $ip->addr . '/' . $self->{v4net} ) ) ) {
+                        croak 'failed to remap net: ' . $key . '/' . $self->{v4net};
+                    }
+                }
+                elsif ( $ip->version == 6 ) {
+                    unless ( ( $ip = NetAddr::IP->new( $ip->addr . '/' . $self->{v6net} ) ) ) {
+                        croak 'failed to remap net: ' . $key . '/' . $self->{v6net};
+                    }
+                }
+                else {
+                    croak 'no IP version';
+                }
+
+                $range{ $ip->network->addr } += $value{$key};
             }
 
-            $dimension->SetValues( %new_value );
+            $dimension->SetValues( %range );
         }
         else {
-            if ( $label and exists $label->{ $dimension->Value } ) {
-                $dimension->SetValue( $label->{ $dimension->Value } );
-            }
-
             push( @dimensions, $dimension->Dimensions );
         }
     }
@@ -184,4 +165,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1;    # End of App::DSC::DataTool::Transformer::Labler
+1;    # End of App::DSC::DataTool::Transformer::NetRemap

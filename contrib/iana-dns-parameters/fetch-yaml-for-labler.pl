@@ -26,7 +26,10 @@ if ( $response->is_success ) {
             $rcode{$value} = $name;
         }
     }
-    $label{rcode}->{Rcode} = \%rcode;
+    foreach ( qw(rcode client_addr_vs_rcode rcode_vs_replylen) ) {
+        my %copy = %rcode;
+        $label{$_}->{Rcode} = \%copy;
+    }
 }
 else {
     die $response->status_line;
@@ -47,11 +50,44 @@ if ( $response->is_success ) {
         if ( /^([^,]+),((?:\d+|\d+-\d+)),/o ) {
             my ( $type, $value ) = ( $1, $2 );
             if ( defined $value and $type ) {
+                if ( $type eq '*' ) {
+                    $type = 'wildcard';
+                }
                 $qtype{$value} = $type;
             }
         }
     }
-    $label{qtype}->{Qtype} = \%qtype;
+    foreach ( qw(qtype transport_vs_qtype certain_qnames_vs_qtype qtype_vs_tld qtype_vs_qnamelen chaos_types_and_names dns_ip_version_vs_qtype) ) {
+        my %copy = %qtype;
+        $label{$_}->{Qtype} = \%copy;
+    }
+}
+else {
+    die $response->status_line;
+}
+
+# OPCODE
+
+my $response = $ua->get( 'http://www.iana.org/assignments/dns-parameters/dns-parameters-5.csv' );
+if ( $response->is_success ) {
+    my %opcode;
+    my $head = 1;
+    foreach ( split( /[\r\n]+/o, $response->decoded_content ) ) {
+        if ( $head ) {
+            $head = 0;
+            next;
+        }
+
+        my ( $value, $name ) = split( /[,\s]+/o );
+        $name =~ s/["']+//go;
+        if ( defined $value and $name ) {
+            $opcode{$value} = $name;
+        }
+    }
+    foreach ( qw(opcode) ) {
+        my %copy = %opcode;
+        $label{$_}->{Opcode} = \%opcode;
+    }
 }
 else {
     die $response->status_line;

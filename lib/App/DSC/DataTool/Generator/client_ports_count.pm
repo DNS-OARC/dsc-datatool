@@ -1,15 +1,15 @@
-package App::DSC::DataTool::Transformer;
+package App::DSC::DataTool::Generator::client_ports_count;
 
 use common::sense;
 use Carp;
 
-use base qw(App::DSC::DataTool::Errors);
+use base qw( App::DSC::DataTool::Generator );
 
 =encoding utf8
 
 =head1 NAME
 
-App::DSC::DataTool::Transformer - Base class for data transformers
+App::DSC::DataTool::Generator::client_ports_count - Generate count of uniq client ports
 
 =head1 VERSION
 
@@ -21,79 +21,26 @@ See L<App::DSC::DataTool> for version.
 
 =head1 DESCRIPTION
 
-Base class for data transformers...
+Generate count of uniq client ports...
 
 =head1 METHODS
 
 =over 4
 
-=item $transformer = App::DSC::DataTool::Transformer->new (...)
-
-Create a new transformer object, arguments are passed to the specific module
-via C<Init>.
-
-=cut
-
-sub new {
-    my ( $this, %args ) = @_;
-    my $class = ref( $this ) ? ref( $this ) : $this;
-    my $self = {
-        errors => [],
-    };
-    bless $self, $class;
-
-    foreach ( qw(skipped_key skipped_sum_key) ) {
-        $self->{$_} = delete $args{$_};
-    }
-
-    $self->Init( %args );
-
-    return $self;
-}
-
-sub DESTROY {
-    $_[0]->Destroy;
-    return;
-}
-
-=item $transformer->Init (...)
-
-Called upon creation of the object, arguments should be handled in the specific
-module.
-
-=cut
-
-sub Init {
-}
-
-=item $transformer->Destroy
-
-Called upon destruction of the object.
-
-=cut
-
-sub Destroy {
-}
-
-=item $name = $transformer->Name
-
-Return the name of the module, must be overloaded.
+=item Name
 
 =cut
 
 sub Name {
-    confess 'Name is not overloaded';
+    return 'client_ports_count';
 }
 
-=item $dataset = $transformer->Dataset ( $dataset )
-
-Make transformation on the given L<App::DSC::DataTool::Dataset> object, the
-object returned will be used. Must be overloaded.
+=item Dataset
 
 =cut
 
 sub Dataset {
-    confess 'Dataset is not overloaded';
+    confess 'Not implemented';
 }
 
 =back
@@ -142,4 +89,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1;    # End of App::DSC::DataTool::Transformer
+1;    # End of App::DSC::DataTool::Generator::client_ports_count

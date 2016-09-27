@@ -11,6 +11,7 @@ use App::DSC::DataTool;
 use App::DSC::DataTool::Inputs;
 use App::DSC::DataTool::Outputs;
 use App::DSC::DataTool::Transformers;
+use App::DSC::DataTool::Generators;
 use App::DSC::DataTool::Log;
 
 my $conf;
@@ -20,27 +21,35 @@ my @xml;
 my @dat;
 my @output;
 my @transform;
+my @generators;
 my @dataset;
+my @skip_dataset;
 my $list;
 my $man;
 my $help;
 my $verbose = 0;
 my $version;
+my $skipped_key     = '-:SKIPPED:-';
+my $skipped_sum_key = '-:SKIPPED_SUM:-';
 
 GetOptions(
-    'conf=s'       => \$conf,
-    'server=s'     => \$server,
-    'node=s'       => \$node,
-    'xml=s'        => \@xml,
-    'dataset|ds=s' => \@dataset,
-    'dat|d=s'      => \@dat,
-    'output=s'     => \@output,
-    'transform=s'  => \@transform,
-    'list:s'       => \$list,
-    'help|?'       => \$help,
-    'man'          => \$man,
-    'version|V'    => \$version,
-    'verbose|v+'   => \$verbose,
+    'conf=s'              => \$conf,
+    'server=s'            => \$server,
+    'node=s'              => \$node,
+    'xml=s@'              => \@xml,
+    'dataset|ds=s@'       => \@dataset,
+    'skip-dataset|sds=s@' => \@skip_dataset,
+    'dat|d=s@'            => \@dat,
+    'output=s@'           => \@output,
+    'transform=s@'        => \@transform,
+    'generator=s@'        => \@generators,
+    'list:s'              => \$list,
+    'skipped-key=s'       => \$skipped_key,
+    'skipped-sum-key=s'   => \$skipped_sum_key,
+    'help|?'              => \$help,
+    'man'                 => \$man,
+    'version|V'           => \$version,
+    'verbose|v+'          => \$verbose,
 ) or pod2usage( 2 );
 pod2usage( 1 ) if $help;
 pod2usage( -exitval => 0, -verbose => 2 ) if $man;
@@ -64,6 +73,12 @@ foreach ( @dataset ) {
         $dataset{$dataset} = 1;
     }
 }
+my %skip_dataset;
+foreach ( @skip_dataset ) {
+    foreach my $dataset ( split( /,/o, $_ ) ) {
+        $skip_dataset{$dataset} = 1;
+    }
+}
 
 my %transformer = ( '*' => [] );
 foreach ( @transform ) {
@@ -81,13 +96,41 @@ foreach ( @transform ) {
         die 'Invalid transform: "' . $args . '" not in format key=value';
     }
 
-    my $transformer = App::DSC::DataTool::Transformers->instance->Transformer( $name, %args );
+    my $transformer = App::DSC::DataTool::Transformers->instance->Transformer(
+        $name,
+        skipped_key     => $skipped_key,
+        skipped_sum_key => $skipped_sum_key,
+        %args
+    );
     unless ( defined $transformer ) {
         die 'Transformer failed';
     }
     foreach my $dataset ( split( /,/o, $datasets ) ) {
         push( @{ $transformer{$dataset} }, $transformer );
     }
+}
+
+{
+    my @g;
+
+    foreach my $list ( @generators ) {
+        foreach ( split( /,/o, $list ) ) {
+            unless ( App::DSC::DataTool::Generators->instance->Exists( $_ ) ) {
+                die 'Generator ' . $_ . ' does not exists';
+            }
+
+            push(
+                @g,
+                App::DSC::DataTool::Generators->instance->Generator(
+                    $_,
+                    skipped_key     => $skipped_key,
+                    skipped_sum_key => $skipped_sum_key,
+                )
+            );
+        }
+    }
+
+    @generators = @g;
 }
 
 my @outputs;
@@ -129,36 +172,54 @@ foreach ( @xml ) {
             $log->log( 'main', 0, 'skipping ', $dataset->Name );
             next;
         }
+        if ( scalar %skip_dataset and exists $skip_dataset{ $dataset->Name } ) {
+            $log->log( 'main', 0, 'skipping ', $dataset->Name );
+            next;
+        }
 
         $log->log( 'main', 0, 'processing ', $dataset->Name );
         while ( my $err = $xml->GetError ) {
             $log->log( 'main', 0, $err );
         }
 
-        foreach my $transformer ( @{ $transformer{'*'} } ) {
-            $log->log( 'main', 0, 'transforming with ', $transformer->Name );
-            my $new_dataset = $transformer->Dataset( $dataset );
-            while ( my $err = $transformer->GetError ) {
-                $log->log( 'main', 0, $err );
-            }
-            if ( blessed $new_dataset and $new_dataset->isa( 'App::DSC::DataTool::Dataset' ) ) {
-                $dataset = $new_dataset;
-            }
-        }
-        if ( exists $transformer{ $dataset->Name } ) {
-            foreach my $transformer ( @{ $transformer{ $dataset->Name } } ) {
-                $log->log( 'main', 0, 'transforming with ', $transformer->Name );
-                $dataset = $transformer->Dataset( $dataset );
-                while ( my $err = $transformer->GetError ) {
-                    $log->log( 'main', 0, $err );
+        my @datasets = ( $dataset );
+
+        foreach my $generator ( @generators ) {
+            $log->log( 'main', 0, 'generating with ', $generator->Name );
+            foreach my $generated_dataset ( $generator->Dataset( $dataset ) ) {
+                unless ( blessed $generated_dataset and $generated_dataset->isa( 'App::DSC::DataTool::Dataset' ) ) {
+                    die 'Generator ' . $generator->Name . ' returned invalid data';
                 }
+                push( @datasets, $generated_dataset );
             }
         }
 
-        foreach my $output ( @outputs ) {
-            $output->Dataset( $dataset );
-            while ( my $err = $output->GetError ) {
-                $log->log( 'main', 0, $err );
+        foreach $dataset ( @datasets ) {
+            foreach my $transformer ( @{ $transformer{'*'} } ) {
+                $log->log( 'main', 0, 'transforming with ', $transformer->Name );
+                my $new_dataset = $transformer->Dataset( $dataset );
+                while ( my $err = $transformer->GetError ) {
+                    $log->log( 'main', 0, $err );
+                }
+                if ( blessed $new_dataset and $new_dataset->isa( 'App::DSC::DataTool::Dataset' ) ) {
+                    $dataset = $new_dataset;
+                }
+            }
+            if ( exists $transformer{ $dataset->Name } ) {
+                foreach my $transformer ( @{ $transformer{ $dataset->Name } } ) {
+                    $log->log( 'main', 0, 'transforming with ', $transformer->Name );
+                    $dataset = $transformer->Dataset( $dataset );
+                    while ( my $err = $transformer->GetError ) {
+                        $log->log( 'main', 0, $err );
+                    }
+                }
+            }
+
+            foreach my $output ( @outputs ) {
+                $output->Dataset( $dataset );
+                while ( my $err = $output->GetError ) {
+                    $log->log( 'main', 0, $err );
+                }
             }
         }
     }
@@ -258,9 +319,22 @@ To see a full list of options, check the man-page of the transformer module:
 For a list of datasets see the DSC configuration that created the data files
 and the documentation for the Presenter.
 
-=item B<[ -l | --list ] [tr|transform|in|input|out|output|all]>
+=item B<[ -g | --generator ] <list of generators>>
 
-List the available transformers, input and output formats.
+Use the specified generators to generate additional datasets, the list is comma
+separated and the option can be given multiple times.
+
+=item B<[ -l | --list ] <type>|all>
+
+List the available B<transformers>, B<generators>, B<inputs> and B<outputs>.
+
+=item B<--skipped-key "text">
+
+Set the special DSC skipped key, default to "-:SKIPPED:-".
+
+=item B<--skipped-sum-key "text">
+
+Set the special DSC skipped sum key, default to "-:SKIPPED_SUM:-".
 
 =item B<-h | --help>
 

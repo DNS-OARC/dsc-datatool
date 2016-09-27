@@ -1,4 +1,4 @@
-package App::DSC::DataTool::Transformer;
+package App::DSC::DataTool::Generator;
 
 use common::sense;
 use Carp;
@@ -9,7 +9,7 @@ use base qw(App::DSC::DataTool::Errors);
 
 =head1 NAME
 
-App::DSC::DataTool::Transformer - Base class for data transformers
+App::DSC::DataTool::Generator - Base class for data generators
 
 =head1 VERSION
 
@@ -21,15 +21,15 @@ See L<App::DSC::DataTool> for version.
 
 =head1 DESCRIPTION
 
-Base class for data transformers...
+Base class for data generators...
 
 =head1 METHODS
 
 =over 4
 
-=item $transformer = App::DSC::DataTool::Transformer->new (...)
+=item $generator = App::DSC::DataTool::Generator->new (...)
 
-Create a new transformer object, arguments are passed to the specific module
+Create a new generator object, arguments are passed to the specific module
 via C<Init>.
 
 =cut
@@ -56,7 +56,7 @@ sub DESTROY {
     return;
 }
 
-=item $transformer->Init (...)
+=item $generator->Init (...)
 
 Called upon creation of the object, arguments should be handled in the specific
 module.
@@ -66,7 +66,7 @@ module.
 sub Init {
 }
 
-=item $transformer->Destroy
+=item $generator->Destroy
 
 Called upon destruction of the object.
 
@@ -75,7 +75,7 @@ Called upon destruction of the object.
 sub Destroy {
 }
 
-=item $name = $transformer->Name
+=item $name = $generator->Name
 
 Return the name of the module, must be overloaded.
 
@@ -85,10 +85,10 @@ sub Name {
     confess 'Name is not overloaded';
 }
 
-=item $dataset = $transformer->Dataset ( $dataset )
+=item @datasets = $generator->Dataset ( $dataset )
 
-Make transformation on the given L<App::DSC::DataTool::Dataset> object, the
-object returned will be used. Must be overloaded.
+Generate new datasets base on the given L<App::DSC::DataTool::Dataset> object,
+may return nothing.  Must be overloaded.
 
 =cut
 
@@ -142,4 +142,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1;    # End of App::DSC::DataTool::Transformer
+1;    # End of App::DSC::DataTool::Generator

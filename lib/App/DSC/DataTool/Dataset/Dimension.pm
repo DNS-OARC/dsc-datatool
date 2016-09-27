@@ -85,6 +85,24 @@ sub Value {
     return $_[0]->{value};
 }
 
+=item $dimension = $dimension->SetValue( $value )
+
+Set the value of the dimension.
+
+=cut
+
+sub SetValue {
+    my ( $self, $value ) = @_;
+
+    unless ( defined $value ) {
+        confess '$value must be defined';
+    }
+
+    $self->{value} = $value;
+
+    return $self;
+}
+
 =item $dimension = $dimension->AddDimension ( <dimensions...> )
 
 Adds the dimensions to the dimension, returns itself on success or confesses.
