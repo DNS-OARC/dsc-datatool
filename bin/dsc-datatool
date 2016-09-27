@@ -43,7 +43,7 @@ GetOptions(
     'output=s@'           => \@output,
     'transform=s@'        => \@transform,
     'generator=s@'        => \@generators,
-    'list:s'              => \$list,
+    'list'                => \$list,
     'skipped-key=s'       => \$skipped_key,
     'skipped-sum-key=s'   => \$skipped_sum_key,
     'help|?'              => \$help,
@@ -55,6 +55,14 @@ pod2usage( 1 ) if $help;
 pod2usage( -exitval => 0, -verbose => 2 ) if $man;
 if ( $version ) {
     say 'dsc-datatool version ', App::DSC::DataTool->VERSION;
+    exit 0;
+}
+if ( $list ) {
+    say 'Available input: ', join( ', ', sort( App::DSC::DataTool::Inputs->instance->Have ) );
+    say '     generators: ', join( ', ', sort( App::DSC::DataTool::Generators->instance->Have ) );
+    say '   transformers: ', join( ', ', sort( App::DSC::DataTool::Transformers->instance->Have ) );
+    say '         output: ', join( ', ', sort( App::DSC::DataTool::Outputs->instance->Have ) );
+
     exit 0;
 }
 unless ( $server and $node and ( scalar @xml or scalar @dat ) ) {
@@ -324,9 +332,9 @@ and the documentation for the Presenter.
 Use the specified generators to generate additional datasets, the list is comma
 separated and the option can be given multiple times.
 
-=item B<[ -l | --list ] <type>|all>
+=item B<[ -l | --list ]>
 
-List the available B<transformers>, B<generators>, B<inputs> and B<outputs>.
+List the available B<inputs>, B<generators>, B<transformers> and B<outputs>.
 
 =item B<--skipped-key "text">
 

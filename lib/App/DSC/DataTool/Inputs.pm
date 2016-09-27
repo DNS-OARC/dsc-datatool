@@ -88,6 +88,16 @@ sub Exists {
     return $_[1] && $_[0]->{input}->{ $_[1] } ? 1 : 0;
 }
 
+=item @names = $inputs->Have
+
+Return an array of input names that exists.
+
+=cut
+
+sub Have {
+    return keys $_[0]->{input};
+}
+
 =item $input = $inputs->Input ( $name, ... )
 
 Return a new input object for the specified B<$name> or undef if that name

@@ -88,6 +88,16 @@ sub Exists {
     return $_[1] && $_[0]->{output}->{ $_[1] } ? 1 : 0;
 }
 
+=item @names = $outputs->Have
+
+Return an array of output names that exists.
+
+=cut
+
+sub Have {
+    return keys $_[0]->{output};
+}
+
 =item $output = $outputs->Output ( $name, ... )
 
 Return a new output object for the specified B<$name> or undef if that name
