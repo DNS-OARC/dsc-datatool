@@ -41,6 +41,10 @@ Initialize the InfluxDB output, called from the output factory.
 
 =item timestamp (optional)
 
+=item dml (optional)
+
+=item database (optional)
+
 =back
 
 =cut
@@ -64,10 +68,23 @@ sub Init {
         $self->{timestamp} = 'start';
     }
 
-    unless ( $args{file} eq '-' ) {
-        $self->{handle} = IO::File->new;
+    $self->{handle} = IO::File->new;
+    if ( $args{file} eq '-' ) {
+        unless ( $self->{handle}->fdopen( fileno( STDOUT ), 'w' ) ) {
+            croak 'Unable to open stdout: ' . $!;
+        }
+    }
+    else {
         unless ( $self->{handle}->open( $args{file}, $args{append} ? '>>' : '>' ) ) {
             croak 'Unable to open file ' . $args{file} . ': ' . $!;
+        }
+    }
+
+    if ( $args{dml} ) {
+        $self->{handle}->say( '# DML' );
+
+        if ( $args{database} ) {
+            $self->{handle}->say( '# CONTEXT-DATABASE: ', $args{database} );
         }
     }
 
@@ -155,15 +172,8 @@ sub Process {
 
     my %value = $dimension->Values;
     $tags .= ',' . _quote( lc( $dimension->Name ) ) . '=';
-    if ( $self->{handle} ) {
-        foreach ( keys %value ) {
-            $self->{handle}->say( $tags, _quote( $_ ), ' value=', $value{$_}, ' ', $timestamp );
-        }
-    }
-    else {
-        foreach ( keys %value ) {
-            say $tags, _quote( $_ ), ' value=', $value{$_}, ' ', $timestamp;
-        }
+    foreach ( keys %value ) {
+        $self->{handle}->say( $tags, _quote( $_ ), ' value=', $value{$_}, ' ', $timestamp );
     }
 
     return;
