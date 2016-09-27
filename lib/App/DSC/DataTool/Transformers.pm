@@ -89,6 +89,16 @@ sub Exists {
     return $_[1] && $_[0]->{transformer}->{ $_[1] } ? 1 : 0;
 }
 
+=item @names = $transformers->Have
+
+Return an array of transformer names that exists.
+
+=cut
+
+sub Have {
+    return keys $_[0]->{transformer};
+}
+
 =item $transformer = $transformers->Transformer ( $name, ... )
 
 Return a new transformer object for the specified B<$name> or undef if that

@@ -89,6 +89,16 @@ sub Exists {
     return $_[1] && $_[0]->{generator}->{ $_[1] } ? 1 : 0;
 }
 
+=item @names = $generators->Have
+
+Return an array of generator names that exists.
+
+=cut
+
+sub Have {
+    return keys $_[0]->{generator};
+}
+
 =item $generator = $generators->Generator ( $name, ... )
 
 Return a new generator object for the specified B<$name> or undef if that
