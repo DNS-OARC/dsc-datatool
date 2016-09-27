@@ -114,7 +114,21 @@ Legends:
 # InfluxDB
 
 ```
---output ";InfluxDB" --transform ";Labler;*;yaml=$HOME/labler.yaml" --transform ";ReRanger;rcode_vs_replylen;range=/64;pad_to=5" --transform ";ReRanger;qtype_vs_qnamelen;range=/16;pad_to=3" --transform ";ReRanger;client_port_range;key=low;range=/2048;pad_to=5" --transform ";ReRanger;edns_bufsiz,priming_queries;key=low;range=/512;pad_to=5;allow_invalid_keys=1" --transform ";ReRanger;priming_responses;key=low;range=/128;pad_to=4" --transform ";NetRemap;client_subnet,client_subnet2,client_addr_vs_rcode,ipv6_rsn_abusers;net=8"
+bin/dsc-datatool \
+--server $server \
+--node $node \
+--output ";InfluxDB;file=influx.txt;dml=1;database=dsc" \
+--transform ";Labler;*;yaml=$HOME/labler.yaml" \
+--transform ";ReRanger;rcode_vs_replylen;range=/64;pad_to=5" \
+--transform ";ReRanger;qtype_vs_qnamelen;range=/16;pad_to=3" \
+--transform ";ReRanger;client_port_range;key=low;range=/2048;pad_to=5" \
+--transform ";ReRanger;edns_bufsiz,priming_queries;key=low;range=/512;pad_to=5;allow_invalid_keys=1" \
+--transform ";ReRanger;priming_responses;key=low;range=/128;pad_to=4" \
+--transform ";NetRemap;client_subnet,client_subnet2,client_addr_vs_rcode,ipv6_rsn_abusers;net=8" \
+--generator client_subnet_country,client_subnet_authority \
+--xml $file
+
+influx -import -path=influx.txt
 ```
 
 # TODO
