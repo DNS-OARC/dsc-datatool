@@ -1,0 +1,417 @@
+#!/usr/bin/env perl
+
+use common::sense;
+
+use Getopt::Long;
+use Pod::Usage;
+use YAML::Tiny;
+use Scalar::Util qw( blessed );
+
+use App::DSC::DataTool;
+use App::DSC::DataTool::Inputs;
+use App::DSC::DataTool::Outputs;
+use App::DSC::DataTool::Transformers;
+use App::DSC::DataTool::Generators;
+use App::DSC::DataTool::Log;
+
+my $conf;
+my $server;
+my $node;
+my @xml;
+my @dat;
+my @output;
+my @transform;
+my @generators;
+my @dataset;
+my @skip_dataset;
+my $list;
+my $man;
+my $help;
+my $verbose = 0;
+my $version;
+my $skipped_key     = '-:SKIPPED:-';
+my $skipped_sum_key = '-:SKIPPED_SUM:-';
+
+GetOptions(
+    'conf=s'              => \$conf,
+    'server=s'            => \$server,
+    'node=s'              => \$node,
+    'xml=s@'              => \@xml,
+    'dataset|ds=s@'       => \@dataset,
+    'skip-dataset|sds=s@' => \@skip_dataset,
+    'dat|d=s@'            => \@dat,
+    'output=s@'           => \@output,
+    'transform=s@'        => \@transform,
+    'generator=s@'        => \@generators,
+    'list'                => \$list,
+    'skipped-key=s'       => \$skipped_key,
+    'skipped-sum-key=s'   => \$skipped_sum_key,
+    'help|?'              => \$help,
+    'man'                 => \$man,
+    'version|V'           => \$version,
+    'verbose|v+'          => \$verbose,
+) or pod2usage( 2 );
+pod2usage( 1 ) if $help;
+pod2usage( -exitval => 0, -verbose => 2 ) if $man;
+if ( $version ) {
+    say 'dsc-datatool version ', App::DSC::DataTool->VERSION;
+    exit 0;
+}
+if ( $list ) {
+    say 'Available input: ', join( ', ', sort( App::DSC::DataTool::Inputs->instance->Have ) );
+    say '     generators: ', join( ', ', sort( App::DSC::DataTool::Generators->instance->Have ) );
+    say '   transformers: ', join( ', ', sort( App::DSC::DataTool::Transformers->instance->Have ) );
+    say '         output: ', join( ', ', sort( App::DSC::DataTool::Outputs->instance->Have ) );
+
+    exit 0;
+}
+unless ( $server and $node and ( scalar @xml or scalar @dat ) ) {
+    pod2usage(
+        -msg     => '--server, --node and either a --xml or --dat must be given',
+        -verbose => 0
+    );
+}
+
+my $log = App::DSC::DataTool::Log->instance( verbose => $verbose );
+$log->log( 'main', 0, 'starting (verbose ', $verbose, ')' );
+
+my %dataset;
+foreach ( @dataset ) {
+    foreach my $dataset ( split( /,/o, $_ ) ) {
+        $dataset{$dataset} = 1;
+    }
+}
+my %skip_dataset;
+foreach ( @skip_dataset ) {
+    foreach my $dataset ( split( /,/o, $_ ) ) {
+        $skip_dataset{$dataset} = 1;
+    }
+}
+
+my %transformer = ( '*' => [] );
+foreach ( @transform ) {
+    my ( undef, $separator, $options ) = split( /(.)/o, $_, 2 );
+    if ( $separator eq ',' ) {
+        die 'Invalid separator used for transform: ' . $_;
+    }
+    my ( $name, $datasets, @args ) = split( $separator, $options );
+    my %args;
+    foreach my $args ( @args ) {
+        if ( $args =~ /^(.+)=(.+)$/o ) {
+            $args{$1} = $2;
+            next;
+        }
+        die 'Invalid transform: "' . $args . '" not in format key=value';
+    }
+
+    my $transformer = App::DSC::DataTool::Transformers->instance->Transformer(
+        $name,
+        skipped_key     => $skipped_key,
+        skipped_sum_key => $skipped_sum_key,
+        %args
+    );
+    unless ( defined $transformer ) {
+        die 'Transformer failed';
+    }
+    foreach my $dataset ( split( /,/o, $datasets ) ) {
+        push( @{ $transformer{$dataset} }, $transformer );
+    }
+}
+
+{
+    my @g;
+
+    foreach my $list ( @generators ) {
+        foreach ( split( /,/o, $list ) ) {
+            unless ( App::DSC::DataTool::Generators->instance->Exists( $_ ) ) {
+                die 'Generator ' . $_ . ' does not exists';
+            }
+
+            push(
+                @g,
+                App::DSC::DataTool::Generators->instance->Generator(
+                    $_,
+                    skipped_key     => $skipped_key,
+                    skipped_sum_key => $skipped_sum_key,
+                )
+            );
+        }
+    }
+
+    @generators = @g;
+}
+
+my @outputs;
+foreach ( @output ) {
+    my ( undef, $separator, $options ) = split( /(.)/o, $_, 2 );
+    my ( $name, @args ) = split( $separator, $options );
+    my %args;
+    foreach my $args ( @args ) {
+        if ( $args =~ /^(.+)=(.+)$/o ) {
+            $args{$1} = $2;
+            next;
+        }
+        die 'Invalid output: "' . $args . '" not in format key=value';
+    }
+
+    my $output = App::DSC::DataTool::Outputs->instance->Output( $name, %args );
+    unless ( defined $output ) {
+        die 'Output failed';
+    }
+    push( @outputs, $output );
+}
+
+foreach ( @xml ) {
+    my $xml = App::DSC::DataTool::Inputs->instance->Input(
+        'XML',
+        server => $server,
+        node   => $node,
+        file   => $_
+    );
+    unless ( defined $xml ) {
+        die 'XML Input failed';
+    }
+    while ( my $err = $xml->GetError ) {
+        $log->log( 'main', 0, $err );
+    }
+
+    while ( my $dataset = $xml->Dataset ) {
+        if ( scalar %dataset and !exists $dataset{ $dataset->Name } ) {
+            $log->log( 'main', 0, 'skipping ', $dataset->Name );
+            next;
+        }
+        if ( scalar %skip_dataset and exists $skip_dataset{ $dataset->Name } ) {
+            $log->log( 'main', 0, 'skipping ', $dataset->Name );
+            next;
+        }
+
+        $log->log( 'main', 0, 'processing ', $dataset->Name );
+        while ( my $err = $xml->GetError ) {
+            $log->log( 'main', 0, $err );
+        }
+
+        my @datasets = ( $dataset );
+
+        foreach my $generator ( @generators ) {
+            $log->log( 'main', 0, 'generating with ', $generator->Name );
+            foreach my $generated_dataset ( $generator->Dataset( $dataset ) ) {
+                unless ( blessed $generated_dataset and $generated_dataset->isa( 'App::DSC::DataTool::Dataset' ) ) {
+                    die 'Generator ' . $generator->Name . ' returned invalid data';
+                }
+                push( @datasets, $generated_dataset );
+            }
+        }
+
+        foreach $dataset ( @datasets ) {
+            foreach my $transformer ( @{ $transformer{'*'} } ) {
+                $log->log( 'main', 0, 'transforming with ', $transformer->Name );
+                my $new_dataset = $transformer->Dataset( $dataset );
+                while ( my $err = $transformer->GetError ) {
+                    $log->log( 'main', 0, $err );
+                }
+                if ( blessed $new_dataset and $new_dataset->isa( 'App::DSC::DataTool::Dataset' ) ) {
+                    $dataset = $new_dataset;
+                }
+            }
+            if ( exists $transformer{ $dataset->Name } ) {
+                foreach my $transformer ( @{ $transformer{ $dataset->Name } } ) {
+                    $log->log( 'main', 0, 'transforming with ', $transformer->Name );
+                    $dataset = $transformer->Dataset( $dataset );
+                    while ( my $err = $transformer->GetError ) {
+                        $log->log( 'main', 0, $err );
+                    }
+                }
+            }
+
+            foreach my $output ( @outputs ) {
+                $output->Dataset( $dataset );
+                while ( my $err = $output->GetError ) {
+                    $log->log( 'main', 0, $err );
+                }
+            }
+        }
+    }
+    while ( my $err = $xml->GetError ) {
+        $log->log( 'main', 0, $err );
+    }
+}
+
+exit;
+
+__END__
+
+=head1 NAME
+
+dsc-datatool - Export DSC data into various formats and databases
+
+=head1 SYNOPSIS
+
+dsc-datatool --server name --node name <--xml|--dat> [options]
+
+=head1 DESCRIPTION
+
+B<dsc-datatool> can be used to read DSC data in the XML and DAT format and
+export it into another format or send it to various databases, use
+B<--list> to see the list of available output plugins.
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<[ -c | --conf ] <file>>
+
+Specify the YAML configuration file to use (default to ~/.dsc-datatool.conf),
+any command line option will override the options in the configuration file.
+See B<dsc-datatool.conf(5)> for more information.
+
+=item B<[ -s | --server ] <name>> (required)
+
+Specify the server for where the data comes from.
+
+=item B<[ -n | --node ] <name>> (required)
+
+Specify the node for where the data comes from.
+
+=item B<[ -x | --xml ] <file or directory>> (suggested)
+
+Read DSC data from the given file or directory, can be specified multiple
+times.
+If a directory is given then all files ending with B<.xml> will be read.
+
+=item B<[ -d | --dat ] <file or directory>> (suggested)
+
+Read DSC data from the given file or directory, can be specified multiple
+times.
+If a directory is given then all files ending with B<.dat> will be
+read.
+Note that the DAT format is depended on the filename to know what type
+of data it is.
+
+=item B<[ -ds | --dataset ] <list of datasets>>
+
+Specify that only the list of datasets will be processed, the list is comma
+separated and the option can be given multiple times.
+
+=item B<[ -o | --output ] <sep><type>[<sep>option=value...]>
+
+Output data to B<type> and use B<separator> as an options separator, example:
+
+  --output ;Carbon;host=localhost;port=2003
+
+Can be specified multiple times to output to more then one.
+
+To see a full list of options, check the man-page of the output module:
+
+  man App:DSC::DataTool::Output::NAME
+
+=item B<[ -t | --transform ] <sep><type><sep><datasets>[<sep>option=value...]>
+
+Use the transformer B<type> to change the list of datasets in B<datasets>,
+example:
+
+  --transform ;ReRanger;rcode_vs_replylen;type=sum;range=/128
+
+B<datasets> is a comma separated list of datasets to run the tranformer on,
+because of this do not use comma (,) as a separator.  B<*> in B<datasets> will
+make the tranformer run on all datasets.
+
+Can be specific multiple times to chain transformation, the chain will be
+executed in the order on command line with one exception.  All transformations
+specified for dataset B<*> will be executed before named dataset
+transformations.
+
+To see a full list of options, check the man-page of the transformer module:
+
+  man App:DSC::DataTool::Transformer::NAME
+
+For a list of datasets see the DSC configuration that created the data files
+and the documentation for the Presenter.
+
+=item B<[ -g | --generator ] <list of generators>>
+
+Use the specified generators to generate additional datasets, the list is comma
+separated and the option can be given multiple times.
+
+=item B<[ -l | --list ]>
+
+List the available B<inputs>, B<generators>, B<transformers> and B<outputs>.
+
+=item B<--skipped-key "text">
+
+Set the special DSC skipped key, default to "-:SKIPPED:-".
+
+=item B<--skipped-sum-key "text">
+
+Set the special DSC skipped sum key, default to "-:SKIPPED_SUM:-".
+
+=item B<-h | --help>
+
+Print a brief help message and exits.
+
+=item B<-m | --man>
+
+Prints the manual page and exits.
+
+=item B<-v | --verbose>
+
+Increase the verbose level, can be given multiple times.
+
+=item B<-V | --version>
+
+Display version and exit.
+
+=back
+
+=head1 FILES
+
+=over 8
+
+=item /etc/dsc/dsc-datatool.conf
+
+System wide configuration for B<dsc-datatool>.
+
+=item ~/.dsc-datatool.conf
+
+User configuration for B<dsc-datatool>.
+
+=back
+
+=head1 SEE ALSO
+
+L<App::DSC::DataTool>, dsc-datatool.conf(5)
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright (c) 2016, OARC, Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived
+   from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+=cut
