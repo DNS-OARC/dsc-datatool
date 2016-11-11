@@ -1,4 +1,20 @@
 Revision history for App::DSC::DataTool
 
-1.00    date
-        Release 1.00
+0.02    2016-11-11
+        Release 0.02
+
+        First release of `dsc-datatool` with support for:
+        - Reading DSC XML files
+        - Transformer:
+          - Labler: convert indexes/keys to textual names such as QTYPE
+          - ReRanger: (re)compile lists/ranges/buckets into new buckets
+          - NetRemap: (re)compile IP addresses and subets into new subnets
+        - Generator:
+          - client_subnet_authority: Create a dataset with IP Authority for subnets
+          - client_subnet_country: Create a dataset with Countries for subnets
+        - Output:
+          - Graphite
+          - InfluxDB
+
+        See `dsc-datatool -h` for options and wiki article:
+          https://github.com/DNS-OARC/dsc-datatool/wiki/Setting-up-a-test-Grafana
