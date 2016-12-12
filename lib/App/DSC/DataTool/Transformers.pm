@@ -96,7 +96,7 @@ Return an array of transformer names that exists.
 =cut
 
 sub Have {
-    return keys $_[0]->{transformer};
+    return keys %{ $_[0]->{transformer} };
 }
 
 =item $transformer = $transformers->Transformer ( $name, ... )

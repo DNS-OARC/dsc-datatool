@@ -95,7 +95,7 @@ Return an array of input names that exists.
 =cut
 
 sub Have {
-    return keys $_[0]->{input};
+    return keys %{ $_[0]->{input} };
 }
 
 =item $input = $inputs->Input ( $name, ... )
