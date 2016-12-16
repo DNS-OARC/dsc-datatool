@@ -1,5 +1,5 @@
 Name:           dsc-datatool
-Version:        0.02
+Version:        0.03
 Release:        1%{?dist}
 Summary:        Export DSC data to other formats and/or databases
 
@@ -61,5 +61,19 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Thu Dec 15 2016 Jerry Lundström <lundstrom.jerry@gmail.com> 2.03-1
+* Fri Dec 16 2016 Jerry Lundström <lundstrom.jerry@gmail.com> 0.03-1
+- Release 0.03
+
+  Support processing of 25 of the 37 DAT files that the Extractor
+  can produce, the others can not be converted into time series data
+  since they lack timestamps.  Processing of XML is the recommended
+  approach to secure all information.
+
+  72e829c Implement processing of DAT directories
+  45294d0 RPM spec
+  4e8ff69 Fix 5.24 forbidden keys usage
+  7589ad2 Use perl 5.24 also
+  cfac110 Fix #16: Handle directories in --xml and warn that --dat is
+          not implemented yet
+* Thu Dec 15 2016 Jerry Lundström <lundstrom.jerry@gmail.com> 0.02-1
 - Initial package
