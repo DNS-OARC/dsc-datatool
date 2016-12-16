@@ -71,12 +71,6 @@ unless ( $server and $node and ( scalar @xml or scalar @dat ) ) {
         -verbose => 0
     );
 }
-if ( scalar @dat ) {
-    pod2usage(
-        -msg     => 'Sorry, --dat is not implemented yet',
-        -verbose => 0
-    );
-}
 
 my $log = App::DSC::DataTool::Log->instance( verbose => $verbose );
 $log->log( 'main', 0, 'starting (verbose ', $verbose, ')' );
@@ -266,6 +260,83 @@ foreach my $file ( @xml ) {
     }
 }
 
+foreach my $dir ( @dat ) {
+    $log->log( 'main', 0, 'reading DAT directory ' . $_ );
+
+    my $dat = App::DSC::DataTool::Inputs->instance->Input(
+        'DAT',
+        server    => $server,
+        node      => $node,
+        directory => $dir
+    );
+    unless ( defined $dat ) {
+        die 'DAT Input failed';
+    }
+    while ( my $err = $dat->GetError ) {
+        $log->log( 'main', 0, $err );
+    }
+
+    while ( my $dataset = $dat->Dataset ) {
+        if ( scalar %dataset and !exists $dataset{ $dataset->Name } ) {
+            $log->log( 'main', 0, 'skipping ', $dataset->Name );
+            next;
+        }
+        if ( scalar %skip_dataset and exists $skip_dataset{ $dataset->Name } ) {
+            $log->log( 'main', 0, 'skipping ', $dataset->Name );
+            next;
+        }
+
+        $log->log( 'main', 0, 'processing ', $dataset->Name );
+        while ( my $err = $dat->GetError ) {
+            $log->log( 'main', 0, $err );
+        }
+
+        my @datasets = ( $dataset );
+
+        foreach my $generator ( @generators ) {
+            $log->log( 'main', 0, 'generating with ', $generator->Name );
+            foreach my $generated_dataset ( $generator->Dataset( $dataset ) ) {
+                unless ( blessed $generated_dataset and $generated_dataset->isa( 'App::DSC::DataTool::Dataset' ) ) {
+                    die 'Generator ' . $generator->Name . ' returned invalid data';
+                }
+                push( @datasets, $generated_dataset );
+            }
+        }
+
+        foreach $dataset ( @datasets ) {
+            foreach my $transformer ( @{ $transformer{'*'} } ) {
+                $log->log( 'main', 0, 'transforming with ', $transformer->Name );
+                my $new_dataset = $transformer->Dataset( $dataset );
+                while ( my $err = $transformer->GetError ) {
+                    $log->log( 'main', 0, $err );
+                }
+                if ( blessed $new_dataset and $new_dataset->isa( 'App::DSC::DataTool::Dataset' ) ) {
+                    $dataset = $new_dataset;
+                }
+            }
+            if ( exists $transformer{ $dataset->Name } ) {
+                foreach my $transformer ( @{ $transformer{ $dataset->Name } } ) {
+                    $log->log( 'main', 0, 'transforming with ', $transformer->Name );
+                    $dataset = $transformer->Dataset( $dataset );
+                    while ( my $err = $transformer->GetError ) {
+                        $log->log( 'main', 0, $err );
+                    }
+                }
+            }
+
+            foreach my $output ( @outputs ) {
+                $output->Dataset( $dataset );
+                while ( my $err = $output->GetError ) {
+                    $log->log( 'main', 0, $err );
+                }
+            }
+        }
+    }
+    while ( my $err = $dat->GetError ) {
+        $log->log( 'main', 0, $err );
+    }
+}
+
 exit;
 
 __END__
@@ -308,14 +379,10 @@ Read DSC data from the given file or directory, can be specified multiple
 times.
 If a directory is given then all files ending with B<.xml> will be read.
 
-=item B<[ -d | --dat ] <file or directory>> (suggested)
+=item B<[ -d | --dat ] <directory>> (suggested)
 
-NOTE: Not implemented yet!
-
-Read DSC data from the given file or directory, can be specified multiple
+Read DSC data from the given directory, can be specified multiple
 times.
-If a directory is given then all files ending with B<.dat> will be
-read.
 Note that the DAT format is depended on the filename to know what type
 of data it is.
 
