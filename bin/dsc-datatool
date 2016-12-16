@@ -161,21 +161,122 @@ foreach ( @output ) {
     push( @outputs, $output );
 }
 
-foreach ( @xml ) {
-    my $xml = App::DSC::DataTool::Inputs->instance->Input(
-        'XML',
-        server => $server,
-        node   => $node,
-        file   => $_
-    );
-    unless ( defined $xml ) {
-        die 'XML Input failed';
+foreach my $file ( @xml ) {
+    my @files;
+
+    if ( -d $file ) {
+        unless ( opendir( XMLS, $file ) ) {
+            die 'Unable to open directory ' . $file . ': ' . $!;
+        }
+        while ( my $entry = readdir( XMLS ) ) {
+            my $fullpath = $file . '/' . $entry;
+
+            unless ( -f $fullpath and $fullpath =~ /\.xml$/io ) {
+                next;
+            }
+
+            push( @files, $fullpath );
+        }
     }
-    while ( my $err = $xml->GetError ) {
+    else {
+        @files = ( $file );
+    }
+
+    foreach ( @files ) {
+        $log->log( 'main', 0, 'reading XML file ' . $_ );
+
+        my $xml = App::DSC::DataTool::Inputs->instance->Input(
+            'XML',
+            server => $server,
+            node   => $node,
+            file   => $_
+        );
+        unless ( defined $xml ) {
+            die 'XML Input failed';
+        }
+        while ( my $err = $xml->GetError ) {
+            $log->log( 'main', 0, $err );
+        }
+
+        while ( my $dataset = $xml->Dataset ) {
+            if ( scalar %dataset and !exists $dataset{ $dataset->Name } ) {
+                $log->log( 'main', 0, 'skipping ', $dataset->Name );
+                next;
+            }
+            if ( scalar %skip_dataset and exists $skip_dataset{ $dataset->Name } ) {
+                $log->log( 'main', 0, 'skipping ', $dataset->Name );
+                next;
+            }
+
+            $log->log( 'main', 0, 'processing ', $dataset->Name );
+            while ( my $err = $xml->GetError ) {
+                $log->log( 'main', 0, $err );
+            }
+
+            my @datasets = ( $dataset );
+
+            foreach my $generator ( @generators ) {
+                $log->log( 'main', 0, 'generating with ', $generator->Name );
+                foreach my $generated_dataset ( $generator->Dataset( $dataset ) ) {
+                    unless ( blessed $generated_dataset and $generated_dataset->isa( 'App::DSC::DataTool::Dataset' ) ) {
+                        die 'Generator ' . $generator->Name . ' returned invalid data';
+                    }
+                    push( @datasets, $generated_dataset );
+                }
+            }
+
+            foreach $dataset ( @datasets ) {
+                foreach my $transformer ( @{ $transformer{'*'} } ) {
+                    $log->log( 'main', 0, 'transforming with ', $transformer->Name );
+                    my $new_dataset = $transformer->Dataset( $dataset );
+                    while ( my $err = $transformer->GetError ) {
+                        $log->log( 'main', 0, $err );
+                    }
+                    if ( blessed $new_dataset and $new_dataset->isa( 'App::DSC::DataTool::Dataset' ) ) {
+                        $dataset = $new_dataset;
+                    }
+                }
+                if ( exists $transformer{ $dataset->Name } ) {
+                    foreach my $transformer ( @{ $transformer{ $dataset->Name } } ) {
+                        $log->log( 'main', 0, 'transforming with ', $transformer->Name );
+                        $dataset = $transformer->Dataset( $dataset );
+                        while ( my $err = $transformer->GetError ) {
+                            $log->log( 'main', 0, $err );
+                        }
+                    }
+                }
+
+                foreach my $output ( @outputs ) {
+                    $output->Dataset( $dataset );
+                    while ( my $err = $output->GetError ) {
+                        $log->log( 'main', 0, $err );
+                    }
+                }
+            }
+        }
+        while ( my $err = $xml->GetError ) {
+            $log->log( 'main', 0, $err );
+        }
+    }
+}
+
+foreach my $dir ( @dat ) {
+    $log->log( 'main', 0, 'reading DAT directory ' . $_ );
+
+    my $dat = App::DSC::DataTool::Inputs->instance->Input(
+        'DAT',
+        server    => $server,
+        node      => $node,
+        directory => $dir
+    );
+    unless ( defined $dat ) {
+        die 'DAT Input failed';
+    }
+    while ( my $err = $dat->GetError ) {
         $log->log( 'main', 0, $err );
     }
 
-    while ( my $dataset = $xml->Dataset ) {
+    while ( my $dataset = $dat->Dataset ) {
         if ( scalar %dataset and !exists $dataset{ $dataset->Name } ) {
             $log->log( 'main', 0, 'skipping ', $dataset->Name );
             next;
@@ -186,7 +287,7 @@ foreach ( @xml ) {
         }
 
         $log->log( 'main', 0, 'processing ', $dataset->Name );
-        while ( my $err = $xml->GetError ) {
+        while ( my $err = $dat->GetError ) {
             $log->log( 'main', 0, $err );
         }
 
@@ -231,7 +332,7 @@ foreach ( @xml ) {
             }
         }
     }
-    while ( my $err = $xml->GetError ) {
+    while ( my $err = $dat->GetError ) {
         $log->log( 'main', 0, $err );
     }
 }
@@ -278,12 +379,10 @@ Read DSC data from the given file or directory, can be specified multiple
 times.
 If a directory is given then all files ending with B<.xml> will be read.
 
-=item B<[ -d | --dat ] <file or directory>> (suggested)
+=item B<[ -d | --dat ] <directory>> (suggested)
 
-Read DSC data from the given file or directory, can be specified multiple
+Read DSC data from the given directory, can be specified multiple
 times.
-If a directory is given then all files ending with B<.dat> will be
-read.
 Note that the DAT format is depended on the filename to know what type
 of data it is.
 

@@ -41,9 +41,9 @@ The server where the input comes from.
 
 The node where the input comes from.
 
-=item file
+=item directory
 
-File to read input from.
+Directory to read files from.
 
 =back
 
@@ -52,18 +52,15 @@ File to read input from.
 sub Init {
     my ( $self, %args ) = @_;
 
-    foreach ( qw( server node file ) ) {
+    foreach ( qw( server node directory ) ) {
         unless ( $args{$_} ) {
             croak $_ . ' must be given';
         }
         $self->{$_} = $args{$_};
     }
-    unless ( -r $self->{file} ) {
-        croak 'file can not be read';
+    unless ( -d $self->{directory} and -r $self->{directory} ) {
+        croak 'directory can not be read';
     }
-
-    $self->{root}     = undef;
-    $self->{datasets} = [];
 
     return $self;
 }
@@ -87,8 +84,287 @@ sub Name {
 
 =cut
 
+my @dataset1d = qw(
+  client_subnet_count
+  ipv6_rsn_abusers_count
+);
+
+my %dataset2d = (
+    qtype                => 'Qtype',
+    rcode                => 'Rcode',
+    do_bit               => 'D0',
+    rd_bit               => 'RD',
+    opcode               => 'Opcode',
+    dnssec_qtype         => 'Qtype',
+    edns_version         => 'EDNSVersion',
+    client_subnet2_count => 'Class',
+    client_subnet2_trace => 'Class',
+    edns_bufsiz          => 'EDNSBufSiz',
+    idn_qname            => 'IDNQname',
+    client_port_range    => 'PortRange',
+    priming_responses    => 'ReplyLen',
+);
+
+my %dataset3d = (
+    chaos_types_and_names   => [ 'Qtype',         'Qname' ],
+    certain_qnames_vs_qtype => [ 'CertainQnames', 'Qtype' ],
+    direction_vs_ipproto    => [ 'Direction',     'IPProto' ],
+    pcap_stats              => [ 'pcap_stat',     'ifname' ],
+    transport_vs_qtype      => [ 'Transport',     'Qtype' ],
+    dns_ip_version          => [ 'IPVersion',     'Qtype' ],
+    priming_queries         => [ 'Transport',     'EDNSBufSiz' ],
+    qr_aa_bits              => [ 'Direction',     'QRAABits' ],
+);
+
 sub Dataset {
-    croak 'Not implemented yet!';
+    my ( $self ) = @_;
+
+    unless ( exists $self->{datasets} ) {
+        $self->{datasets} = [];
+
+        foreach ( @dataset1d ) {
+            $self->process1d( $self->{directory} . '/' . $_ . '.dat', $_ );
+        }
+        foreach ( keys %dataset2d ) {
+            $self->process2d( $self->{directory} . '/' . $_ . '.dat', $_, $dataset2d{$_} );
+        }
+        foreach ( keys %dataset3d ) {
+            $self->process3d( $self->{directory} . '/' . $_ . '.dat', $_, @{ $dataset3d{$_} } );
+        }
+    }
+
+    return shift @{ $self->{datasets} };
+}
+
+=item process1d
+
+=cut
+
+sub process1d {
+    my ( $self, $file, $name ) = @_;
+
+    unless ( -r $file ) {
+        return;
+    }
+
+    unless ( open( DAT, $file ) ) {
+        $self->AddError(
+            App::DSC::DataTool::Error->new(
+                tag     => 'INVALID_DAT',
+                args    => { file => $file },
+                message => 'Unable to open DAT file ' . $file
+            )
+        );
+        return;
+    }
+
+    while ( <DAT> ) {
+        if ( /^#/o ) {
+            next;
+        }
+
+        s/[\r\n]+$//o;
+        my @dat        = split( /\s+/o );
+        my $start_time = shift( @dat );
+
+        my $dataset = App::DSC::DataTool::Dataset->new(
+            name       => $name,
+            server     => $self->{server},
+            node       => $self->{node},
+            start_time => $start_time,
+            stop_time  => $start_time + 60,
+        );
+
+        unless ( scalar @dat == 1 ) {
+            $self->AddError(
+                App::DSC::DataTool::Error->new(
+                    tag     => 'INVALID_DAT',
+                    args    => { file => $file },
+                    message => 'Invalid number of elements for a 1d dataset'
+                )
+            );
+
+            close( DAT );
+
+            return;
+        }
+
+        my $all = App::DSC::DataTool::Dataset::Dimension->new( name => 'All' );
+        $all->AddValues( ALL => $dat[0] );
+        $dataset->AddDimension( $all );
+
+        push( @{ $self->{datasets} }, $dataset );
+    }
+
+    close( DAT );
+
+    return;
+}
+
+=item process2d
+
+=cut
+
+sub process2d {
+    my ( $self, $file, $name, $field ) = @_;
+
+    unless ( -r $file ) {
+        return;
+    }
+
+    unless ( open( DAT, $file ) ) {
+        $self->AddError(
+            App::DSC::DataTool::Error->new(
+                tag     => 'INVALID_DAT',
+                args    => { file => $file },
+                message => 'Unable to open DAT file ' . $file
+            )
+        );
+        return;
+    }
+
+    while ( <DAT> ) {
+        if ( /^#/o ) {
+            next;
+        }
+
+        s/[\r\n]+$//o;
+        my @dat        = split( /\s+/o );
+        my $start_time = shift( @dat );
+
+        my $dataset = App::DSC::DataTool::Dataset->new(
+            name       => $name,
+            server     => $self->{server},
+            node       => $self->{node},
+            start_time => $start_time,
+            stop_time  => $start_time + 60,
+        );
+
+        my $all = App::DSC::DataTool::Dataset::Dimension->new( name => 'All', value => 'ALL' );
+        $dataset->AddDimension( $all );
+
+        my $values = App::DSC::DataTool::Dataset::Dimension->new( name => $field );
+        while ( scalar @dat ) {
+            my $key   = shift( @dat );
+            my $value = shift( @dat );
+
+            unless ( defined $key and defined $value ) {
+                $self->AddError(
+                    App::DSC::DataTool::Error->new(
+                        tag     => 'INVALID_DAT',
+                        args    => { file => $file },
+                        message => 'Invalid number of elements for a 2d dataset'
+                    )
+                );
+
+                close( DAT );
+
+                return;
+            }
+
+            $values->AddValues( $key => $value );
+        }
+        $all->AddDimension( $values );
+
+        push( @{ $self->{datasets} }, $dataset );
+    }
+
+    close( DAT );
+
+    return;
+}
+
+=item process3d
+
+=cut
+
+sub process3d {
+    my ( $self, $file, $name, $first, $second ) = @_;
+
+    unless ( -r $file ) {
+        return;
+    }
+
+    unless ( open( DAT, $file ) ) {
+        $self->AddError(
+            App::DSC::DataTool::Error->new(
+                tag     => 'INVALID_DAT',
+                args    => { file => $file },
+                message => 'Unable to open DAT file ' . $file
+            )
+        );
+        return;
+    }
+
+    while ( <DAT> ) {
+        if ( /^#/o ) {
+            next;
+        }
+
+        s/[\r\n]+$//o;
+        my @dat        = split( /\s+/o );
+        my $start_time = shift( @dat );
+
+        my $dataset = App::DSC::DataTool::Dataset->new(
+            name       => $name,
+            server     => $self->{server},
+            node       => $self->{node},
+            start_time => $start_time,
+            stop_time  => $start_time + 60,
+        );
+
+        while ( scalar @dat ) {
+            my $key   = shift( @dat );
+            my $value = shift( @dat );
+
+            unless ( defined $key and defined $value ) {
+                $self->AddError(
+                    App::DSC::DataTool::Error->new(
+                        tag     => 'INVALID_DAT',
+                        args    => { file => $file },
+                        message => 'Invalid number of elements for a 3d dataset'
+                    )
+                );
+
+                close( DAT );
+
+                return;
+            }
+
+            my $first = App::DSC::DataTool::Dataset::Dimension->new( name => $first, value => $key );
+            $dataset->AddDimension( $first );
+
+            my @dat2 = split( /:/o, $value );
+            my $values = App::DSC::DataTool::Dataset::Dimension->new( name => $second );
+            while ( scalar @dat2 ) {
+                my $key   = shift( @dat2 );
+                my $value = shift( @dat2 );
+
+                unless ( defined $key and defined $value ) {
+                    $self->AddError(
+                        App::DSC::DataTool::Error->new(
+                            tag     => 'INVALID_DAT',
+                            args    => { file => $file },
+                            message => 'Invalid number of elements for a 3d dataset'
+                        )
+                    );
+
+                    close( DAT );
+
+                    return;
+                }
+
+                $values->AddValues( $key => $value );
+            }
+            $first->AddDimension( $values );
+        }
+
+        push( @{ $self->{datasets} }, $dataset );
+    }
+
+    close( DAT );
+
+    return;
 }
 
 =back

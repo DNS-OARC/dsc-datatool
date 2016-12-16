@@ -96,7 +96,7 @@ Return an array of generator names that exists.
 =cut
 
 sub Have {
-    return keys $_[0]->{generator};
+    return keys %{ $_[0]->{generator} };
 }
 
 =item $generator = $generators->Generator ( $name, ... )

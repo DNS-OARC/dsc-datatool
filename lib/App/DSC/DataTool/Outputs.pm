@@ -95,7 +95,7 @@ Return an array of output names that exists.
 =cut
 
 sub Have {
-    return keys $_[0]->{output};
+    return keys %{ $_[0]->{output} };
 }
 
 =item $output = $outputs->Output ( $name, ... )
