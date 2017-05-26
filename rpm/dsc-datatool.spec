@@ -2,6 +2,7 @@ Name:           dsc-datatool
 Version:        0.03
 Release:        1%{?dist}
 Summary:        Export DSC data to other formats and/or databases
+Group:          Productivity/Networking/DNS/Utilities
 
 License:        BSD-3-Clause
 URL:            https://www.dns-oarc.net/oarc/data/dsc
