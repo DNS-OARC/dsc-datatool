@@ -12,7 +12,7 @@ Vcs-Browser: https://github.com/DNS-OARC/dsc-datatool
 Package: dsc-datatool
 Architecture: all
 Depends: ${perl:Depends}, ${misc:Depends}, libyaml-tiny-perl,
- libdsc-datatoool-perl
+ libdsc-datatool-perl
 Suggests: dsc
 Description: Export DSC data to other formats and/or databases
  Tool for converting, exporting, merging and transforming DSC data.
