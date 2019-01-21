@@ -131,7 +131,7 @@ Please report any bugs or feature requests to L<https://github.com/DNS-OARC/dsc-
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2016 OARC, Inc.
+Copyright 2016-2019 OARC, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
