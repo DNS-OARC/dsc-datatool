@@ -10,11 +10,11 @@ App::DSC::DataTool - Export DSC data to other formats and/or databases
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 SYNOPSIS
 

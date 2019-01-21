@@ -1,5 +1,17 @@
 Revision history for App::DSC::DataTool
 
+0.04    2019-01-21
+        Release 0.04
+
+        Package dependency fix and update of example Grafana dashboards.
+
+        d3babc9 Copyright years
+        9955c88 Travis Perl versions
+        134a8b3 Debian dependency
+        2d2114d Fix #23: Rework Grafana dashboards to hopefully show more
+                correct numbers and also split them up.
+        9bca0d3 Prepare SPEC for OSB/COPR
+
 0.03    2016-12-16
         Release 0.03
 
