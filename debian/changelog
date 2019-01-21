@@ -1,3 +1,18 @@
+dsc-datatool (0.04-1~unstable+1) unstable; urgency=low
+
+  * Release 0.04
+
+    Package dependency fix and update of example Grafana dashboards.
+
+    d3babc9 Copyright years
+    9955c88 Travis Perl versions
+    134a8b3 Debian dependency
+    2d2114d Fix #23: Rework Grafana dashboards to hopefully show more
+          correct numbers and also split them up.
+    9bca0d3 Prepare SPEC for OSB/COPR
+
+ -- Jerry Lundström <lundstrom.jerry@gmail.com>  Mon, 21 Jan 2019 11:27:43 +0100
+
 dsc-datatool (0.03-1~unstable+1) unstable; urgency=low
 
   * Release 0.03

@@ -10,11 +10,11 @@ App::DSC::DataTool - Export DSC data to other formats and/or databases
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 SYNOPSIS
 
@@ -34,7 +34,7 @@ Please report any bugs or feature requests to L<https://github.com/DNS-OARC/dsc-
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2016 OARC, Inc.
+Copyright 2016-2019 OARC, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
