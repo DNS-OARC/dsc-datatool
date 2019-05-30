@@ -119,7 +119,7 @@ sub Dataset {
     my $self = shift;
 
     foreach my $dataset ( @_ ) {
-        my $tags = _quote( lc( $dataset->Name ) ) . ',server=' . _quote( $dataset->Server ) . ',node=' . _quote( $dataset->Node );
+        my $tags = _quote_key( lc( $dataset->Name ) ) . ',server=' . _quote_value( $dataset->Server ) . ',node=' . _quote_value( $dataset->Node );
         my $timestamp =
             $self->{timestamp} eq 'start'
           ? $dataset->StartTime
@@ -149,7 +149,7 @@ sub Process {
 
     if ( $dimension->HaveDimensions ) {
         unless ( $dimension->Name eq 'All' and $dimension->Value eq 'ALL' ) {
-            $tags .= ',' . _quote( lc( $dimension->Name ) ) . '=' . _quote( $dimension->Value );
+            $tags .= ',' . _quote_key( lc( $dimension->Name ) ) . '=' . _quote_value( $dimension->Value );
         }
 
         foreach my $dimension2 ( $dimension->Dimensions ) {
@@ -171,22 +171,38 @@ sub Process {
     }
 
     my %value = $dimension->Values;
-    $tags .= ',' . _quote( lc( $dimension->Name ) ) . '=';
+    $tags .= ',' . _quote_key( lc( $dimension->Name ) ) . '=';
     foreach ( keys %value ) {
-        $self->{handle}->say( $tags, _quote( $_ ), ' value=', $value{$_}, ' ', $timestamp );
+        $self->{handle}->say( $tags, _quote_value( $_ ), ' value=', $value{$_}, ' ', $timestamp );
     }
 
     return;
 }
 
-=item _quote
+=item _quote_key
 
 =cut
 
-sub _quote {
+sub _quote_key {
     my ( $key ) = @_;
 
     $key =~ s/([,=\s])/\\$1/go;
+
+    return $key;
+}
+
+=item _quote_value
+
+=cut
+
+sub _quote_value {
+    my ( $key ) = @_;
+
+    $key =~ s/([,=\s])/\\$1/go;
+
+    if ( $key eq '' ) {
+        $key = '""';
+    }
 
     return $key;
 }
