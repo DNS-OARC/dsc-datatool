@@ -1,3 +1,14 @@
+dsc-datatool (0.05-1~unstable+1) unstable; urgency=low
+
+  * Release 0.05
+
+    Fixed issue with empty values in InfluxDB output, they are now
+    quoted as an empty string.
+
+    9917c4e InfluxDB quote keys/values
+
+ -- Jerry Lundström <lundstrom.jerry@gmail.com>  Fri, 31 May 2019 08:44:19 +0200
+
 dsc-datatool (0.04-1~unstable+1) unstable; urgency=low
 
   * Release 0.04
