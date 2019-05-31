@@ -1,5 +1,13 @@
 Revision history for App::DSC::DataTool
 
+0.05    2019-05-31
+        Release 0.05
+
+        Fixed issue with empty values in InfluxDB output, they are now
+        quoted as an empty string.
+
+        9917c4e InfluxDB quote keys/values
+
 0.04    2019-01-21
         Release 0.04
 
