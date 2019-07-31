@@ -38,6 +38,19 @@ BuildRequires:  perl(IP::Country::Fast)
 
 Provides:       perl(App::DSC::DataTool)
 
+Requires:       perl(common::sense) >= 3
+Requires:       perl(XML::LibXML::Simple) >= 0.93
+Requires:       perl(IO::Socket::INET) >= 1.31
+Requires:       perl(Time::HiRes)
+Requires:       perl(Getopt::Long)
+Requires:       perl(YAML::Tiny)
+Requires:       perl(Pod::Usage)
+Requires:       perl(Scalar::Util)
+Requires:       perl(Module::Find)
+Requires:       perl(NetAddr::IP)
+Requires:       perl(IP::Authority)
+Requires:       perl(IP::Country::Fast)
+
 %description
 Tool for converting, exporting, merging and transforming DSC data.
 
