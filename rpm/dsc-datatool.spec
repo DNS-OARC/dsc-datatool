@@ -1,5 +1,5 @@
 Name:           dsc-datatool
-Version:        0.05
+Version:        1.0.0
 Release:        1%{?dist}
 Summary:        Export DSC data to other formats and/or databases
 Group:          Productivity/Networking/DNS/Utilities
@@ -12,47 +12,28 @@ Source0:        https://github.com/DNS-OARC/dsc-datatool/archive/v%{version}.tar
 
 BuildArch:      noarch
 
-BuildRequires:  perl
+BuildRequires:  python3-setuptools
 %if 0%{?suse_version} || 0%{?sle_version}
-BuildRequires:  perl-macros
+BuildRequires:  python3-maxminddb
+BuildRequires:  python3-PyYAML
 %else
-BuildRequires:  perl-macros
-BuildRequires:  perl-generators
-BuildRequires:  perl-interpreter
-BuildRequires:  perl(ExtUtils::MakeMaker)
+BuildRequires:  python36-maxminddb
+BuildRequires:  python36-PyYAML
 %endif
-BuildRequires:  perl(Test::More)
-BuildRequires:  perl(Test::CheckManifest) >= 0.9
-BuildRequires:  perl(common::sense) >= 3
-BuildRequires:  perl(XML::LibXML::Simple) >= 0.93
-BuildRequires:  perl(IO::Socket::INET) >= 1.31
-BuildRequires:  perl(Time::HiRes)
-BuildRequires:  perl(Getopt::Long)
-BuildRequires:  perl(YAML::Tiny)
-BuildRequires:  perl(Pod::Usage)
-BuildRequires:  perl(Scalar::Util)
-BuildRequires:  perl(Module::Find)
-BuildRequires:  perl(NetAddr::IP)
-BuildRequires:  perl(IP::Authority)
-BuildRequires:  perl(IP::Country::Fast)
 
-Provides:       perl(App::DSC::DataTool)
+%package doc
+Summary:        Documentation files for %{name}
+Group:          Documentation
 
-Requires:       perl(common::sense) >= 3
-Requires:       perl(XML::LibXML::Simple) >= 0.93
-Requires:       perl(IO::Socket::INET) >= 1.31
-Requires:       perl(Time::HiRes)
-Requires:       perl(Getopt::Long)
-Requires:       perl(YAML::Tiny)
-Requires:       perl(Pod::Usage)
-Requires:       perl(Scalar::Util)
-Requires:       perl(Module::Find)
-Requires:       perl(NetAddr::IP)
-Requires:       perl(IP::Authority)
-Requires:       perl(IP::Country::Fast)
 
 %description
 Tool for converting, exporting, merging and transforming DSC data.
+
+
+%description doc
+Tool for converting, exporting, merging and transforming DSC data.
+
+This package contains the documentation for dsc-datatool.
 
 
 %prep
@@ -60,71 +41,27 @@ Tool for converting, exporting, merging and transforming DSC data.
 
 
 %build
-%if 0%{?suse_version} || 0%{?sle_version}
-%{__perl} Makefile.PL
-%else
-%{__perl} Makefile.PL INSTALLDIRS=vendor
-%endif
-make %{?_smp_mflags}
+python3 setup.py build
 
 
 %install
-%if 0%{?suse_version} || 0%{?sle_version}
-%perl_make_install
-find %buildroot/%_prefix -name *.bs -a -size 0 | xargs rm -f
-%perl_process_packlist
-%perl_gen_filelist
-%else
-%{__make} pure_install DESTDIR=%{buildroot}
-find %{buildroot} -type f -name .packlist -delete
-%{_fixperms} -c %{buildroot}
-%endif
+python3 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-
-%if 0%{?suse_version} || 0%{?sle_version}
-%files -f %{name}.files
-%defattr(-,root,root)
-%doc Changes LICENSE README.md
-%else
 %files
 %license LICENSE
-%doc Changes README.md
 %{_bindir}/dsc-datatool
-%{perl_vendorlib}/App/DSC/DataTool.pm
-%{perl_vendorlib}/App/DSC/DataTool/
-%{_mandir}/man1/dsc-datatool.1.gz
-%{_mandir}/man3/App::DSC::DataTool.3*
-%{_mandir}/man3/App::DSC::DataTool::Dataset.3*
-%{_mandir}/man3/App::DSC::DataTool::Dataset::Dimension.3*
-%{_mandir}/man3/App::DSC::DataTool::Error.3*
-%{_mandir}/man3/App::DSC::DataTool::Errors.3*
-%{_mandir}/man3/App::DSC::DataTool::Generator.3*
-%{_mandir}/man3/App::DSC::DataTool::Generator::client_ports_count.3*
-%{_mandir}/man3/App::DSC::DataTool::Generator::client_subnet_authority.3*
-%{_mandir}/man3/App::DSC::DataTool::Generator::client_subnet_country.3*
-%{_mandir}/man3/App::DSC::DataTool::Generators.3*
-%{_mandir}/man3/App::DSC::DataTool::Input.3*
-%{_mandir}/man3/App::DSC::DataTool::Input::DAT.3*
-%{_mandir}/man3/App::DSC::DataTool::Input::XML.3*
-%{_mandir}/man3/App::DSC::DataTool::Inputs.3*
-%{_mandir}/man3/App::DSC::DataTool::Log.3*
-%{_mandir}/man3/App::DSC::DataTool::Output.3*
-%{_mandir}/man3/App::DSC::DataTool::Output::Carbon.3*
-%{_mandir}/man3/App::DSC::DataTool::Output::InfluxDB.3*
-%{_mandir}/man3/App::DSC::DataTool::Outputs.3*
-%{_mandir}/man3/App::DSC::DataTool::Transformer.3*
-%{_mandir}/man3/App::DSC::DataTool::Transformer::Labler.3*
-%{_mandir}/man3/App::DSC::DataTool::Transformer::NetRemap.3*
-%{_mandir}/man3/App::DSC::DataTool::Transformer::ReRanger.3*
-%{_mandir}/man3/App::DSC::DataTool::Transformers.3*
-%endif
+%{python3_sitelib}/*
+
+
+%files doc
+%doc CHANGES README.md UPGRADE.md
+%license LICENSE
 
 
 %changelog
+* Wed Apr 15 2020 Jerry Lundström <lundstrom.jerry@gmail.com> 1.0.0-1
+- Prepare for v1.0.0
 * Fri May 31 2019 Jerry Lundström <lundstrom.jerry@gmail.com> 0.05-1
 - Release 0.05
   * Fixed issue with empty values in InfluxDB output, they are now
