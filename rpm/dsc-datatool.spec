@@ -12,6 +12,7 @@ Source0:        https://github.com/DNS-OARC/dsc-datatool/archive/v%{version}.tar
 
 BuildArch:      noarch
 
+BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 %if 0%{?suse_version} || 0%{?sle_version}
 BuildRequires:  python3-maxminddb
@@ -51,7 +52,7 @@ python3 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 %files
 %license LICENSE
 %{_bindir}/dsc-datatool
-%{python3_sitelib}/*
+%{python3_sitelib}/dsc_datatool*
 
 
 %files doc
