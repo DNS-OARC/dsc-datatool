@@ -258,6 +258,15 @@ def main():
         log_level = 0
     logging.basicConfig(format='%(asctime)s %(levelname)s %(module)s: %(message)s', level=log_level, stream=sys.stderr)
 
+    if isinstance(args.server, list):
+        args.server = ' '.join(args.server)
+    elif not isinstance(args.server, str):
+        raise Exception('Invalid argument for --server: %r' % args.server)
+    if isinstance(args.node, list):
+        args.node = ' '.join(args.node)
+    elif not isinstance(args.node, str):
+        raise Exception('Invalid argument for --node: %r' % args.node)
+
     generators = []
     if args.generator:
         for arg in args.generator:

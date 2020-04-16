@@ -2,8 +2,8 @@
 
 dsc-datatool \
   -vvv \
-  -s test \
-  -n test \
+  -s test-server \
+  -n test-node \
   --output ";InfluxDB;dml=1;database=dsc" \
   --transform ";Labler;*;yaml=./labler.yaml" \
   --transform ";ReRanger;rcode_vs_replylen;range=/64;pad_to=5" \

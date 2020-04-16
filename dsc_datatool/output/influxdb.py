@@ -11,7 +11,7 @@ import re
 import sys
 import atexit
 
-from dsc_datatool import Output
+from dsc_datatool import Output,args
 
 
 _re = re.compile(r'([,=\s])')
@@ -88,7 +88,7 @@ class InfluxDB(Output):
 
     def process(self, datasets):
         for dataset in datasets:
-            tags = '%s,server=%s,node=%s' % (_key(dataset.name.lower()), _val(''), _val(''))
+            tags = '%s,server=%s,node=%s' % (_key(dataset.name.lower()), args.server, args.node)
             if self.start_timestamp:
                 timestamp = dataset.start_time * 1000000000
             else:
