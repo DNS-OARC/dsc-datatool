@@ -14,20 +14,20 @@ BuildArch:      noarch
 
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
-%if 0%{?suse_version} || 0%{?sle_version}
-BuildRequires:  python3-maxminddb
-BuildRequires:  python3-PyYAML
-%else
+%if 0%{?rhel}
 BuildRequires:  python36-maxminddb
 BuildRequires:  python36-PyYAML
+%else
+BuildRequires:  python3-maxminddb
+BuildRequires:  python3-PyYAML
 %endif
 
-%if 0%{?suse_version} || 0%{?sle_version}
-Requires:       python3-maxminddb
-Requires:       python3-PyYAML
-%else
+%if 0%{?rhel}
 Requires:       python36-maxminddb
 Requires:       python36-PyYAML
+%else
+Requires:       python3-maxminddb
+Requires:       python3-PyYAML
 %endif
 
 %package doc
