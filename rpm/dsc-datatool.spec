@@ -22,6 +22,14 @@ BuildRequires:  python36-maxminddb
 BuildRequires:  python36-PyYAML
 %endif
 
+%if 0%{?suse_version} || 0%{?sle_version}
+Requires:       python3-maxminddb
+Requires:       python3-PyYAML
+%else
+Requires:       python36-maxminddb
+Requires:       python36-PyYAML
+%endif
+
 %package doc
 Summary:        Documentation files for %{name}
 Group:          Documentation
