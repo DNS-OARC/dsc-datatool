@@ -46,10 +46,13 @@ class client_subnet_authority(Generator):
 
     def __init__(self, opts):
         self.auth = {}
-        if 'csv' in opts:
-            for file in opts.get('csv', '').split(','):
+        csvs = opts.get('csv', None)
+        if csvs:
+            if not isinstance(csvs, list):
+                csvs = [ csvs ]
+            for file in csvs:
                 with open(file, newline='') as csvfile:
-                    self._read(cvsfile)
+                    self._read(csvfile)
         elif opts.get('fetch', 'no').lower() == 'yes':
             urls = opts.get('url', [ 'https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.csv',
                 'https://www.iana.org/assignments/ipv6-unicast-address-assignments/ipv6-unicast-address-assignments.csv' ])
