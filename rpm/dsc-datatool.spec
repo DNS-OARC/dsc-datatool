@@ -58,7 +58,7 @@ python3 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 mkdir -p %{buildroot}%{_mandir}/man1/
 install -m644 man/man1/dsc-datatool.1 %{buildroot}%{_mandir}/man1/
 mkdir -p %{buildroot}%{_mandir}/man5/
-install -m644 man/man1/dsc-datatool.conf.5 %{buildroot}%{_mandir}/man5/
+install -m644 man/man5/dsc-datatool.conf.5 %{buildroot}%{_mandir}/man5/
 mkdir -p %{buildroot}%{_mandir}/man7/
 install -m644 man/man7/dsc-datatool-transformer-reranger.7 %{buildroot}%{_mandir}/man7/
 install -m644 man/man7/dsc-datatool-generator-client_subnet_country.7 %{buildroot}%{_mandir}/man7/
