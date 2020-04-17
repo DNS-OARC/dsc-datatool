@@ -11,8 +11,8 @@ on how to set this up using Influx DB and Grafana.
 ## python
 
 ```
-sudo apt-get install python3-maxminddb python3-venv
+sudo apt-get install python3-maxminddb python3-yaml python3-venv
 python3 -m venv venv --system-site-packages
 . venv/bin/activate
-pip install -e .
+pip install -e . --no-deps
 ```

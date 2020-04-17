@@ -19,78 +19,38 @@ import traceback
 import re
 
 
-parser = argparse.ArgumentParser(prog='dsc-datatool', description='Export DSC data into various formats and databases.')
-parser.add_argument('-c', '--conf', nargs=1)
-# Specify the YAML configuration file to use (default to ~/.dsc-datatool.conf),
-# any command line option will override the options in the configuration file.
-# See B<dsc-datatool.conf(5)> for more information.
-parser.add_argument('-s', '--server', nargs=1, required=True)
-# Specify the server for where the data comes from.
-parser.add_argument('-n', '--node', nargs=1, required=True)
-# Specify the node for where the data comes from.
-parser.add_argument('-x', '--xml', action='append')
-# Read DSC data from the given file or directory, can be specified multiple
-# times.
-# If a directory is given then all files ending with B<.xml> will be read.
-parser.add_argument('-d', '--dat', action='append')
-# Read DSC data from the given directory, can be specified multiple
-# times.
-# Note that the DAT format is depended on the filename to know what type
-# of data it is.
-parser.add_argument('--dataset', action='append')
-# Specify that only the list of datasets will be processed, the list is comma
-# separated and the option can be given multiple times.
-parser.add_argument('-o', '--output', action='append')
-# =item B<[ -o | --output ] <sep><type>[<sep>option=value...]>
-#
-# Output data to B<type> and use B<separator> as an options separator, example:
-#
-#   --output ;Carbon;host=localhost;port=2003
-#
-# Can be specified multiple times to output to more then one.
-#
-# To see a full list of options, check the man-page of the output module:
-  #
-  # man App:DSC::DataTool::Output::NAME
-parser.add_argument('-t', '--transform', action='append')
-# =item B<[ -t | --transform ] <sep><type><sep><datasets>[<sep>option=value...]>
-#
-# Use the transformer B<type> to change the list of datasets in B<datasets>,
-# example:
-#
-#   --transform ;ReRanger;rcode_vs_replylen;type=sum;range=/128
-#
-# B<datasets> is a comma separated list of datasets to run the tranformer on,
-# because of this do not use comma (,) as a separator.  B<*> in B<datasets> will
-# make the tranformer run on all datasets.
-#
-# Can be specific multiple times to chain transformation, the chain will be
-# executed in the order on command line with one exception.  All transformations
-# specified for dataset B<*> will be executed before named dataset
-# transformations.
-#
-# To see a full list of options, check the man-page of the transformer module:
-#
-#   man App:DSC::DataTool::Transformer::NAME
-#
-# For a list of datasets see the DSC configuration that created the data files
-# and the documentation for the Presenter.
-parser.add_argument('-g', '--generator', action='append')
-# =item B<[ -g | --generator ] <list of generators>>
-#
-# Use the specified generators to generate additional datasets, the list is comma
-# separated and the option can be given multiple times.
-#
-parser.add_argument('--list', action='store_true')
-# List the available B<inputs>, B<generators>, B<transformers> and B<outputs>.
-parser.add_argument('--skipped-key', nargs=1, default='-:SKIPPED:-')
-# Set the special DSC skipped key, default to "-:SKIPPED:-".
-parser.add_argument('--skipped-sum-key', nargs=1, default='-:SKIPPED_SUM:-')
-# Set the special DSC skipped sum key, default to "-:SKIPPED_SUM:-".
-parser.add_argument('-v', '--verbose', action='count', default=0)
-# Increase the verbose level, can be given multiple times.
-parser.add_argument('-V', '--version', action='version', version='%(prog)s v'+__version__)
-# Display version and exit.
+parser = argparse.ArgumentParser(prog='dsc-datatool',
+    description='Export DSC data into various formats and databases.',
+    epilog='See man-page dsc-datatool(1) and dsc-datatool [generator|transformer|output] <name>(5) for more information')
+parser.add_argument('-c', '--conf', nargs=1,
+    help='Not implemented')
+#    help='Specify the YAML configuration file to use (default to ~/.dsc-datatool.conf), any command line option will override the options in the configuration file. See dsc-datatool.conf(5)for more information.')
+parser.add_argument('-s', '--server', nargs=1,
+    help='Specify the server for where the data comes from. (required)')
+parser.add_argument('-n', '--node', nargs=1,
+    help='Specify the node for where the data comes from. (required)')
+parser.add_argument('-x', '--xml', action='append',
+    help='Read DSC data from the given file or directory, can be specified multiple times. If a directory is given then all files ending with .xml will be read.')
+parser.add_argument('-d', '--dat', action='append',
+    help='Read DSC data from the given directory, can be specified multiple times. Note that the DAT format is depended on the filename to know what type of data it is.')
+parser.add_argument('--dataset', action='append',
+    help='Specify that only the list of datasets will be processed, the list is comma separated and the option can be given multiple times.')
+parser.add_argument('-o', '--output', action='append',
+    help='"<sep><output>[<sep>option=value...]>" Output data to <output> and use <separator> as an options separator.')
+parser.add_argument('-t', '--transform', action='append',
+    help='"<sep><name><sep><datasets>[<sep>option=value...]>" Use the transformer <name> to change the list of datasets in <datasets>.')
+parser.add_argument('-g', '--generator', action='append',
+    help='"<name>[,<name>,...]" or "<sep><name>[<sep>option=value...]>" Use the specified generators to generate additional datasets.')
+parser.add_argument('--list', action='store_true',
+    help='List the available generators, transformers and outputs then exit.')
+parser.add_argument('--skipped-key', nargs=1, default='-:SKIPPED:-',
+    help='Set the special DSC skipped key. (default to "-:SKIPPED:-")')
+parser.add_argument('--skipped-sum-key', nargs=1, default='-:SKIPPED_SUM:-',
+    help='Set the special DSC skipped sum key. (default to "-:SKIPPED_SUM:-")')
+parser.add_argument('-v', '--verbose', action='count', default=0,
+    help='Increase the verbose level, can be given multiple times.')
+parser.add_argument('-V', '--version', action='version', version='%(prog)s v'+__version__,
+    help='Display version and exit.')
 
 args = parser.parse_args()
 
@@ -257,6 +217,21 @@ def main():
     if log_level < 0:
         log_level = 0
     logging.basicConfig(format='%(asctime)s %(levelname)s %(module)s: %(message)s', level=log_level, stream=sys.stderr)
+
+    if args.list:
+        print('Generators:')
+        for name in _generators:
+            print('',name)
+        print('Transformers:')
+        for name in _transformers:
+            print('',name)
+        print('Outputs:')
+        for name in _outputs:
+            print('',name)
+        return 0
+
+    if not args.server or not args.node:
+        raise Exception('--server and --node must be given')
 
     if isinstance(args.server, list):
         args.server = ' '.join(args.server)

@@ -1,0 +1,185 @@
+.TH "dsc-datatool" "1"
+.SH NAME
+dsc-datatool \- Tool for converting, exporting, merging and transforming DSC data.
+.SH SYNOPSIS
+.SY dsc-datatool
+.OP \-h
+.OP \-c CONF
+.OP \-s SERVER
+.OP \-n NODE
+.OP \-x XML
+.OP \-d DAT
+.OP \-\-dataset DATASET
+.OP \-o OUTPUT
+.OP \-t TRANSFORM]
+.OP \-g GENERATOR
+.OP \-\-list
+.OP \-\-skipped\-key SKIPPED_KEY
+.OP \-\-skipped\-sum\-key SKIPPED_SUM_KEY
+.OP \-v
+.OP \-V
+.YS
+.SH DESCRIPTION
+Tool for converting, exporting, merging and transforming DSC data.
+
+Please have a look at the wiki article on how to set this up using
+Influx DB and Grafana.
+
+https://github.com/DNS-OARC/dsc-datatool/wiki/Setting-up-a-test-Grafana
+.SH OPTIONS
+.TP
+.B -h, --help
+show this help message and exit
+.TP
+.BI "-c " CONF ", --conf " CONF
+Not implemented
+.TP
+.BI "-s " SERVER ", --server " SERVER
+Specify the server for where the data comes from. (required)
+.TP
+.BI "-n " NODE ", --node " NODE
+Specify the node for where the data comes from. (required)
+.TP
+.BI "-x " XML ", --xml " XML
+Read DSC data from the given file or directory, can be specified multiple
+times.
+If a directory is given then all files ending with .xml will be read.
+.TP
+.BI "-d " DAT ", --dat " DAT
+Read DSC data from the given directory, can be specified multiple times.
+Note that the DAT format is depended on the filename to know what type of
+data it is.
+.TP
+.BI "--dataset " DATASET
+Specify that only the list of datasets will be processed, the list is
+comma separated and the option can be given multiple times.
+.TP
+.BI "-o " OUTPUT ", --output " OUTPUT
+.I OUTPUT
+has the following format that uses
+.I output
+to specify the output module and
+.I sep
+as an options separator.
+
+.EX
+  <sep><output>[<sep>option=value...]>
+.EE
+
+Can be specified multiple times to output to more then one.
+
+Use
+.B dsc-datatool --list
+to see a list of modules and the man-page of each output for information
+about options.
+.TP
+.BI "-t " TRANSFORM ", --transform " TRANSFORM
+.I TRANSFORM
+has the following format that uses
+.I name
+to specify the transformer module and
+.I sep
+as an options separator.
+The
+.I datasets
+field can specify which dataset to run the transformer on, or use
+.I *
+to specify all datasets.
+
+.EX
+  <sep><name><sep><datasets>[<sep>option=value...]>
+.EE
+
+Can be specific multiple times to chain transformation, the chain will be
+executed in the order on command line with one exception.
+All transformations specified for dataset
+.I *
+will be executed before named dataset transformations.
+
+Use
+.B dsc-datatool --list
+to see a list of modules and the man-page of each transformer for
+information about options.
+For a list of datasets see the DSC configuration that creates the XML files
+or the documentation for the Presenter that creates the DAT files.
+.TP
+.BI "-g " GENERATOR ", --generator " GENERATOR
+.I GENERATOR
+has two formats, one to specify a comma separated list of generators
+and one that uses
+.I name
+to specify the generator module and
+.I sep
+as an options separator.
+
+.EX
+  <name>[,<name>,...]
+
+  <sep><name>[<sep>option=value...]>
+.EE
+
+This option can be given multiple times.
+
+Use
+.B dsc-datatool --list
+to see a list of modules and the man-page of each generator for
+information about options.
+.TP
+.B --list
+List the available generators, transformers and outputs then exit.
+.TP
+.BI "--skipped-key " SKIPPED_KEY
+Set the special DSC skipped key. (default to "-:SKIPPED:-")
+.TP
+.BI "--skipped-sum-key " SKIPPED_SUM_KEY
+Set the special DSC skipped sum key. (default to "-:SKIPPED_SUM:-")
+.TP
+.B -v, --verbose
+Increase the verbose level, can be given multiple times.
+.TP
+.B -V, --version
+Display version and exit.
+.LP
+.SH EXAMPLE
+.EX
+dsc-datatool \\
+  --server "$SERVER" \\
+  --node "$NODE" \\
+  --output ";InfluxDB;file=influx.txt;dml=1;database=dsc" \\
+  --transform ";Labler;*;yaml=$HOME/labler.yaml" \\
+  --transform ";ReRanger;rcode_vs_replylen;range=/64;pad_to=5" \\
+  --transform ";ReRanger;qtype_vs_qnamelen;range=/16;pad_to=3" \\
+  --transform ";ReRanger;client_port_range;key=low;range=/2048;pad_to=5" \\
+  --transform ";ReRanger;edns_bufsiz,priming_queries;key=low;range=/512;pad_to=5;allow_invalid_keys=1" \\
+  --transform ";ReRanger;priming_responses;key=low;range=/128;pad_to=4" \\
+  --transform ";NetRemap;client_subnet,client_subnet2,client_addr_vs_rcode,ipv6_rsn_abusers;net=8" \\
+  --generator client_subnet_country \\
+  --generator ";client_subnet_authority;fetch=yes" \\
+  --xml "$XML"
+.EE
+.SH "SEE ALSO"
+.BR dsc-datatool.conf (5),
+.BI dsc-datatool- [ generator | transformer | output ]
+.BR <name> (7)
+.SH AUTHORS
+Jerry Lundström, DNS-OARC
+.LP
+Maintained by DNS-OARC
+.LP
+.RS
+.I https://www.dns-oarc.net/tools/dsc
+.RE
+.LP
+.SH BUGS
+For issues and feature requests please use:
+.LP
+.RS
+\fIhttps://github.com/DNS-OARC/dsc-datatool/issues\fP
+.RE
+.LP
+For question and help please use:
+.LP
+.RS
+\fIhttps://lists.dns-oarc.net/mailman/listinfo/dsc\fP
+.RE
+.LP
