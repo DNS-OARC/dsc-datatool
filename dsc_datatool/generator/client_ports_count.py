@@ -10,6 +10,6 @@
 from dsc_datatool import Generator
 
 
-class client_subnet_authority(Generator):
-    def process(self, datasets):
-        raise Exception('not implemented')
+# class client_ports_count(Generator):
+#     def process(self, datasets):
+#         raise Exception('not implemented')

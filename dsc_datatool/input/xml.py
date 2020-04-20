@@ -10,7 +10,7 @@
 import logging
 from xml.dom import minidom
 
-from dsc_datatool import Input, Dataset, Dimension, args
+from dsc_datatool import Input, Dataset, Dimension, process_dataset
 
 
 class XML(Input):
@@ -18,7 +18,7 @@ class XML(Input):
         dom = minidom.parse(file)
         datasets = []
         for array in dom.getElementsByTagName('array'):
-            if args.process_dataset and not array.getAttribute('name') in args.process_dataset:
+            if process_dataset and not array.getAttribute('name') in process_dataset:
                 continue
 
             dataset = Dataset()
