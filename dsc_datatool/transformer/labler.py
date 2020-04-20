@@ -38,12 +38,14 @@ def _process(label, d):
 class Labler(Transformer):
     label = None
 
+
     def __init__(self, opts):
         if not 'yaml' in opts:
             raise Exception('yaml=file option required')
         f = open(opts.get('yaml'), 'r')
         self.label = yaml.load(f)
         f.close()
+
 
     def process(self, datasets):
         if self.label is None:

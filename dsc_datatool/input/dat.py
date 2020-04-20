@@ -9,7 +9,7 @@
 
 import re
 
-from dsc_datatool import Input, Dataset, Dimension, args
+from dsc_datatool import Input, Dataset, Dimension, process_dataset
 
 
 _dataset1d = [
@@ -52,21 +52,21 @@ class DAT(Input):
         datasets = []
 
         for d in _dataset1d:
-            if args.process_dataset and not d in args.process_dataset:
+            if process_dataset and not d in process_dataset:
                 continue
             try:
                 datasets += self.process1d('%s/%s.dat' % (dir, d), d)
             except FileNotFoundError:
                 pass
         for k, v in _dataset2d.items():
-            if args.process_dataset and not k in args.process_dataset:
+            if process_dataset and not k in process_dataset:
                 continue
             try:
                 datasets += self.process2d('%s/%s.dat' % (dir, k), k, v)
             except FileNotFoundError:
                 pass
         for k, v in _dataset3d.items():
-            if args.process_dataset and not k in args.process_dataset:
+            if process_dataset and not k in process_dataset:
                 continue
             try:
                 datasets += self.process3d('%s/%s.dat' % (dir, k), k, v[0], v[1])
