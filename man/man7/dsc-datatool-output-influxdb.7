@@ -1,10 +1,45 @@
 .TH "dsc-datatool-output influxdb" "7"
 .SH NAME
 InfluxDB \- InfluxDB output.
+.SH SYNOPSIS
+.SY dsc-datatool
+.B \-\-output
+.I """;InfluxDB;<options...>"""
+.YS
 .SH DESCRIPTION
-TODO
+This output generates InfluxDB importable output to stdout or to a specified
+file.
+.SH OPTIONS
+.TP
+.BR timestamp =[start|stop]
+Choose which timestamp from the dataset to use in the InfluxDB output to
+specify when the metrics took place.
+
+Default to
+.I start
+timestamp.
+.TP
+.BR file =<filename>
+Specify a file to output to instead of stdout.
+.TP
+.BR append
+If given, the output will be appended to the file specified rather then
+overwritten.
+.TP
+.BR dml
+Add a
+.I "# DML"
+header to the output.
+.TP
+.BR database =name
+If
+.I dml
+is used, this can be used to specify which database the output should be
+imported into.
+.LP
 .SH "SEE ALSO"
-.BR dsc-datatool (1)
+.BR dsc-datatool (1),
+.BR influx (1)
 .SH AUTHORS
 Jerry Lundström, DNS-OARC
 .LP

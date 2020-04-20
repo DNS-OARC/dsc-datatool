@@ -47,6 +47,8 @@ class client_subnet_authority(Generator):
     def __init__(self, opts):
         self.auth = {}
         csvs = opts.get('csv', None)
+        urlv4 = opts.get('urlv4', 'https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.csv')
+        urlv6 = opts.get('urlv6', 'https://www.iana.org/assignments/ipv6-unicast-address-assignments/ipv6-unicast-address-assignments.csv')
         if csvs:
             if not isinstance(csvs, list):
                 csvs = [ csvs ]
@@ -54,8 +56,7 @@ class client_subnet_authority(Generator):
                 with open(file, newline='') as csvfile:
                     self._read(csvfile)
         elif opts.get('fetch', 'no').lower() == 'yes':
-            urls = opts.get('url', [ 'https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.csv',
-                'https://www.iana.org/assignments/ipv6-unicast-address-assignments/ipv6-unicast-address-assignments.csv' ])
+            urls = opts.get('url', [ urlv4, urlv6 ])
             if urls and not isinstance(urls, list):
                 urls = [ urls ]
             logging.info('bootstrapping client subnet authority using URLs')
