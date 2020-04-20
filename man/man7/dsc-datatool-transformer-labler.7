@@ -1,8 +1,41 @@
 .TH "dsc-datatool-transformer labler" "7"
 .SH NAME
 Labler \- Rewrite numeric labels to textual labels using the provided YAML data as lookup tables.
+.SH SYNOPSIS
+.SY dsc-datatool
+.B \-\-transform
+.I """;Labler;<dataset>;yaml=<file>"""
+.YS
 .SH DESCRIPTION
-TODO
+This transformer rewrites labels in datasets based on information provided
+in a YAML file.
+
+The YAML structure is as follows:
+.EX
+---
+dataset_name:
+  DimentionName:
+    DimentionValue: RewriteTo
+.EE
+
+The
+.I dataset_name
+is the name of the dataset,
+.I DimentionName
+is the name of the dimension to rewrite and
+.I DimensionValue
+is the value to change to
+.IR RewriteTo .
+.SH OPTIONS
+.TP
+.B dataset
+See
+.IR dsc-datatool (1)
+on how to specify which dataset(s) to run the transformer on.
+.TP
+.BR yaml =<file>
+The YAML file to load rewrite data from (required).
+.LP
 .SH "SEE ALSO"
 .BR dsc-datatool (1)
 .SH AUTHORS
