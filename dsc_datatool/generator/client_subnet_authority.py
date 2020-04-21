@@ -16,16 +16,55 @@ from io import StringIO
 from dsc_datatool import Generator, Dataset, Dimension, args
 
 
+_whois2rir = {
+    'whois.apnic.net': 'APNIC',
+    'whois.arin.net': 'ARIN',
+    'whois.ripe.net': 'RIPE NCC',
+    'whois.lacnic.net': 'LACNIC',
+    'whois.afrinic.net': 'AFRINIC',
+}
+
+_desig2rir = {
+    'apnic': 'APNIC',
+    'arin': 'ARIN',
+    'ripe ncc': 'RIPE NCC',
+    'lacnic': 'LACNIC',
+    'afrinic': 'AFRINIC',
+    'iana': 'IANA',
+    '6to4': 'IANA',
+}
+
 class client_subnet_authority(Generator):
     auth = None
 
 
     def _read(self, input):
+        global _whois2rir, _desig2rir
         for row in csv.reader(input):
             prefix, designation, date, whois, rdap, status, note = row
             if prefix == 'Prefix':
                 continue
-            designation = designation.replace('Administered by ', '')
+            rir = designation.replace('Administered by ', '').lower()
+
+            whois = whois.lower()
+            if whois in _whois2rir:
+                rir = _whois2rir[whois]
+            else:
+                if rir in _desig2rir:
+                    rir = _desig2rir[rir]
+                else:
+                    found = None
+                    for k, v in _desig2rir.items():
+                        if k in rir:
+                            found = v
+                            break
+                    if found:
+                        rir = found
+                    else:
+                        if status == 'RESERVED':
+                            rir = 'IANA'
+                        else:
+                            raise Exception('Unknown whois/designation: %r/%r %r' % (whois, designation))
 
             try:
                 net = ipaddress.ip_network(prefix)
@@ -39,9 +78,9 @@ class client_subnet_authority(Generator):
                 idx = ipaddress.ip_network('%s/24' % net.network_address, strict=False)
 
             if idx.network_address in self.auth:
-                self.auth[idx.network_address].append({'net': net, 'auth': designation})
+                self.auth[idx.network_address].append({'net': net, 'auth': rir})
             else:
-                self.auth[idx.network_address] = [{'net': net, 'auth': designation}]
+                self.auth[idx.network_address] = [{'net': net, 'auth': rir}]
 
 
     def __init__(self, opts):
