@@ -3,7 +3,7 @@ Section: python
 Priority: optional
 Maintainer: Jerry Lundström <lundstrom.jerry@gmail.com>
 Build-Depends: debhelper (>= 8.0.0), python3 (>= 3.6), python3-maxminddb,
- python3-yaml, python-setuptools
+ python3-yaml, python3-setuptools, dh-python
 Standards-Version: 3.9.4
 Homepage: https://www.dns-oarc.net/oarc/data/dsc
 Vcs-Git: https://github.com/DNS-OARC/dsc-datatool.git
@@ -12,7 +12,7 @@ X-Python3-Version: >= 3.6
 
 Package: dsc-datatool
 Architecture: all
-Depends: ${misc:Depends}, python3 (>= 3.6), python3-maxminddb, python3-yaml
+Depends: ${misc:Depends}, ${python3:Depends}
 Suggests: dsc
 Description: Export DSC data to other formats and/or databases
  Tool for converting, exporting, merging and transforming DSC data.
