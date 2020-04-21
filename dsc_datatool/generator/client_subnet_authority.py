@@ -1,10 +1,10 @@
-"""
-    dsc_datatool
-    ~~~~~~~~~~~~
+"""dsc_datatool.generator.client_subnet_authority
 
-    DSC datatool
+See `man dsc-datatool-generator client_subnet_authority`.
 
-    :copyright: 2020 OARC, Inc.
+Part of dsc_datatool.
+
+:copyright: 2020 OARC, Inc.
 """
 
 import csv

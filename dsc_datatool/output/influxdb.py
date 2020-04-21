@@ -1,10 +1,10 @@
-"""
-    dsc_datatool
-    ~~~~~~~~~~~~
+"""dsc_datatool.output.influxdb
 
-    DSC datatool
+See `man dsc-datatool-output influxdb`.
 
-    :copyright: 2020 OARC, Inc.
+Part of dsc_datatool.
+
+:copyright: 2020 OARC, Inc.
 """
 
 import re
