@@ -1,10 +1,10 @@
-"""
-    dsc_datatool
-    ~~~~~~~~~~~~
+"""dsc_datatool.transformer.labler
 
-    DSC datatool
+See `man dsc-datatool-transformer labler`.
 
-    :copyright: 2020 OARC, Inc.
+Part of dsc_datatool.
+
+:copyright: 2020 OARC, Inc.
 """
 
 import yaml

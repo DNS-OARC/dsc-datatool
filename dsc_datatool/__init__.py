@@ -1,10 +1,35 @@
-"""
-    dsc_datatool
-    ~~~~~~~~~~~~
+"""dsc_datatool
 
-    DSC datatool
+The main Python module for the command line tool `dsc-datatool`, see
+`man dsc-datatool` on how to run it.
 
-    :copyright: 2020 OARC, Inc.
+On runtime it will load all plugins under the following module path:
+- dsc_datatool.input
+- dsc_datatool.output
+- dsc_datatool.generator
+- dsc_datatool.transformer
+
+Each plugin category should base it class on one of the follow superclasses:
+- dsc_datatool.Input
+- dsc_datatool.Output
+- dsc_datatool.Generator
+- dsc_datatool.Transformer
+
+Doing so it will be automatically registered as available and indexed in
+the following public dicts using the class name:
+- inputs
+- outputs
+- generators
+- transformers
+
+Example of an output:
+
+    from dsc_datatool import Output
+    class ExampleOutput(Output):
+        def process(self, datasets)
+            ...
+
+:copyright: 2020 OARC, Inc.
 """
 
 __version__ = '1.0.0'
@@ -27,38 +52,87 @@ process_dataset = {}
 
 
 class Dataset(object):
+    """A representation of a DSC dataset
+
+    A DSC dataset is one to two dimensional structure where the last
+    dimension holds an array of values and counters.
+
+    It is based on the XML structure of DSC:
+
+        <array name="pcap_stats" dimensions="2" start_time="1563520560" stop_time="1563520620">
+          <dimension number="1" type="ifname"/>
+          <dimension number="2" type="pcap_stat"/>
+          <data>
+            <ifname val="eth0">
+              <pcap_stat val="filter_received" count="5625"/>
+              <pcap_stat val="pkts_captured" count="4894"/>
+              <pcap_stat val="kernel_dropped" count="731"/>
+            </ifname>
+          </data>
+        </array>
+
+    Attributes:
+    - name: The name of the dataset
+    - start_time: The start time of the dataset in seconds
+    - stop_time: The stop time of the dataset in seconds
+    - dimensions: An array with `Dimension`, the first dimension
+    """
     name = None
     start_time = None
     stop_time = None
     dimensions = None
 
+
     def __init__(self):
         self.dimensions = []
+
 
     def __repr__(self):
         return '<Dataset name=%r dimension=%r>' % (self.name, self.dimensions)
 
 
 class Dimension(object):
+    """A representation of a DSC dimension
+
+    A DSC dataset dimension which can be the first or second dimension,
+    see `Dataset` for more information.
+
+    Attributes:
+    - name: The name of the dimension
+    - value: Is set to the value of the dimension if it's the first dimension
+    - values: A dict of values with corresponding counters if it's the second dimension
+    """
     name = None
     value = None
     values = None
     dimensions = None
+
 
     def __init__(self, name):
         self.name = name
         self.values = {}
         self.dimensions = []
 
+
     def __repr__(self):
         return '<Dimension name=%r value=%r dimension=%r>' % (self.name, self.values or self.value, self.dimensions)
 
 
 class Input(object):
+    """Base class of an input plugin"""
+
+
     def process(self, file):
+        """Input.process(...) -> [ Dataset, ... ]
+
+        Called to process a file and return an array of `Dataset`'s found in it.
+        """
         raise Exception('process() not overloaded')
 
+
     def __init_subclass__(cls):
+        """This method is called when a class is subclassed and it will
+        register the input plugin in `inputs`."""
         global inputs
         if cls.__name__ in inputs:
             raise Exception('Duplicate input module: %s already exists' % cls.__name__)
@@ -66,13 +140,27 @@ class Input(object):
 
 
 class Output(object):
+    """Base class of an output plugin"""
+
+
     def process(self, datasets):
+        """Output.process([ Dataset, ... ])
+
+        Called to output the `Dataset`'s in the given array."""
         raise Exception('process() not overloaded')
 
+
     def __init__(self, opts):
+        """instance = Output({ 'opt': value, ... })
+
+        Called to create an instance of the output plugin, will get a dict
+        with options provided on command line."""
         pass
 
+
     def __init_subclass__(cls):
+        """This method is called when a class is subclassed and it will
+        register the output plugin in `outputs`."""
         global outputs
         if cls.__name__ in outputs:
             raise Exception('Duplicate output module: %s already exists' % cls.__name__)
@@ -80,13 +168,28 @@ class Output(object):
 
 
 class Generator(object):
+    """Base class of a generator plugin"""
+
+
     def process(self, datasets):
+        """Generator.process([ Dataset, ... ]) -> [ Dataset, ... ]
+
+        Called to generate additional `Dataset`'s based on the given array
+        of `Dataset`'s."""
         raise Exception('process() not overloaded')
 
+
     def __init__(self, opts):
+        """instance = Generator({ 'opt': value, ... })
+
+        Called to create an instance of the generator plugin, will get a dict
+        with options provided on command line."""
         pass
 
+
     def __init_subclass__(cls):
+        """This method is called when a class is subclassed and it will
+        register the generator plugin in `generators`."""
         global generators
         if cls.__name__ in generators:
             raise Exception('Duplicate generator module: %s already exists' % cls.__name__)
@@ -94,13 +197,28 @@ class Generator(object):
 
 
 class Transformer(object):
+    """Base class of a transformer plugin"""
+
+
     def process(self, datasets):
+        """Transformer.process([ Dataset, ... ])
+
+        Called to do transformation of the given `Dataset`'s, as in modifying
+        them directly."""
         raise Exception('process() not overloaded')
 
+
     def __init__(self, opts):
+        """instance = Transformer({ 'opt': value, ... })
+
+        Called to create an instance of the transformer plugin, will get a dict
+        with options provided on command line."""
         pass
 
+
     def __init_subclass__(cls):
+        """This method is called when a class is subclassed and it will
+        register the transformer plugin in `transformers`."""
         global transformers
         if cls.__name__ in transformers:
             raise Exception('Duplicate transformer module: %s already exists' % cls.__name__)
@@ -108,6 +226,7 @@ class Transformer(object):
 
 
 def main():
+    """Called when running `dsc-datatool`."""
     def iter_namespace(ns_pkg):
         return pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + ".")
 

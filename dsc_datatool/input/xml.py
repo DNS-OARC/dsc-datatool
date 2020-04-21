@@ -1,10 +1,10 @@
-"""
-    dsc_datatool
-    ~~~~~~~~~~~~
+"""dsc_datatool.input.xml
 
-    DSC datatool
+Input plugin to generate `Dataset`'s from DSC XML files.
 
-    :copyright: 2020 OARC, Inc.
+Part of dsc_datatool.
+
+:copyright: 2020 OARC, Inc.
 """
 
 import logging
