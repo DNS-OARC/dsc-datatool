@@ -14,7 +14,7 @@ BuildArch:      noarch
 
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
-%if 0%{?rhel}
+%if 0%{?el7}
 BuildRequires:  python36-maxminddb
 BuildRequires:  python36-PyYAML
 %else
@@ -22,7 +22,7 @@ BuildRequires:  python3-maxminddb
 BuildRequires:  python3-PyYAML
 %endif
 
-%if 0%{?rhel}
+%if 0%{?el7}
 Requires:       python36-maxminddb
 Requires:       python36-PyYAML
 %else
