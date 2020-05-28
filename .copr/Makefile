@@ -16,7 +16,8 @@ $(top)/rpmbuild:
 
 srpm: prereq update-dist-tools
 	test -f .gitmodules && git submodule update --init || true
+	test "$(spec)" = "develop.spec" && auto_build_number=`date --utc +%s` message="Auto build `date --utc --iso-8601=seconds`" "$(top)/dist-tools/spec-new-changelog-entry"
 	overwrite=yes nosign=yes "$(top)/dist-tools/create-source-packages" rpm
 	cp ../*.orig.tar.gz "$(top)/rpmbuild/SOURCES/"
-	rpmbuild -bs --define "%_topdir $(top)/rpmbuild" --undefine=dist "$(spec)"
+	test "$(spec)" = "develop.spec" && rpmbuild -bs --define "%_topdir $(top)/rpmbuild" --undefine=dist rpm/dsc-datatool.spec || rpmbuild -bs --define "%_topdir $(top)/rpmbuild" --undefine=dist "$(spec)"
 	cp "$(top)"/rpmbuild/SRPMS/*.src.rpm "$(outdir)"
