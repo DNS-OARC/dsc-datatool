@@ -458,7 +458,11 @@ def main():
 
     xml_input = inputs['XML']()
     for file in xml:
-        datasets = xml_input.process(file)
+        try:
+            datasets = xml_input.process(file)
+        except Exception as e:
+            logging.critical('Unable to process XML file %s: %s' % (file, e))
+            return 1
 
         ret = _process(datasets, gens, trans, out)
         if ret > 0:
@@ -466,7 +470,11 @@ def main():
 
     dat_input = inputs['DAT']()
     for dir in dat:
-        datasets = dat_input.process(dir)
+        try:
+            datasets = dat_input.process(dir)
+        except Exception as e:
+            logging.critical('Unable to process DAT files in %s: %s' % (dir, e))
+            return 1
 
         ret = _process(datasets, gens, trans, out)
         if ret > 0:

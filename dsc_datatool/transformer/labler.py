@@ -43,7 +43,10 @@ class Labler(Transformer):
         if not 'yaml' in opts:
             raise Exception('yaml=file option required')
         f = open(opts.get('yaml'), 'r')
-        self.label = yaml.load(f)
+        try:
+            self.label = yaml.full_load(f)
+        except AttributeError:
+            self.label = yaml.load(f)
         f.close()
 
 
