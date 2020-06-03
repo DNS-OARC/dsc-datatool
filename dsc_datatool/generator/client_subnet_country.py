@@ -19,6 +19,7 @@ class client_subnet_country(Generator):
 
 
     def __init__(self, opts):
+        Generator.__init__(self, opts)
         paths = opts.get('path', ['/var/lib/GeoIP', '/usr/share/GeoIP', '/usr/local/share/GeoIP'])
         if not isinstance(paths, list):
             paths = [ paths ]

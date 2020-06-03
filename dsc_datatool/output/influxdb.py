@@ -55,6 +55,7 @@ class InfluxDB(Output):
 
 
     def __init__(self, opts):
+        Output.__init__(self, opts)
         timestamp = opts.get('timestamp', 'start')
         if timestamp == 'start':
             pass
