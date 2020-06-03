@@ -64,11 +64,11 @@ class client_subnet_authority(Generator):
                         if status == 'RESERVED':
                             rir = 'IANA'
                         else:
-                            raise Exception('Unknown whois/designation: %r/%r %r' % (whois, designation))
+                            raise Exception('Unknown whois/designation: %r/%r' % (whois, designation))
 
             try:
                 net = ipaddress.ip_network(prefix)
-            except:
+            except Exception:
                 ip, net = prefix.split('/')
                 net = ipaddress.ip_network('%s.0.0.0/%s' % (int(ip), net))
 
@@ -84,6 +84,7 @@ class client_subnet_authority(Generator):
 
 
     def __init__(self, opts):
+        Generator.__init__(self, opts)
         self.auth = {}
         csvs = opts.get('csv', None)
         urlv4 = opts.get('urlv4', 'https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.csv')

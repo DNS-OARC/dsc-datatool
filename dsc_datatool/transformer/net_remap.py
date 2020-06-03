@@ -18,6 +18,7 @@ class NetRemap(Transformer):
 
 
     def __init__(self, opts):
+        Transformer.__init__(self, opts)
         net = opts.get('net', None)
         self.v4net = opts.get('v4net', net)
         self.v6net = opts.get('v6net', net)

@@ -438,9 +438,9 @@ def main():
                 xml.append(entry)
             elif os.path.isdir(entry):
                 with os.scandir(entry) as dir:
-                    for entry in dir:
-                        if not entry.name.startswith('.') and entry.is_file() and entry.name.lower().endswith('.xml'):
-                            xml.append(entry.path)
+                    for file in dir:
+                        if not file.name.startswith('.') and file.is_file() and file.name.lower().endswith('.xml'):
+                            xml.append(file.path)
             else:
                 logging.error('--xml %r is not a file or directory' % entry)
 

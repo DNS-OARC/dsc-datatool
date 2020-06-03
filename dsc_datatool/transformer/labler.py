@@ -40,6 +40,7 @@ class Labler(Transformer):
 
 
     def __init__(self, opts):
+        Transformer.__init__(self, opts)
         if not 'yaml' in opts:
             raise Exception('yaml=file option required')
         f = open(opts.get('yaml'), 'r')

@@ -24,6 +24,7 @@ class ReRanger(Transformer):
 
 
     def __init__(self, opts):
+        Transformer.__init__(self, opts)
         self.key = opts.get('key', 'mid')
         self.func = opts.get('func', 'sum')
         self.allow_invalid_keys = opts.get('allow_invalid_keys', False)
