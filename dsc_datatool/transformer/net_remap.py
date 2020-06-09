@@ -15,6 +15,7 @@ from dsc_datatool import Transformer, args
 class NetRemap(Transformer):
     v4net = None
     v6net = None
+    nonstrict = False
 
 
     def __init__(self, opts):
@@ -27,6 +28,9 @@ class NetRemap(Transformer):
             raise Exception('v4net (or net) must be given')
         if not self.v6net:
             raise Exception('v6net (or net) must be given')
+
+        if opts.get('nonstrict', False):
+            self.nonstrict = True
 
 
     def _process(self, dimension):
@@ -45,7 +49,12 @@ class NetRemap(Transformer):
                 dimension.values['0'] = v
                 continue
 
-            ip = ipaddress.ip_address(k)
+            try:
+                ip = ipaddress.ip_address(k)
+            except Exception as e:
+                if not self.nonstrict:
+                    raise e
+                continue
             if ip.version == 4:
                 nkey = str(ipaddress.IPv4Network('%s/%s' % (ip, self.v4net), strict=False).network_address)
             else:

@@ -16,6 +16,7 @@ from dsc_datatool import Generator, Dataset, Dimension, args
 
 class client_subnet_country(Generator):
     reader = None
+    nonstrict = False
 
 
     def __init__(self, opts):
@@ -37,6 +38,9 @@ class client_subnet_country(Generator):
 
         logging.info('Using %s' % db)
         self.reader = maxminddb.open_database(db)
+
+        if opts.get('nonstrict', False):
+            self.nonstrict = True
 
 
     def process(self, datasets):
@@ -62,7 +66,12 @@ class client_subnet_country(Generator):
 
             cc = {}
             for subnet in subnets:
-                c = self.reader.get(subnet)
+                try:
+                    c = self.reader.get(subnet)
+                except Exception as e:
+                    if not self.nonstrict:
+                        raise e
+                    continue
                 if c:
                     iso_code = c.get('country', {}).get('iso_code', '??')
                     if iso_code in cc:
