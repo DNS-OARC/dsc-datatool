@@ -28,6 +28,11 @@ if that is specified.
 The IPv6 network to use for IPv6 addresses and networks, default to
 .I net
 if that is specified.
+.TP
+.BR nonstrict =<value>
+If set (to any value) then a non-strict mode is enabled which will disregard
+any bad data in the dataset, skipping it completely.
+Default is strict mode.
 .LP
 .SH "SEE ALSO"
 .BR dsc-datatool (1)

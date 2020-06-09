@@ -34,6 +34,11 @@ Full path to Maxmind database, this option overrides
 .I path
 and
 .IR filename .
+.TP
+.BR nonstrict =<value>
+If set (to any value) then a non-strict mode is enabled which will disregard
+any bad data in the dataset, skipping it completely.
+Default is strict mode.
 .LP
 .SH "SEE ALSO"
 .BR dsc-datatool (1),
