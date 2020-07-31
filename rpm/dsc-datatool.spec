@@ -1,6 +1,6 @@
 Name:           dsc-datatool
 Version:        1.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Export DSC data to other formats and/or databases
 Group:          Productivity/Networking/DNS/Utilities
 
@@ -78,11 +78,59 @@ install -m644 man/man7/dsc-datatool-transformer-netremap.7 %{buildroot}%{_mandir
 
 
 %files doc
-%doc CHANGES README.md UPGRADE.md
+%doc CHANGES README.md
 %license LICENSE
 
 
 %changelog
+* Mon Aug 03 2020 Jerry Lundström <lundstrom.jerry@gmail.com> 1.0.0-2
+- Release 1.0.0
+  * This release brings a complete rewrite of the tool, from Perl to
+    Python. This rewrite was made possible thanks to funding from EURid,
+    and will help with maintainability and packaging.
+  * Core design and command line syntax is kept the same but as the
+    libraries the generators use have been changed additional command line
+    options must be used.
+    - client_subnet_authority (generator)
+      This generator now uses IANA's IP address space registry CSVs to
+      look up the network authority, therefor it needs either to fetch
+      the CSV files or be given them on command line.
+      See `man dsc-datatool-generator client_subnet_authority` for more
+      information.
+    - client_subnet_country (generator)
+      This generator now uses MaxMind databases to look up country based
+      on subnet.
+      See `man dsc-datatool generator client_subnet_country` for more
+      information and setup guide of the MaxMind databases.
+  * Commits:
+    589ea8b Badges
+    c32038b nonstrict
+    0ea3e32 LGTM
+    cff2e1c COPR
+    02c31b0 COPR
+    e8332fd COPR
+    6d9f71c Input, YAML
+    93ba755 EPEL 8 packages
+    3e2df6f Authority
+    f5d023f Debian packaging
+    1a59f09 Documentation
+    85cb1e1 restructure
+    decd3f6 man-pages, URLs
+    f264854 man-pages
+    d73c319 man-pages
+    f5ca007 man-pages
+    7bfaf53 Fedora dependencies
+    3452b48 RPM dependencies
+    7a4edbc Test
+    ed43406 client_subnet_authority
+    62c7d9d Server, node
+    e0c6419 RPM package
+    938f154 Rewrite
+    5400464 README
+    968ccb1 COPR, spec
+    14d987f RPM requires
+    ee10efb Package
+    a25870f Funding
 * Wed Apr 15 2020 Jerry Lundström <lundstrom.jerry@gmail.com> 1.0.0-1
 - Prepare for v1.0.0
 * Fri May 31 2019 Jerry Lundström <lundstrom.jerry@gmail.com> 0.05-1

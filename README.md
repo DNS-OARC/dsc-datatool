@@ -4,11 +4,19 @@
 
 Tool for converting, exporting, merging and transforming DSC data.
 
-Please have a look at [the wiki article](https://github.com/DNS-OARC/dsc-datatool/wiki/Setting-up-a-test-Grafana)
+Please have a look at the man-page(s) `dsc-datatool` (1) on how to use or
+[the wiki article](https://github.com/DNS-OARC/dsc-datatool/wiki/Setting-up-a-test-Grafana)
 on how to set this up using Influx DB and Grafana.
 
+## Dependencies
 
-## python
+`dsc-datatool` requires the following Python libraries:
+- PyYAML
+- maxminddb
+
+## Python Development Environment
+
+Using Ubuntu/Debian:
 
 ```
 sudo apt-get install python3-maxminddb python3-yaml python3-venv
