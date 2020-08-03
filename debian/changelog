@@ -58,12 +58,6 @@ dsc-datatool (1.0.0-2~unstable+1) unstable; urgency=low
 
  -- Jerry Lundström <lundstrom.jerry@gmail.com>  Mon, 03 Aug 2020 14:17:13 +0200
 
-dsc-datatool (1.0.0-1~unstable+1) unstable; urgency=low
-
-  * Prepare for v1.0.0
-
- -- Jerry Lundström <lundstrom.jerry@gmail.com>  Wed, 15 Apr 2020 15:36:49 +0200
-
 dsc-datatool (0.05-1~unstable+1) unstable; urgency=low
 
   * Release 0.05
