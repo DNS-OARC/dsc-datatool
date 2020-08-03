@@ -1,0 +1,61 @@
+.TH "dsc-datatool-generator client_subnet_authority" "7"
+.SH NAME
+client_subnet_authority \- Generates network authority information (RIR) based on client subnet.
+.SH SYNOPSIS
+.SY dsc-datatool
+.B \-\-generator
+.I """;client_subnet_authority;<options...>"""
+.YS
+.SH DESCRIPTION
+This generator will lookup the network authority (RIR) based network
+information in the
+.I client_subnet
+dataset and generate a new dataset
+.IR client_subnet_authority .
+
+The network authority lookup will be done from imports of CSV files or by
+fetching the required data from IANA.
+.SH OPTIONS
+.TP
+.BR csv =<files>
+Read the network authority information from the given
+.IR file(s) .
+This option can be a single file, a list of comma separated files or given
+multiple times.
+.TP
+.BR fetch =yes
+Fetch the network authority information from IANA IP address space registry
+for IPv4 and IPv6.
+.TP
+.BR urlv4 =url
+URL for IANA IPv4 address space registry, default to
+.IR https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.csv .
+.TP
+.BR urlv6 =url
+URL for IANA IPv6 address space registry, default to
+.IR https://www.iana.org/assignments/ipv6-unicast-address-assignments/ipv6-unicast-address-assignments.csv .
+.LP
+.SH "SEE ALSO"
+.BR dsc-datatool (1)
+.SH AUTHORS
+Jerry Lundström, DNS-OARC
+.LP
+Maintained by DNS-OARC
+.LP
+.RS
+.I https://www.dns-oarc.net/tools/dsc
+.RE
+.LP
+.SH BUGS
+For issues and feature requests please use:
+.LP
+.RS
+\fIhttps://github.com/DNS-OARC/dsc-datatool/issues\fP
+.RE
+.LP
+For question and help please use:
+.LP
+.RS
+\fIhttps://lists.dns-oarc.net/mailman/listinfo/dsc\fP
+.RE
+.LP

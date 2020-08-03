@@ -1,21 +1,16 @@
-language: perl
-perl:
-  - "5.28"
-  - "5.26"
-  - "5.24"
-  - "5.22"
-  - "5.20"
-  - "5.18"
-  - "5.16"
-  - "5.14"
-install:
-  - cpanm --quiet --installdeps --notest .
+dist: bionic
+addons:
+  apt:
+    update: true
+    packages:
+    - python3-venv
+    - python3-pip
+    - python3-maxminddb
+    - python3-yaml
+language: sh
 script:
-  - perl Makefile.PL
-  - make
-  - make dist
-  - tar zxvf *.tar.gz
-  - cd p5-App-DSC-DataTool-*[0-9]
-  - perl Makefile.PL
-  - make
-  - RELEASE_TESTING=1 make test
+  - python3 -m venv venv --system-site-packages
+  - . venv/bin/activate
+  - pip install -e .
+  - cd tests
+  - ./test.sh

@@ -1,0 +1,3 @@
+graft dsc_datatool
+global-exclude *.pyc
+include CHANGES

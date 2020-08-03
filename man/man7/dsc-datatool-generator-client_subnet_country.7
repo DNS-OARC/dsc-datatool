@@ -1,0 +1,67 @@
+.TH "dsc-datatool-generator client_subnet_country" "7"
+.SH NAME
+client_subnet_country \- Generates country information based on client subnet using Maxmind database.
+.SH SYNOPSIS
+.SY dsc-datatool
+.B \-\-generator
+.I """;client_subnet_country;<options...>"""
+.YS
+.SH DESCRIPTION
+This generator looks up country code in a Maxmind database for the subnets
+in the
+.I client_subnet
+dataset and the dataset
+.I client_subnet_country
+from that.
+.SH OPTIONS
+.TP
+.BR path =<directory>
+Search for the Maxmind database in the specified
+.IR directory .
+This option can be given multiple times to search in multiple directories.
+
+Default search paths are:
+.IR /var/lib/GeoIP ,
+.IR /usr/share/GeoIP ,
+.IR /usr/local/share/GeoIP .
+.TP
+.BR filename =filename
+The database filename to search for, default to
+.IR GeoLite2-Country.mmdb .
+.TP
+.BR db =/path/to/database.mmdb
+Full path to Maxmind database, this option overrides
+.I path
+and
+.IR filename .
+.TP
+.BR nonstrict =<value>
+If set (to any value) then a non-strict mode is enabled which will disregard
+any bad data in the dataset, skipping it completely.
+Default is strict mode.
+.LP
+.SH "SEE ALSO"
+.BR dsc-datatool (1),
+.BR geoipupdate (1)
+.SH AUTHORS
+Jerry Lundström, DNS-OARC
+.LP
+Maintained by DNS-OARC
+.LP
+.RS
+.I https://www.dns-oarc.net/tools/dsc
+.RE
+.LP
+.SH BUGS
+For issues and feature requests please use:
+.LP
+.RS
+\fIhttps://github.com/DNS-OARC/dsc-datatool/issues\fP
+.RE
+.LP
+For question and help please use:
+.LP
+.RS
+\fIhttps://lists.dns-oarc.net/mailman/listinfo/dsc\fP
+.RE
+.LP

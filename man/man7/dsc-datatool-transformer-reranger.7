@@ -1,0 +1,75 @@
+.TH "dsc-datatool-transformer reranger" "7"
+.SH NAME
+ReRanger \- Rewrite ranged or numerical statistics into other ranges.
+.SH SYNOPSIS
+.SY dsc-datatool
+.B \-\-transform
+.I """;ReRanger;<dataset>;<options...>"""
+.YS
+.SH DESCRIPTION
+This transformer can re-range values in datasets to new rangers.
+
+It supports both values that are a single numerical value or one that is
+already a range itself
+.RI ( num\-num ).
+.SH OPTIONS
+.TP
+.B dataset
+See
+.IR dsc-datatool (1)
+on how to specify which dataset(s) to run the transformer on.
+.TP
+.BR key =[low|mid|high]
+Specify what value to use when re-ranging an already ranged value
+.RI (low\-high).
+
+Default to
+.IR mid ,
+which is high minus low then divided by 2.
+.TP
+.BR func =<func>
+The function to use when aggregating multiple values into a new ranger,
+default to
+.IR sum .
+
+Currently only one function exists,
+.IR sum ,
+which adds the sum of all values into the new range.
+.TP
+.B allow_invalid_keys
+If given the "invalid" keys/values that is not numerical or a range will be
+passed through unmodified.
+.TP
+.BR range =</num>
+The new range given as
+.I /number
+(required).
+
+For example
+.I range=/64
+will re-range all values into buckets of 64, 0-63, 64-127 and so on.
+.LP
+.SH "SEE ALSO"
+.BR dsc-datatool (1)
+.SH AUTHORS
+Jerry Lundström, DNS-OARC
+.LP
+Maintained by DNS-OARC
+.LP
+.RS
+.I https://www.dns-oarc.net/tools/dsc
+.RE
+.LP
+.SH BUGS
+For issues and feature requests please use:
+.LP
+.RS
+\fIhttps://github.com/DNS-OARC/dsc-datatool/issues\fP
+.RE
+.LP
+For question and help please use:
+.LP
+.RS
+\fIhttps://lists.dns-oarc.net/mailman/listinfo/dsc\fP
+.RE
+.LP

@@ -1,0 +1,8 @@
+man/man7/dsc-datatool-transformer-reranger.7
+man/man7/dsc-datatool-generator-client_subnet_country.7
+man/man7/dsc-datatool-generator-client_subnet_authority.7
+man/man7/dsc-datatool-output-influxdb.7
+man/man7/dsc-datatool-transformer-labler.7
+man/man7/dsc-datatool-transformer-netremap.7
+man/man5/dsc-datatool.conf.5
+man/man1/dsc-datatool.1

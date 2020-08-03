@@ -1,0 +1,507 @@
+<dscdata>
+<array name="pcap_stats" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="ifname"/>
+  <dimension number="2" type="pcap_stat"/>
+  <data>
+    <ifname val="eth0">
+      <pcap_stat val="filter_received" count="5625"/>
+      <pcap_stat val="pkts_captured" count="4894"/>
+      <pcap_stat val="kernel_dropped" count="731"/>
+    </ifname>
+  </data>
+</array>
+<array name="direction_vs_ipproto" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="Direction"/>
+  <dimension number="2" type="IPProto"/>
+  <data>
+    <Direction val="sent">
+      <IPProto val="udp" count="289"/>
+    </Direction>
+    <Direction val="recv">
+      <IPProto val="udp" count="219"/>
+    </Direction>
+    <Direction val="else">
+      <IPProto val="udp" count="267"/>
+    </Direction>
+  </data>
+</array>
+<array name="client_port_range" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="All"/>
+  <dimension number="2" type="PortRange"/>
+  <data>
+    <All val="ALL">
+      <PortRange val="33792-34815" count="12"/>
+      <PortRange val="35840-36863" count="12"/>
+      <PortRange val="24576-25599" count="11"/>
+      <PortRange val="56320-57343" count="11"/>
+      <PortRange val="55296-56319" count="10"/>
+      <PortRange val="41984-43007" count="9"/>
+      <PortRange val="19456-20479" count="8"/>
+      <PortRange val="58368-59391" count="8"/>
+      <PortRange val="61440-62463" count="8"/>
+      <PortRange val="63488-64511" count="8"/>
+      <PortRange val="3072-4095" count="7"/>
+      <PortRange val="15360-16383" count="7"/>
+      <PortRange val="34816-35839" count="7"/>
+      <PortRange val="37888-38911" count="7"/>
+      <PortRange val="40960-41983" count="7"/>
+      <PortRange val="45056-46079" count="7"/>
+      <PortRange val="46080-47103" count="7"/>
+      <PortRange val="59392-60415" count="7"/>
+      <PortRange val="13312-14335" count="6"/>
+      <PortRange val="14336-15359" count="6"/>
+      <PortRange val="32768-33791" count="6"/>
+      <PortRange val="36864-37887" count="6"/>
+      <PortRange val="43008-44031" count="6"/>
+      <PortRange val="49152-50175" count="6"/>
+      <PortRange val="52224-53247" count="6"/>
+      <PortRange val="2048-3071" count="5"/>
+      <PortRange val="12288-13311" count="5"/>
+      <PortRange val="16384-17407" count="5"/>
+      <PortRange val="28672-29695" count="5"/>
+      <PortRange val="31744-32767" count="5"/>
+      <PortRange val="39936-40959" count="5"/>
+      <PortRange val="47104-48127" count="5"/>
+      <PortRange val="54272-55295" count="5"/>
+      <PortRange val="5120-6143" count="4"/>
+      <PortRange val="7168-8191" count="4"/>
+      <PortRange val="10240-11263" count="4"/>
+      <PortRange val="11264-12287" count="4"/>
+      <PortRange val="17408-18431" count="4"/>
+      <PortRange val="18432-19455" count="4"/>
+      <PortRange val="22528-23551" count="4"/>
+      <PortRange val="23552-24575" count="4"/>
+      <PortRange val="25600-26623" count="4"/>
+      <PortRange val="26624-27647" count="4"/>
+      <PortRange val="29696-30719" count="4"/>
+      <PortRange val="30720-31743" count="4"/>
+      <PortRange val="38912-39935" count="4"/>
+      <PortRange val="48128-49151" count="4"/>
+      <PortRange val="50176-51199" count="4"/>
+      <PortRange val="62464-63487" count="4"/>
+      <PortRange val="1024-2047" count="3"/>
+      <PortRange val="4096-5119" count="3"/>
+      <PortRange val="8192-9215" count="3"/>
+      <PortRange val="9216-10239" count="3"/>
+      <PortRange val="20480-21503" count="3"/>
+      <PortRange val="27648-28671" count="3"/>
+      <PortRange val="44032-45055" count="3"/>
+      <PortRange val="53248-54271" count="3"/>
+      <PortRange val="57344-58367" count="3"/>
+      <PortRange val="6144-7167" count="2"/>
+      <PortRange val="21504-22527" count="2"/>
+      <PortRange val="51200-52223" count="2"/>
+      <PortRange val="60416-61439" count="1"/>
+    </All>
+  </data>
+</array>
+<array name="transport_vs_qtype" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="Transport"/>
+  <dimension number="2" type="Qtype"/>
+  <data>
+    <Transport val="udp">
+      <Qtype val="1" count="128"/>
+      <Qtype val="12" count="78"/>
+      <Qtype val="28" count="71"/>
+      <Qtype val="48" count="25"/>
+      <Qtype val="16" count="18"/>
+      <Qtype val="15" count="9"/>
+      <Qtype val="2" count="7"/>
+      <Qtype val="43" count="5"/>
+      <Qtype val="6" count="4"/>
+    </Transport>
+    <Transport val="tcp">
+    </Transport>
+  </data>
+</array>
+<array name="ipv6_rsn_abusers" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="All"/>
+  <dimension number="2" type="ClientAddr"/>
+  <data>
+  </data>
+</array>
+<array name="idn_vs_tld" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="All"/>
+  <dimension number="2" type="TLD"/>
+  <data>
+  </data>
+</array>
+<array name="rd_bit" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="All"/>
+  <dimension number="2" type="RD"/>
+  <data>
+    <All val="ALL">
+      <RD val="set" count="186"/>
+      <RD val="clr" count="159"/>
+    </All>
+  </data>
+</array>
+<array name="do_bit" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="All"/>
+  <dimension number="2" type="D0"/>
+  <data>
+    <All val="ALL">
+      <D0 val="clr" count="211"/>
+      <D0 val="set" count="134"/>
+    </All>
+  </data>
+</array>
+<array name="edns_bufsiz" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="All"/>
+  <dimension number="2" type="EDNSBufSiz"/>
+  <data>
+    <All val="ALL">
+      <EDNSBufSiz val="None" count="204"/>
+      <EDNSBufSiz val="4096-4607" count="73"/>
+      <EDNSBufSiz val="512-1023" count="26"/>
+      <EDNSBufSiz val="1024-1535" count="22"/>
+      <EDNSBufSiz val="3584-4095" count="12"/>
+      <EDNSBufSiz val="1536-2047" count="6"/>
+      <EDNSBufSiz val="2048-2559" count="1"/>
+      <EDNSBufSiz val="8192-8703" count="1"/>
+    </All>
+  </data>
+</array>
+<array name="edns_version" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="All"/>
+  <dimension number="2" type="EDNSVersion"/>
+  <data>
+    <All val="ALL">
+      <EDNSVersion val="none" count="204"/>
+      <EDNSVersion val="0" count="141"/>
+    </All>
+  </data>
+</array>
+<array name="idn_qname" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="All"/>
+  <dimension number="2" type="IDNQname"/>
+  <data>
+    <All val="ALL">
+      <IDNQname val="normal" count="345"/>
+    </All>
+  </data>
+</array>
+<array name="chaos_types_and_names" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="Qtype"/>
+  <dimension number="2" type="Qname"/>
+  <data>
+  </data>
+</array>
+<array name="client_addr_vs_rcode" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="Rcode"/>
+  <dimension number="2" type="ClientAddr"/>
+  <data>
+    <Rcode val="0">
+      <ClientAddr val="64.191.0.198" count="78"/>
+      <ClientAddr val="2620:ff:c000::198" count="50"/>
+      <ClientAddr val="-:SKIPPED:-" count="131"/>
+      <ClientAddr val="-:SKIPPED_SUM:-" count="131"/>
+    </Rcode>
+    <Rcode val="3">
+      <ClientAddr val="64.191.0.198" count="3"/>
+      <ClientAddr val="2620:ff:c000::198" count="2"/>
+    </Rcode>
+    <Rcode val="2">
+      <ClientAddr val="64.191.0.198" count="6"/>
+    </Rcode>
+  </data>
+</array>
+<array name="client_subnet2" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="Class"/>
+  <dimension number="2" type="ClientSubnet"/>
+  <data>
+    <Class val="ok">
+      <ClientSubnet val="64.191.0.0" count="180"/>
+      <ClientSubnet val="2620:ff:c000::198" count="5"/>
+    </Class>
+    <Class val="non-auth-tld">
+      <ClientSubnet val="64.191.0.0" count="18"/>
+    </Class>
+    <Class val="root-servers.net">
+    </Class>
+    <Class val="localhost">
+    </Class>
+    <Class val="a-for-a">
+    </Class>
+    <Class val="a-for-root">
+    </Class>
+    <Class val="rfc1918-ptr">
+      <ClientSubnet val="2620:ff:c000::198" count="1"/>
+    </Class>
+    <Class val="funny-qclass">
+    </Class>
+  </data>
+</array>
+<array name="certain_qnames_vs_qtype" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="CertainQnames"/>
+  <dimension number="2" type="Qtype"/>
+  <data>
+    <CertainQnames val="localhost">
+    </CertainQnames>
+    <CertainQnames val="X.root-servers.net">
+    </CertainQnames>
+    <CertainQnames val="else">
+      <Qtype val="1" count="128"/>
+      <Qtype val="12" count="78"/>
+      <Qtype val="28" count="71"/>
+      <Qtype val="48" count="25"/>
+      <Qtype val="16" count="18"/>
+      <Qtype val="15" count="9"/>
+      <Qtype val="2" count="7"/>
+      <Qtype val="43" count="5"/>
+      <Qtype val="6" count="4"/>
+    </CertainQnames>
+  </data>
+</array>
+<array name="qtype_vs_tld" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="Qtype"/>
+  <dimension number="2" type="TLD"/>
+  <data>
+    <Qtype val="1">
+      <TLD val="net" count="128"/>
+      <TLD val="..." count="128"/>
+    </Qtype>
+    <Qtype val="43">
+    </Qtype>
+    <Qtype val="12">
+      <TLD val="arpa" count="78"/>
+    </Qtype>
+    <Qtype val="16">
+    </Qtype>
+    <Qtype val="48">
+    </Qtype>
+    <Qtype val="28">
+      <TLD val="net" count="71"/>
+    </Qtype>
+    <Qtype val="15">
+      <TLD val="asia" count="8"/>
+      <TLD val="net" count="1"/>
+    </Qtype>
+    <Qtype val="2">
+      <TLD val="arpa" count="3"/>
+      <TLD val="net" count="2"/>
+      <TLD val="com" count="1"/>
+      <TLD val="org" count="1"/>
+    </Qtype>
+    <Qtype val="6">
+      <TLD val="net" count="2"/>
+      <TLD val="arpa" count="2"/>
+    </Qtype>
+  </data>
+</array>
+<array name="qtype_vs_qnamelen" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="Qtype"/>
+  <dimension number="2" type="QnameLen"/>
+  <data>
+    <Qtype val="1">
+      <QnameLen val="20" count="84"/>
+      <QnameLen val="15" count="28"/>
+      <QnameLen val="16" count="8"/>
+      <QnameLen val="24" count="2"/>
+      <QnameLen val="12" count="1"/>
+      <QnameLen val="18" count="1"/>
+      <QnameLen val="22" count="1"/>
+      <QnameLen val="23" count="1"/>
+      <QnameLen val="28" count="1"/>
+      <QnameLen val="46" count="1"/>
+    </Qtype>
+    <Qtype val="43">
+      <QnameLen val="15" count="2"/>
+      <QnameLen val="26" count="2"/>
+      <QnameLen val="17" count="1"/>
+    </Qtype>
+    <Qtype val="12">
+      <QnameLen val="23" count="35"/>
+      <QnameLen val="25" count="21"/>
+      <QnameLen val="26" count="16"/>
+      <QnameLen val="24" count="2"/>
+      <QnameLen val="72" count="2"/>
+      <QnameLen val="27" count="1"/>
+      <QnameLen val="28" count="1"/>
+    </Qtype>
+    <Qtype val="16">
+      <QnameLen val="74" count="9"/>
+      <QnameLen val="21" count="8"/>
+      <QnameLen val="15" count="1"/>
+    </Qtype>
+    <Qtype val="48">
+      <QnameLen val="23" count="11"/>
+      <QnameLen val="13" count="10"/>
+      <QnameLen val="12" count="2"/>
+      <QnameLen val="17" count="2"/>
+    </Qtype>
+    <Qtype val="28">
+      <QnameLen val="20" count="45"/>
+      <QnameLen val="15" count="12"/>
+      <QnameLen val="16" count="7"/>
+      <QnameLen val="24" count="2"/>
+      <QnameLen val="18" count="1"/>
+      <QnameLen val="23" count="1"/>
+      <QnameLen val="26" count="1"/>
+      <QnameLen val="35" count="1"/>
+      <QnameLen val="59" count="1"/>
+    </Qtype>
+    <Qtype val="15">
+      <QnameLen val="13" count="8"/>
+      <QnameLen val="26" count="1"/>
+    </Qtype>
+    <Qtype val="2">
+      <QnameLen val="12" count="3"/>
+      <QnameLen val="21" count="2"/>
+      <QnameLen val="9" count="1"/>
+      <QnameLen val="23" count="1"/>
+    </Qtype>
+    <Qtype val="6">
+      <QnameLen val="21" count="2"/>
+      <QnameLen val="9" count="1"/>
+      <QnameLen val="17" count="1"/>
+    </Qtype>
+  </data>
+</array>
+<array name="client_subnet" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="All"/>
+  <dimension number="2" type="ClientSubnet"/>
+  <data>
+    <All val="ALL">
+      <ClientSubnet val="64.191.0.0" count="198"/>
+      <ClientSubnet val="2620:ff:c000::" count="5"/>
+    </All>
+  </data>
+</array>
+<array name="rcode_vs_replylen" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="Rcode"/>
+  <dimension number="2" type="ReplyLen"/>
+  <data>
+    <Rcode val="0">
+      <ReplyLen val="54" count="84"/>
+      <ReplyLen val="66" count="45"/>
+      <ReplyLen val="75" count="40"/>
+      <ReplyLen val="232" count="31"/>
+      <ReplyLen val="244" count="17"/>
+      <ReplyLen val="272" count="11"/>
+      <ReplyLen val="1118" count="10"/>
+      <ReplyLen val="271" count="9"/>
+      <ReplyLen val="296" count="8"/>
+      <ReplyLen val="49" count="7"/>
+      <ReplyLen val="233" count="7"/>
+      <ReplyLen val="368" count="7"/>
+      <ReplyLen val="268" count="6"/>
+      <ReplyLen val="563" count="6"/>
+      <ReplyLen val="1472" count="6"/>
+      <ReplyLen val="82" count="5"/>
+      <ReplyLen val="309" count="5"/>
+      <ReplyLen val="42" count="4"/>
+      <ReplyLen val="88" count="4"/>
+      <ReplyLen val="104" count="4"/>
+      <ReplyLen val="241" count="4"/>
+      <ReplyLen val="379" count="4"/>
+      <ReplyLen val="722" count="4"/>
+      <ReplyLen val="62" count="3"/>
+      <ReplyLen val="245" count="3"/>
+      <ReplyLen val="293" count="3"/>
+      <ReplyLen val="298" count="3"/>
+      <ReplyLen val="478" count="3"/>
+      <ReplyLen val="587" count="3"/>
+      <ReplyLen val="41" count="2"/>
+      <ReplyLen val="50" count="2"/>
+      <ReplyLen val="61" count="2"/>
+      <ReplyLen val="84" count="2"/>
+      <ReplyLen val="87" count="2"/>
+      <ReplyLen val="96" count="2"/>
+      <ReplyLen val="99" count="2"/>
+      <ReplyLen val="102" count="2"/>
+      <ReplyLen val="110" count="2"/>
+      <ReplyLen val="123" count="2"/>
+      <ReplyLen val="131" count="2"/>
+      <ReplyLen val="132" count="2"/>
+      <ReplyLen val="239" count="2"/>
+      <ReplyLen val="253" count="2"/>
+      <ReplyLen val="261" count="2"/>
+      <ReplyLen val="396" count="2"/>
+      <ReplyLen val="574" count="2"/>
+      <ReplyLen val="1100" count="2"/>
+      <ReplyLen val="57" count="1"/>
+      <ReplyLen val="64" count="1"/>
+      <ReplyLen val="69" count="1"/>
+      <ReplyLen val="77" count="1"/>
+      <ReplyLen val="80" count="1"/>
+      <ReplyLen val="85" count="1"/>
+      <ReplyLen val="89" count="1"/>
+      <ReplyLen val="94" count="1"/>
+      <ReplyLen val="98" count="1"/>
+      <ReplyLen val="111" count="1"/>
+      <ReplyLen val="112" count="1"/>
+      <ReplyLen val="125" count="1"/>
+      <ReplyLen val="127" count="1"/>
+      <ReplyLen val="151" count="1"/>
+      <ReplyLen val="155" count="1"/>
+      <ReplyLen val="174" count="1"/>
+      <ReplyLen val="202" count="1"/>
+      <ReplyLen val="229" count="1"/>
+      <ReplyLen val="235" count="1"/>
+      <ReplyLen val="237" count="1"/>
+      <ReplyLen val="259" count="1"/>
+      <ReplyLen val="294" count="1"/>
+      <ReplyLen val="299" count="1"/>
+      <ReplyLen val="302" count="1"/>
+      <ReplyLen val="324" count="1"/>
+      <ReplyLen val="326" count="1"/>
+      <ReplyLen val="328" count="1"/>
+      <ReplyLen val="345" count="1"/>
+      <ReplyLen val="362" count="1"/>
+      <ReplyLen val="389" count="1"/>
+      <ReplyLen val="412" count="1"/>
+      <ReplyLen val="591" count="1"/>
+      <ReplyLen val="1141" count="1"/>
+      <ReplyLen val="1146" count="1"/>
+    </Rcode>
+    <Rcode val="3">
+      <ReplyLen val="92" count="2"/>
+      <ReplyLen val="101" count="2"/>
+      <ReplyLen val="694" count="2"/>
+      <ReplyLen val="130" count="1"/>
+      <ReplyLen val="795" count="1"/>
+    </Rcode>
+    <Rcode val="2">
+      <ReplyLen val="31" count="6"/>
+    </Rcode>
+  </data>
+</array>
+<array name="opcode" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="All"/>
+  <dimension number="2" type="Opcode"/>
+  <data>
+    <All val="ALL">
+      <Opcode val="0" count="345"/>
+    </All>
+  </data>
+</array>
+<array name="rcode" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="All"/>
+  <dimension number="2" type="Rcode"/>
+  <data>
+    <All val="ALL">
+      <Rcode val="0" count="416"/>
+      <Rcode val="3" count="8"/>
+      <Rcode val="2" count="6"/>
+    </All>
+  </data>
+</array>
+<array name="qtype" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="All"/>
+  <dimension number="2" type="Qtype"/>
+  <data>
+    <All val="ALL">
+      <Qtype val="1" count="128"/>
+      <Qtype val="12" count="78"/>
+      <Qtype val="28" count="71"/>
+      <Qtype val="48" count="25"/>
+      <Qtype val="16" count="18"/>
+      <Qtype val="15" count="9"/>
+      <Qtype val="2" count="7"/>
+      <Qtype val="43" count="5"/>
+      <Qtype val="6" count="4"/>
+    </All>
+  </data>
+</array>
+</dscdata>

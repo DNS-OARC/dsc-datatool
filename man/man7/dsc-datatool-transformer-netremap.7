@@ -1,0 +1,60 @@
+.TH "dsc-datatool-transformer netremap" "7"
+.SH NAME
+NetRemap \- Remap network addresses to other ranges/subnets.
+.SH SYNOPSIS
+.SY dsc-datatool
+.B \-\-transform
+.I """;NetRemap;<dataset>;<options...>"""
+.YS
+.SH DESCRIPTION
+This transformer can remap network ranges on IP addresses and subnets.
+.SH OPTIONS
+.TP
+.B dataset
+See
+.IR dsc-datatool (1)
+on how to specify which dataset(s) to run the transformer on.
+.TP
+.BR net =<network>
+The network to remap both IPv4 and IPv6 addresses and networks, specify
+only the number in a short-form network (e.g. "/<network>").
+.TP
+.BR v4net =<network>
+The IPv4 network to use for IPv4 addresses and networks, default to
+.I net
+if that is specified.
+.TP
+.BR v6net =<network>
+The IPv6 network to use for IPv6 addresses and networks, default to
+.I net
+if that is specified.
+.TP
+.BR nonstrict =<value>
+If set (to any value) then a non-strict mode is enabled which will disregard
+any bad data in the dataset, skipping it completely.
+Default is strict mode.
+.LP
+.SH "SEE ALSO"
+.BR dsc-datatool (1)
+.SH AUTHORS
+Jerry Lundström, DNS-OARC
+.LP
+Maintained by DNS-OARC
+.LP
+.RS
+.I https://www.dns-oarc.net/tools/dsc
+.RE
+.LP
+.SH BUGS
+For issues and feature requests please use:
+.LP
+.RS
+\fIhttps://github.com/DNS-OARC/dsc-datatool/issues\fP
+.RE
+.LP
+For question and help please use:
+.LP
+.RS
+\fIhttps://lists.dns-oarc.net/mailman/listinfo/dsc\fP
+.RE
+.LP
