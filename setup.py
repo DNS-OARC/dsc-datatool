@@ -6,10 +6,10 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    python_requires='>=3.6.8',
+    python_requires='>=3.5.1',
     install_requires=[
-        'maxminddb>=1.3.0',
-        'PyYAML>=3.12',
+        'maxminddb>=1.2.0',
+        'PyYAML>=3.11',
     ],
     extras_require={
         'dev': [

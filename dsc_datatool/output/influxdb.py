@@ -97,3 +97,7 @@ class InfluxDB(Output):
 
             for d in dataset.dimensions:
                 _process(tags, timestamp, d, self.fh)
+
+
+if sys.version_info[0] == 3 and sys.version_info[1] == 5:
+    Output.__init_subclass__(InfluxDB)
