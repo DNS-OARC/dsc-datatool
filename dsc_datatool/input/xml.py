@@ -52,3 +52,8 @@ class XML(Input):
             datasets.append(dataset)
 
         return datasets
+
+
+import sys
+if sys.version_info[0] == 3 and sys.version_info[1] == 5:
+    Input.__init_subclass__(XML)

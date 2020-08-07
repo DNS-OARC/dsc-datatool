@@ -162,3 +162,8 @@ class client_subnet_authority(Generator):
                 authd.dimensions.append(authd1)
 
         return gen_datasets
+
+
+import sys
+if sys.version_info[0] == 3 and sys.version_info[1] == 5:
+    Generator.__init_subclass__(client_subnet_authority)
