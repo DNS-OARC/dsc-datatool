@@ -32,7 +32,7 @@ Example of an output:
 :copyright: 2020 OARC, Inc.
 """
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 import argparse
 import logging
