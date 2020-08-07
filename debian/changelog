@@ -1,3 +1,14 @@
+dsc-datatool (1.0.1-1~unstable+1) unstable; urgency=low
+
+  * Release 1.0.1
+
+    This release adds compatibility with Python v3.5 which allows
+    packages to be built for Ubuntu Xenial.
+
+    bc0be5b python 3.5
+
+ -- Jerry Lundström <lundstrom.jerry@gmail.com>  Fri, 07 Aug 2020 10:51:33 +0200
+
 dsc-datatool (1.0.0-2~unstable+1) unstable; urgency=low
 
   * Release 1.0.0

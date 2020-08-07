@@ -1,6 +1,6 @@
 Name:           dsc-datatool
-Version:        1.0.0
-Release:        2%{?dist}
+Version:        1.0.1
+Release:        1%{?dist}
 Summary:        Export DSC data to other formats and/or databases
 Group:          Productivity/Networking/DNS/Utilities
 
@@ -83,6 +83,12 @@ install -m644 man/man7/dsc-datatool-transformer-netremap.7 %{buildroot}%{_mandir
 
 
 %changelog
+* Fri Aug 07 2020 Jerry Lundström <lundstrom.jerry@gmail.com> 1.0.1-1
+- Release 1.0.1
+  * This release adds compatibility with Python v3.5 which allows
+    packages to be built for Ubuntu Xenial.
+  * Commits:
+    bc0be5b python 3.5
 * Mon Aug 03 2020 Jerry Lundström <lundstrom.jerry@gmail.com> 1.0.0-2
 - Release 1.0.0
   * This release brings a complete rewrite of the tool, from Perl to
