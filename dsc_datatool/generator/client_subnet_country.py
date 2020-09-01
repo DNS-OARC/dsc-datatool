@@ -94,5 +94,5 @@ class client_subnet_country(Generator):
 
 
 import sys
-if sys.version_info[0] == 3 and sys.version_info[1] == 5:
+if sys.version_info[0] == 3 and sys.version_info[1] == 5: # pragma: no cover
     Generator.__init_subclass__(client_subnet_country)

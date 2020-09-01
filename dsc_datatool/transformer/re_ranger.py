@@ -119,5 +119,5 @@ class ReRanger(Transformer):
 
 
 import sys
-if sys.version_info[0] == 3 and sys.version_info[1] == 5:
+if sys.version_info[0] == 3 and sys.version_info[1] == 5: # pragma: no cover
     Transformer.__init_subclass__(ReRanger)
