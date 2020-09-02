@@ -15,7 +15,7 @@ def test_dimension():
 def test_input():
     o = Input()
     with pytest.raises(Exception):
-        o.process()
+        o.process("test")
 
     class Input1(Input):
         def process(self, file):
@@ -29,7 +29,7 @@ def test_input():
 def test_output():
     o = Output({})
     with pytest.raises(Exception):
-        o.process()
+        o.process([])
 
     class Output1(Output):
         def process(self, file):
@@ -43,7 +43,7 @@ def test_output():
 def test_generator():
     o = Generator({})
     with pytest.raises(Exception):
-        o.process()
+        o.process([])
 
     class Generator1(Generator):
         def process(self, file):
@@ -57,7 +57,7 @@ def test_generator():
 def test_transformer():
     o = Transformer({})
     with pytest.raises(Exception):
-        o.process()
+        o.process([])
 
     class Transformer1(Transformer):
         def process(self, file):
