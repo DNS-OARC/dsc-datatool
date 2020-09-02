@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
 base=`dirname $0`
-export PYTHONPATH="$base/.."
+export PYTHONPATH="$base/..:$PYTHONPATH"
 
 exec python3-coverage run -a "$base/dsc-datatool.py" "$@"

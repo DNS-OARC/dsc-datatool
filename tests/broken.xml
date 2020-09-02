@@ -1,0 +1,3 @@
+<dscdata>
+<array name="pcap_stats" dimensions="2" start_time="1563520560" stop_time="1563520620">
+  <dimension number="1" type="ifname"
