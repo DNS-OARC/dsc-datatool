@@ -7,10 +7,13 @@ addons:
     - python3-pip
     - python3-maxminddb
     - python3-yaml
+    - python3-pytest
+    - python3-coverage
 language: sh
 script:
   - python3 -m venv venv --system-site-packages
   - . venv/bin/activate
   - pip install -e .
+  - python3-coverage run -m pytest
   - cd tests
   - ./test.sh

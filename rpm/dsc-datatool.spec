@@ -1,5 +1,5 @@
 Name:           dsc-datatool
-Version:        1.0.1
+Version:        1.0.2
 Release:        1%{?dist}
 Summary:        Export DSC data to other formats and/or databases
 Group:          Productivity/Networking/DNS/Utilities
@@ -83,6 +83,17 @@ install -m644 man/man7/dsc-datatool-transformer-netremap.7 %{buildroot}%{_mandir
 
 
 %changelog
+* Wed Oct 21 2020 Jerry Lundström <lundstrom.jerry@gmail.com> 1.0.2-1
+- Release 1.0.2
+  * This release fixed a bug in DAT file parsing that was discovered when
+    adding coverage tests.
+  * Commits:
+    45b1aa3 Coverage
+    7aedc1a Coverage
+    64957b9 DAT, Coverage
+    370fb86 Coverage
+    891cb7c Coverage
+    9374faa Coverage
 * Fri Aug 07 2020 Jerry Lundström <lundstrom.jerry@gmail.com> 1.0.1-1
 - Release 1.0.1
   * This release adds compatibility with Python v3.5 which allows

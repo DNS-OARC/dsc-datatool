@@ -93,7 +93,7 @@ class DAT(Input):
                 dataset.stop_time = dataset.start_time + 60
 
                 d1 = Dimension('All')
-                d1.values = { 'ALL': dat[0] }
+                d1.values = { 'ALL': int(dat[0]) }
                 dataset.dimensions.append(d1)
 
                 datasets.append(dataset)
@@ -125,7 +125,7 @@ class DAT(Input):
                         raise Exception('DAT %r dataset %r: invalid number of elements for a 2d dataset' % (file, name))
                     k = dat.pop(0)
                     v = dat.pop(0)
-                    d2.values[k] = v
+                    d2.values[k] = int(v)
                 d1.dimensions.append(d2)
 
                 datasets.append(dataset)
@@ -164,7 +164,7 @@ class DAT(Input):
                             raise Exception('DAT %r dataset %r: invalid number of elements for a 2d dataset' % (file, name))
                         k2 = dat2.pop(0)
                         v2 = dat2.pop(0)
-                        d2.values[k2] = v2
+                        d2.values[k2] = int(v2)
                     d1.dimensions.append(d2)
 
                 datasets.append(dataset)
@@ -173,5 +173,5 @@ class DAT(Input):
 
 
 import sys
-if sys.version_info[0] == 3 and sys.version_info[1] == 5:
+if sys.version_info[0] == 3 and sys.version_info[1] == 5: # pragma: no cover
     Input.__init_subclass__(DAT)
