@@ -1,3 +1,17 @@
+2020-10-21 Jerry Lundström
+
+    Release 1.0.2
+
+    This release fixed a bug in DAT file parsing that was discovered when
+    adding coverage tests.
+
+    45b1aa3 Coverage
+    7aedc1a Coverage
+    64957b9 DAT, Coverage
+    370fb86 Coverage
+    891cb7c Coverage
+    9374faa Coverage
+
 2020-08-07 Jerry Lundström
 
     Release 1.0.1
