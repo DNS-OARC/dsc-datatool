@@ -8,6 +8,17 @@ Please have a look at the man-page(s) `dsc-datatool` (1) on how to use or
 [the wiki article](https://github.com/DNS-OARC/dsc-datatool/wiki/Setting-up-a-test-Grafana)
 on how to set this up using Influx DB and Grafana.
 
+More information about DSC may be found here:
+- https://www.dns-oarc.net/tools/dsc
+- https://www.dns-oarc.net/oarc/data/dsc
+
+Issues should be reported here:
+- https://github.com/DNS-OARC/dsc-datatool/issues
+
+General support and discussion:
+- Mattermost: https://chat.dns-oarc.net/community/channels/oarc-software
+- mailing-list: https://lists.dns-oarc.net/mailman/listinfo/dsc
+
 ## Dependencies
 
 `dsc-datatool` requires the following Python libraries:
