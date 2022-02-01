@@ -21,9 +21,9 @@ because timestamps are not supported by the Textfile Collector.
 
 You must make sure only one XML file from a server+node combination is
 processed at a time.
-Because otherwise you will have multiple data point from the same metric
-in the files generated and because the Textfile Collector does not support
-timestamps it cannot separate the measurements.
+Because otherwise you will get multiple data point for the same metric
+and this will generate errors from the Textfile Collector, since it does
+not support timestamps and cannot separate the measurements.
 
 You must make sure that only one file (per server+node combo) is generated
 for the Textfile Collector to read, and it should be the same between runs.
