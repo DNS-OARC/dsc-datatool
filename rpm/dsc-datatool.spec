@@ -64,6 +64,7 @@ install -m644 man/man7/dsc-datatool-transformer-reranger.7 %{buildroot}%{_mandir
 install -m644 man/man7/dsc-datatool-generator-client_subnet_country.7 %{buildroot}%{_mandir}/man7/
 install -m644 man/man7/dsc-datatool-generator-client_subnet_authority.7 %{buildroot}%{_mandir}/man7/
 install -m644 man/man7/dsc-datatool-output-influxdb.7 %{buildroot}%{_mandir}/man7/
+install -m644 man/man7/dsc-datatool-output-prometheus.7 %{buildroot}%{_mandir}/man7/
 install -m644 man/man7/dsc-datatool-transformer-labler.7 %{buildroot}%{_mandir}/man7/
 install -m644 man/man7/dsc-datatool-transformer-netremap.7 %{buildroot}%{_mandir}/man7/
 

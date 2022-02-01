@@ -4,7 +4,7 @@ See `man dsc-datatool-generator client_subnet_authority`.
 
 Part of dsc_datatool.
 
-:copyright: 2020 OARC, Inc.
+:copyright: 2022 OARC, Inc.
 """
 
 import csv

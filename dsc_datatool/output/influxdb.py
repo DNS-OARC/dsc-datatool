@@ -4,14 +4,14 @@ See `man dsc-datatool-output influxdb`.
 
 Part of dsc_datatool.
 
-:copyright: 2020 OARC, Inc.
+:copyright: 2022 OARC, Inc.
 """
 
 import re
 import sys
 import atexit
 
-from dsc_datatool import Output,args
+from dsc_datatool import Output, args
 
 
 _re = re.compile(r'([,=\s])')
@@ -60,7 +60,7 @@ class InfluxDB(Output):
         if timestamp == 'start':
             pass
         elif timestamp == 'stop':
-            self.timestamp = False
+            self.start_timestamp = False
         else:
             raise Exception('timestamp option invalid')
         file = opts.get('file', None)
