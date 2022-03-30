@@ -14,6 +14,7 @@ BuildArch:      noarch
 
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
+BuildRequires:  python-rpm-macros
 %if 0%{?el7}
 BuildRequires:  python36-maxminddb
 BuildRequires:  python36-PyYAML
