@@ -1,5 +1,5 @@
 Name:           dsc-datatool
-Version:        1.0.2
+Version:        1.1.0
 Release:        1%{?dist}
 Summary:        Export DSC data to other formats and/or databases
 Group:          Productivity/Networking/DNS/Utilities
@@ -85,6 +85,20 @@ install -m644 man/man7/dsc-datatool-transformer-netremap.7 %{buildroot}%{_mandir
 
 
 %changelog
+* Tue Apr 05 2022 Jerry Lundström <lundstrom.jerry@gmail.com> 1.1.0-1
+- Release 1.1.0
+  * This releases adds support for Prometheus' node_exporter using it's
+    Textfile Collector (see `man dsc-datatool-output prometheus`) and
+    fixes a bug in InfluxDB output when selecting what timestamp to use.
+    Also updates packages and Grafana test site dashboards.
+  * Commits:
+    4381541 RPM
+    19bc153 Typo/clarification
+    2a32dd8 Prometheus, InfluxDB, Copyright
+    dd5323e debhelper
+    7352c1e Bye Travis
+    32b3bbe Grafana dashboards
+    304ab76 Info
 * Wed Oct 21 2020 Jerry Lundström <lundstrom.jerry@gmail.com> 1.0.2-1
 - Release 1.0.2
   * This release fixed a bug in DAT file parsing that was discovered when

@@ -1,3 +1,22 @@
+dsc-datatool (1.1.0-1~unstable+1) unstable; urgency=low
+
+  * Release 1.1.0
+
+    This releases adds support for Prometheus' node_exporter using it's
+    Textfile Collector (see `man dsc-datatool-output prometheus`) and
+    fixes a bug in InfluxDB output when selecting what timestamp to use.
+    Also updates packages and Grafana test site dashboards.
+
+    4381541 RPM
+    19bc153 Typo/clarification
+    2a32dd8 Prometheus, InfluxDB, Copyright
+    dd5323e debhelper
+    7352c1e Bye Travis
+    32b3bbe Grafana dashboards
+    304ab76 Info
+
+ -- Jerry Lundström <lundstrom.jerry@gmail.com>  Tue, 05 Apr 2022 10:45:59 +0200
+
 dsc-datatool (1.0.2-1~unstable+1) unstable; urgency=low
 
   * Release 1.0.2
