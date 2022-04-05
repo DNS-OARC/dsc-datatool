@@ -4,7 +4,7 @@ See `man dsc-datatool-transformer reranger`.
 
 Part of dsc_datatool.
 
-:copyright: 2020 OARC, Inc.
+:copyright: 2022 OARC, Inc.
 """
 
 import re

@@ -1,0 +1,75 @@
+.TH "dsc-datatool-output prometheus" "7"
+.SH NAME
+Prometheus \- Prometheus output.
+.SH SYNOPSIS
+.SY dsc-datatool
+.B \-\-output
+.I """;Prometheus;<options...>"""
+.YS
+.SH DESCRIPTION
+This output generates Prometheus importable output to stdout or to a specified
+file.
+.SS Prometheus' node_exporter
+This output can be used together with Prometheus'
+.IR node_exporter 's
+Textfile Collector to automate statistics gathering but some specific
+setup and requirements must be meet.
+
+You must hide the timestamp with option
+.B timestamp=hide
+because timestamps are not supported by the Textfile Collector.
+
+You must make sure only one XML file from a server+node combination is
+processed at a time.
+Because otherwise you will get multiple data point for the same metric
+and this will generate errors from the Textfile Collector, since it does
+not support timestamps and cannot separate the measurements.
+
+You must make sure that only one file (per server+node combo) is generated
+for the Textfile Collector to read, and it should be the same between runs.
+See Textfile Collectors documentation how to setup that atomically.
+.SH OPTIONS
+.TP
+.BR timestamp =[hide|start|stop]
+Choose which timestamp from the dataset to use in the Prometheus output to
+specify when the metrics took place.
+
+Default to
+.I start
+timestamp.
+.TP
+.BR file =<filename>
+Specify a file to output to instead of stdout.
+.TP
+.BR append
+If given, the output will be appended to the file specified rather then
+overwritten.
+.LP
+.SH "SEE ALSO"
+.BR dsc-datatool (1)
+
+.I https://prometheus.io/docs/guides/node-exporter/
+
+.I https://github.com/prometheus/node_exporter#textfile-collector
+.SH AUTHORS
+Jerry Lundström, DNS-OARC
+.LP
+Maintained by DNS-OARC
+.LP
+.RS
+.I https://www.dns-oarc.net/tools/dsc
+.RE
+.LP
+.SH BUGS
+For issues and feature requests please use:
+.LP
+.RS
+\fIhttps://github.com/DNS-OARC/dsc-datatool/issues\fP
+.RE
+.LP
+For question and help please use:
+.LP
+.RS
+\fIhttps://lists.dns-oarc.net/mailman/listinfo/dsc\fP
+.RE
+.LP
