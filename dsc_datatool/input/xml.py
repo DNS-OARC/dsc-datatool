@@ -9,6 +9,7 @@ Part of dsc_datatool.
 
 import logging
 from xml.dom import minidom
+import base64
 
 from dsc_datatool import Input, Dataset, Dimension, process_dataset
 
@@ -42,12 +43,23 @@ class XML(Input):
             for node1 in array.getElementsByTagName(dimensions[0]):
                 d1 = Dimension(dimensions[0])
                 d1.value = node1.getAttribute('val')
+                try:
+                    if node1.getAttribute('base64'):
+                        d1.value = base64.b64decode(d1.value).decode('utf-8')
+                except Exception as e:
+                    pass
                 dataset.dimensions.append(d1)
 
                 d2 = Dimension(dimensions[1])
                 d1.dimensions.append(d2)
                 for node2 in node1.getElementsByTagName(dimensions[1]):
-                    d2.values[node2.getAttribute('val')] = int(node2.getAttribute('count'))
+                    val = node2.getAttribute('val')
+                    try:
+                        if node2.getAttribute('base64'):
+                            val = base64.b64decode(val).decode('utf-8')
+                    except Exception as e:
+                        pass
+                    d2.values[val] = int(node2.getAttribute('count'))
 
             datasets.append(dataset)
 
