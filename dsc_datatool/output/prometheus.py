@@ -96,7 +96,7 @@ class Prometheus(Output):
         for dataset in datasets:
             self.type_def = '# TYPE %s gauge' % _key(dataset.name.lower())
             self.type_printed = False
-            tags = '%s{server=%s,node=%s' % (_key(dataset.name.lower()), _val(args.server), _val(args.node))
+            tags = '%s_%s{server=%s,node=%s' % (_key(args.prefix), _key(dataset.name.lower()), _val(args.server), _val(args.node))
             if self.start_timestamp:
                 timestamp = dataset.start_time * 1000
             else:

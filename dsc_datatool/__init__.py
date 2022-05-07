@@ -335,6 +335,8 @@ def main():
         help='"<name>[,<name>,...]" or "<sep><name>[<sep>option=value...]>" Use the specified generators to generate additional datasets.')
     parser.add_argument('--list', action='store_true',
         help='List the available generators, transformers and outputs then exit.')
+    parser.add_argument('--prefix', nargs=1 ,default='dsc',
+        help='Add prefix for prometheus metrics. (default to "dsc")')
     parser.add_argument('--skipped-key', nargs=1, default='-:SKIPPED:-',
         help='Set the special DSC skipped key. (default to "-:SKIPPED:-")')
     parser.add_argument('--skipped-sum-key', nargs=1, default='-:SKIPPED_SUM:-',
