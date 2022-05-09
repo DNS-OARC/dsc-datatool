@@ -32,8 +32,9 @@ class Prometheus(Output):
     show_timestamp = True
     start_timestamp = True
     fh = None
-    type_def = ""
+    type_def = ''
     type_printed = False
+    prefix = ''
 
 
     def __init__(self, opts):
@@ -57,6 +58,7 @@ class Prometheus(Output):
             atexit.register(self.close)
         else:
             self.fh = sys.stdout
+        self.prefix = opts.get('prefix', '')
 
 
     def close(self):
@@ -96,7 +98,7 @@ class Prometheus(Output):
         for dataset in datasets:
             self.type_def = '# TYPE %s gauge' % _key(dataset.name.lower())
             self.type_printed = False
-            tags = '%s{server=%s,node=%s' % (_key(dataset.name.lower()), _val(args.server), _val(args.node))
+            tags = '%s%s{server=%s,node=%s' % (self.prefix, _key(dataset.name.lower()), _val(args.server), _val(args.node))
             if self.start_timestamp:
                 timestamp = dataset.start_time * 1000
             else:
