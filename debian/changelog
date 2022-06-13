@@ -1,3 +1,20 @@
+dsc-datatool (1.2.0-1~unstable+1) unstable; urgency=low
+
+  * Release 1.2.0
+
+    This release fixes handling of base64'ed strings in DSC XML and will
+    now decode them back into text when reading, the selected output will
+    then handling any quoting or escaping needed.
+    Added a new option for Prometheus output to set a prefix for metrics so
+    that they can be easily separated from other metrics if needed, see
+    `man dsc-datatool-output prometheus`.
+
+    5f9f972 Fix COPR
+    3d72019 Prometheus metric prefix
+    bdc992e base64 labels
+
+ -- Jerry Lundström <lundstrom.jerry@gmail.com>  Mon, 13 Jun 2022 15:25:09 +0200
+
 dsc-datatool (1.1.0-1~unstable+1) unstable; urgency=low
 
   * Release 1.1.0
