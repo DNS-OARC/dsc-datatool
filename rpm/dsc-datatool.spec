@@ -1,5 +1,5 @@
 Name:           dsc-datatool
-Version:        1.1.0
+Version:        1.2.0
 Release:        1%{?dist}
 Summary:        Export DSC data to other formats and/or databases
 Group:          Productivity/Networking/DNS/Utilities
@@ -85,6 +85,18 @@ install -m644 man/man7/dsc-datatool-transformer-netremap.7 %{buildroot}%{_mandir
 
 
 %changelog
+* Mon Jun 13 2022 Jerry Lundström <lundstrom.jerry@gmail.com> 1.2.0-1
+- Release 1.2.0
+  * This release fixes handling of base64'ed strings in DSC XML and will
+    now decode them back into text when reading, the selected output will
+    then handling any quoting or escaping needed.
+  * Added a new option for Prometheus output to set a prefix for metrics so
+    that they can be easily separated from other metrics if needed, see
+    `man dsc-datatool-output prometheus`.
+  * Commits:
+    5f9f972 Fix COPR
+    3d72019 Prometheus metric prefix
+    bdc992e base64 labels
 * Tue Apr 05 2022 Jerry Lundström <lundstrom.jerry@gmail.com> 1.1.0-1
 - Release 1.1.0
   * This releases adds support for Prometheus' node_exporter using it's
