@@ -36,6 +36,7 @@ _desig2rir = {
 
 class client_subnet_authority(Generator):
     auth = None
+    nonstrict = False
 
 
     def _read(self, input):
@@ -89,6 +90,9 @@ class client_subnet_authority(Generator):
         csvs = opts.get('csv', None)
         urlv4 = opts.get('urlv4', 'https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.csv')
         urlv6 = opts.get('urlv6', 'https://www.iana.org/assignments/ipv6-unicast-address-assignments/ipv6-unicast-address-assignments.csv')
+        if opts.get('nonstrict', False):
+            self.nonstrict = True
+
         if csvs:
             if not isinstance(csvs, list):
                 csvs = [ csvs ]
@@ -130,7 +134,12 @@ class client_subnet_authority(Generator):
 
             auth = {}
             for subnet in subnets:
-                ip = ipaddress.ip_address(subnet)
+                try:
+                    ip = ipaddress.ip_address(subnet)
+                except Exception as e:
+                    if not self.nonstrict:
+                        raise e
+                    continue
                 if ip.version == 4:
                     idx = ipaddress.ip_network('%s/8' % ip, strict=False)
                     ip = ipaddress.ip_network('%s/32' % ip)
