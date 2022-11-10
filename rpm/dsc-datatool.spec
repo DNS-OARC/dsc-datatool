@@ -1,5 +1,5 @@
 Name:           dsc-datatool
-Version:        1.2.0
+Version:        1.3.0
 Release:        1%{?dist}
 Summary:        Export DSC data to other formats and/or databases
 Group:          Productivity/Networking/DNS/Utilities
@@ -85,6 +85,17 @@ install -m644 man/man7/dsc-datatool-transformer-netremap.7 %{buildroot}%{_mandir
 
 
 %changelog
+* Thu Nov 10 2022 Jerry Lundström <lundstrom.jerry@gmail.com> 1.3.0-1
+- Release 1.3.0
+  * This release adds option `nonstrict` to `client_subnet_authority`
+    generator for skipping bad data in datasets.
+  * The contrib DSC+Grafana test site dashboards has been moved to its
+    own repository, feel free to contribute your own creations to it:
+      https://github.com/DNS-OARC/dsc-datatool-grafana
+  * Commits:
+    90b232d Add CodeQL workflow for GitHub code scanning
+    e4fa3b0 Test site
+    474f97d client_subnet_authority non-strict mode
 * Mon Jun 13 2022 Jerry Lundström <lundstrom.jerry@gmail.com> 1.2.0-1
 - Release 1.2.0
   * This release fixes handling of base64'ed strings in DSC XML and will
