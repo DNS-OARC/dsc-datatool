@@ -1,3 +1,20 @@
+dsc-datatool (1.3.0-1~unstable+1) unstable; urgency=low
+
+  * Release 1.3.0
+
+    This release adds option `nonstrict` to `client_subnet_authority`
+    generator for skipping bad data in datasets.
+
+    The contrib DSC+Grafana test site dashboards has been moved to its
+    own repository, feel free to contribute your own creations to it:
+      https://github.com/DNS-OARC/dsc-datatool-grafana
+
+    90b232d Add CodeQL workflow for GitHub code scanning
+    e4fa3b0 Test site
+    474f97d client_subnet_authority non-strict mode
+
+ -- Jerry Lundström <lundstrom.jerry@gmail.com>  Thu, 10 Nov 2022 13:58:05 +0100
+
 dsc-datatool (1.2.0-1~unstable+1) unstable; urgency=low
 
   * Release 1.2.0

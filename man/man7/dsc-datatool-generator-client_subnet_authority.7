@@ -34,6 +34,11 @@ URL for IANA IPv4 address space registry, default to
 .BR urlv6 =url
 URL for IANA IPv6 address space registry, default to
 .IR https://www.iana.org/assignments/ipv6-unicast-address-assignments/ipv6-unicast-address-assignments.csv .
+.TP
+.BR nonstrict =<value>
+If set (to any value) then a non-strict mode is enabled which will disregard
+any bad data in the dataset, skipping it completely.
+Default is strict mode.
 .LP
 .SH "SEE ALSO"
 .BR dsc-datatool (1)
