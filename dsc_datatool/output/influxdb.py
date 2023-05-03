@@ -67,9 +67,9 @@ class InfluxDB(Output):
         append = opts.get('append', False)
         if file:
             if append:
-                self.fh = open(file, 'a')
+                self.fh = open(file, 'a', encoding="utf-8")
             else:
-                self.fh = open(file, 'w')
+                self.fh = open(file, 'w', encoding="utf-8")
             atexit.register(self.close)
         else:
             self.fh = sys.stdout
