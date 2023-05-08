@@ -13,7 +13,7 @@ import logging
 from urllib.request import Request, urlopen
 from io import StringIO
 
-from dsc_datatool import Generator, Dataset, Dimension, args
+from dsc_datatool import Generator, Dataset, Dimension, args, encoding
 
 
 _whois2rir = {
@@ -97,7 +97,7 @@ class client_subnet_authority(Generator):
             if not isinstance(csvs, list):
                 csvs = [ csvs ]
             for file in csvs:
-                with open(file, newline='') as csvfile:
+                with open(file, newline='', encoding=encoding) as csvfile:
                     self._read(csvfile)
         elif opts.get('fetch', 'no').lower() == 'yes':
             urls = opts.get('url', [ urlv4, urlv6 ])
