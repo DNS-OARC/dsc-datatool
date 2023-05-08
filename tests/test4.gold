@@ -1,0 +1,5 @@
+# CONTEXT-DATABASE: dsc
+# DML
+pcap_stats,server=test-server-åäö,node=test-node,ifname=eth0åäö,pcap_stat=filter_received value=5625 1563520560000000000
+pcap_stats,server=test-server-åäö,node=test-node,ifname=eth0åäö,pcap_stat=kernel_dropped value=731 1563520560000000000
+pcap_stats,server=test-server-åäö,node=test-node,ifname=eth0åäö,pcap_stat=pkts_captured value=4894 1563520560000000000

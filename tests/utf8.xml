@@ -1,0 +1,13 @@
+<dscdata>
+<array name="pcap_stats" dimensions="2" start_time="1563520560" stop_time="1563520621">
+  <dimension number="1" type="ifname"/>
+  <dimension number="2" type="pcap_stat"/>
+  <data>
+    <ifname val="eth0åäö">
+      <pcap_stat val="filter_received" count="5625"/>
+      <pcap_stat val="pkts_captured" count="4894"/>
+      <pcap_stat val="kernel_dropped" count="731"/>
+    </ifname>
+  </data>
+</array>
+</dscdata>

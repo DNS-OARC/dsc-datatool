@@ -9,7 +9,7 @@ Part of dsc_datatool.
 
 import yaml
 
-from dsc_datatool import Transformer
+from dsc_datatool import Transformer, encoding
 
 
 def _process(label, d):
@@ -43,7 +43,7 @@ class Labler(Transformer):
         Transformer.__init__(self, opts)
         if not 'yaml' in opts:
             raise Exception('yaml=file option required')
-        f = open(opts.get('yaml'), 'r')
+        f = open(opts.get('yaml'), 'r', encoding=encoding)
         try:
             self.label = yaml.full_load(f)
         except AttributeError:
