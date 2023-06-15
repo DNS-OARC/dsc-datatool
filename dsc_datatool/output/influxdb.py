@@ -4,7 +4,7 @@ See `man dsc-datatool-output influxdb`.
 
 Part of dsc_datatool.
 
-:copyright: 2022 OARC, Inc.
+:copyright: 2023 OARC, Inc.
 """
 
 import re

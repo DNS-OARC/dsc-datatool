@@ -4,7 +4,7 @@ Input plugin to generate `Dataset`'s from DSC DAT files.
 
 Part of dsc_datatool.
 
-:copyright: 2022 OARC, Inc.
+:copyright: 2023 OARC, Inc.
 """
 
 import re
