@@ -29,10 +29,10 @@ Example of an output:
         def process(self, datasets)
             ...
 
-:copyright: 2022 OARC, Inc.
+:copyright: 2023 OARC, Inc.
 """
 
-__version__ = '1.3.0'
+__version__ = '1.4.0'
 
 import argparse
 import logging
@@ -49,6 +49,7 @@ outputs = {}
 generators = {}
 transformers = {}
 process_dataset = {}
+encoding = 'utf-8'
 
 
 class Dataset(object):
@@ -339,6 +340,8 @@ def main():
         help='Set the special DSC skipped key. (default to "-:SKIPPED:-")')
     parser.add_argument('--skipped-sum-key', nargs=1, default='-:SKIPPED_SUM:-',
         help='Set the special DSC skipped sum key. (default to "-:SKIPPED_SUM:-")')
+    parser.add_argument('--encoding', nargs=1, default='utf-8',
+        help='Encoding to use for all files, default utf-8.')
     parser.add_argument('-v', '--verbose', action='count', default=0,
         help='Increase the verbose level, can be given multiple times.')
     parser.add_argument('-V', '--version', action='version', version='%(prog)s v'+__version__,

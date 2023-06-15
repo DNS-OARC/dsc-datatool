@@ -4,14 +4,14 @@ See `man dsc-datatool-output prometheus`.
 
 Part of dsc_datatool.
 
-:copyright: 2022 OARC, Inc.
+:copyright: 2023 OARC, Inc.
 """
 
 import re
 import sys
 import atexit
 
-from dsc_datatool import Output, args
+from dsc_datatool import Output, args, encoding
 
 
 _re = re.compile(r'([\\\n"])')
@@ -52,9 +52,9 @@ class Prometheus(Output):
         append = opts.get('append', False)
         if file:
             if append:
-                self.fh = open(file, 'a')
+                self.fh = open(file, 'a', encoding=encoding)
             else:
-                self.fh = open(file, 'w')
+                self.fh = open(file, 'w', encoding=encoding)
             atexit.register(self.close)
         else:
             self.fh = sys.stdout

@@ -1,5 +1,5 @@
 Name:           dsc-datatool
-Version:        1.3.0
+Version:        1.4.0
 Release:        1%{?dist}
 Summary:        Export DSC data to other formats and/or databases
 Group:          Productivity/Networking/DNS/Utilities
@@ -85,6 +85,13 @@ install -m644 man/man7/dsc-datatool-transformer-netremap.7 %{buildroot}%{_mandir
 
 
 %changelog
+* Thu Jun 15 2023 Jerry Lundström <lundstrom.jerry@gmail.com> 1.4.0-1
+- Release 1.4.0
+  * This release adds the option `--encoding` to set an encoding to use
+    for reading and writing files.
+  * Commits:
+    f64c8b6 encoding man-page
+    09c0ce9 Encoding
 * Thu Nov 10 2022 Jerry Lundström <lundstrom.jerry@gmail.com> 1.3.0-1
 - Release 1.3.0
   * This release adds option `nonstrict` to `client_subnet_authority`

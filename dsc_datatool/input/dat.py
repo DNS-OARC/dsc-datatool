@@ -4,12 +4,12 @@ Input plugin to generate `Dataset`'s from DSC DAT files.
 
 Part of dsc_datatool.
 
-:copyright: 2022 OARC, Inc.
+:copyright: 2023 OARC, Inc.
 """
 
 import re
 
-from dsc_datatool import Input, Dataset, Dimension, process_dataset
+from dsc_datatool import Input, Dataset, Dimension, process_dataset, encoding
 
 
 _dataset1d = [
@@ -78,7 +78,7 @@ class DAT(Input):
 
     def process1d(self, file, name):
         datasets = []
-        with open(file, 'r') as f:
+        with open(file, 'r', encoding=encoding) as f:
             for l in f.readlines():
                 if re.match(r'^#', l):
                     continue
@@ -103,7 +103,7 @@ class DAT(Input):
 
     def process2d(self, file, name, field):
         datasets = []
-        with open(file, 'r') as f:
+        with open(file, 'r', encoding=encoding) as f:
             for l in f.readlines():
                 if re.match(r'^#', l):
                     continue
@@ -135,7 +135,7 @@ class DAT(Input):
 
     def process3d(self, file, name, first, second):
         datasets = []
-        with open(file, 'r') as f:
+        with open(file, 'r', encoding=encoding) as f:
             for l in f.readlines():
                 if re.match(r'^#', l):
                     continue
