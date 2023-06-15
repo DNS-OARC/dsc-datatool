@@ -29,10 +29,10 @@ Example of an output:
         def process(self, datasets)
             ...
 
-:copyright: 2022 OARC, Inc.
+:copyright: 2023 OARC, Inc.
 """
 
-__version__ = '1.3.0'
+__version__ = '1.4.0'
 
 import argparse
 import logging
