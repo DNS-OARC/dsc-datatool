@@ -14,7 +14,7 @@ import atexit
 from dsc_datatool import Output, args, encoding
 
 
-_re = re.compile(r'([,=\s])')
+_re = re.compile(r'([,=\\\s])')
 
 
 def _key(key):
