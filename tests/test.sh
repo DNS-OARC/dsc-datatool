@@ -69,7 +69,7 @@ dsc-datatool \
   --transform ";ReRanger;priming_responses;key=low;range=/128;pad_to=4" \
   --transform ";NetRemap;client_subnet,client_subnet2,client_addr_vs_rcode,ipv6_rsn_abusers;net=16" \
   --generator ";client_subnet_authority;csv=$base/ipv4-address-space.csv;csv=$base/ipv6-unicast-address-assignments.csv" \
-  --xml "$base/utf8.xml" | sort -s > "$base/test4.out"
+  --xml "$base/utf8.xml" | sort -s > "$base/test.out"
 
-sort -s "$base/test4.gold" > "$base/test4.gold.tmp"
-diff -u "$base/test4.gold.tmp" "$base/test4.out"
+sort -s "$base/test.gold4" > "$base/test.gold4.tmp"
+diff -u "$base/test.gold4.tmp" "$base/test.out"
