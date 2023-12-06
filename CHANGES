@@ -1,3 +1,18 @@
+2023-12-06 Jerry Lundström
+
+    Release 1.4.1
+
+    This release fixes issue with InfluxDB quoting, was missing to quote
+    the quote character.
+
+    Other changes:
+    - Dependency correction for SLE 15.5
+    - Tweaks to test layouts
+
+    b44b874 Tests
+    eef3ae0 SLE 15.5
+    75c7fc1 Influx quoting
+
 2023-06-15 Jerry Lundström
 
     Release 1.4.0
