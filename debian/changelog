@@ -1,3 +1,20 @@
+dsc-datatool (1.4.1-1~unstable+1) unstable; urgency=low
+
+  * Release 1.4.1
+
+    This release fixes issue with InfluxDB quoting, was missing to quote
+    the quote character.
+
+    Other changes:
+    - Dependency correction for SLE 15.5
+    - Tweaks to test layouts
+
+    b44b874 Tests
+    eef3ae0 SLE 15.5
+    75c7fc1 Influx quoting
+
+ -- Jerry Lundström <lundstrom.jerry@gmail.com>  Wed, 06 Dec 2023 09:02:27 +0100
+
 dsc-datatool (1.4.0-1~unstable+1) unstable; urgency=low
 
   * Release 1.4.0

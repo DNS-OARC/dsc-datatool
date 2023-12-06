@@ -1,5 +1,5 @@
 Name:           dsc-datatool
-Version:        1.4.0
+Version:        1.4.1
 Release:        1%{?dist}
 Summary:        Export DSC data to other formats and/or databases
 Group:          Productivity/Networking/DNS/Utilities
@@ -93,6 +93,17 @@ install -m644 man/man7/dsc-datatool-transformer-netremap.7 %{buildroot}%{_mandir
 
 
 %changelog
+* Wed Dec 06 2023 Jerry Lundström <lundstrom.jerry@gmail.com> 1.4.1-1
+- Release 1.4.1
+  * This release fixes issue with InfluxDB quoting, was missing to quote
+    the quote character.
+  * Other changes:
+    - Dependency correction for SLE 15.5
+    - Tweaks to test layouts
+  * Commits:
+    b44b874 Tests
+    eef3ae0 SLE 15.5
+    75c7fc1 Influx quoting
 * Thu Jun 15 2023 Jerry Lundström <lundstrom.jerry@gmail.com> 1.4.0-1
 - Release 1.4.0
   * This release adds the option `--encoding` to set an encoding to use
