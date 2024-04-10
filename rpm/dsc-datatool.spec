@@ -19,7 +19,7 @@ BuildRequires:  python-rpm-macros
 BuildRequires:  python36-maxminddb
 BuildRequires:  python36-PyYAML
 %else
-%if 0%{?sle_version} == 150500 && !0%{?is_opensuse}
+%if (0%{?sle_version} == 150500 && !0%{?is_opensuse}) || 0%{?sle_version} >= 150600
 BuildRequires:  python311-maxminddb
 %else
 BuildRequires:  python3-maxminddb
@@ -31,7 +31,7 @@ BuildRequires:  python3-PyYAML
 Requires:       python36-maxminddb
 Requires:       python36-PyYAML
 %else
-%if 0%{?sle_version} == 150500 && !0%{?is_opensuse}
+%if (0%{?sle_version} == 150500 && !0%{?is_opensuse}) || 0%{?sle_version} >= 150600
 Requires:       python311-maxminddb
 %else
 Requires:       python3-maxminddb
