@@ -64,6 +64,9 @@ class client_subnet_authority(Generator):
                     else:
                         if status == 'RESERVED':
                             rir = 'IANA'
+                        elif designation == 'Segment Routing (SRv6) SIDs':
+                            # TODO: How to better handle this weird allocation?
+                            rir = 'IANA'
                         else:
                             raise Exception('Unknown whois/designation: %r/%r' % (whois, designation))
 
