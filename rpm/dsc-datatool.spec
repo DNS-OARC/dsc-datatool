@@ -1,5 +1,5 @@
 Name:           dsc-datatool
-Version:        1.4.1
+Version:        1.4.2
 Release:        1%{?dist}
 Summary:        Export DSC data to other formats and/or databases
 Group:          Productivity/Networking/DNS/Utilities
@@ -93,6 +93,17 @@ install -m644 man/man7/dsc-datatool-transformer-netremap.7 %{buildroot}%{_mandir
 
 
 %changelog
+* Tue Jun 18 2024 Jerry Lundström <lundstrom.jerry@gmail.com> 1.4.2-1
+- Release 1.4.2
+  * This release fixes issues with IANA's IPv6 parameters file,
+    dsc-datatool expected a RIR in the Designation field but IANA recently
+    added a title for SRv6 reservation which caused an exception.
+  * Other updates are related to packages and GitHub workflows.
+  * Commits:
+    7560d82 Tests
+    8568c84 Fix client subnet authority
+    a8c58a9 Workflow
+    fd8915c RPM SUSE
 * Wed Dec 06 2023 Jerry Lundström <lundstrom.jerry@gmail.com> 1.4.1-1
 - Release 1.4.1
   * This release fixes issue with InfluxDB quoting, was missing to quote

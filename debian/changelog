@@ -1,3 +1,20 @@
+dsc-datatool (1.4.2-1~unstable+1) unstable; urgency=low
+
+  * Release 1.4.2
+
+    This release fixes issues with IANA's IPv6 parameters file,
+    dsc-datatool expected a RIR in the Designation field but IANA recently
+    added a title for SRv6 reservation which caused an exception.
+
+    Other updates are related to packages and GitHub workflows.
+
+    7560d82 Tests
+    8568c84 Fix client subnet authority
+    a8c58a9 Workflow
+    fd8915c RPM SUSE
+
+ -- Jerry Lundström <lundstrom.jerry@gmail.com>  Tue, 18 Jun 2024 12:32:53 +0200
+
 dsc-datatool (1.4.1-1~unstable+1) unstable; urgency=low
 
   * Release 1.4.1
