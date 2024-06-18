@@ -2,33 +2,30 @@ Prefix,Designation,Date,WHOIS,RDAP,Status,Note
 2001:0000::/23,IANA,1999-07-01,whois.iana.org,,ALLOCATED,"2001:0000::/23 is reserved for IETF Protocol Assignments [RFC2928].
 2001:0000::/32 is reserved for TEREDO [RFC4380].
 2001:1::1/128 is reserved for Port Control Protocol Anycast [RFC7723].
-2001:2::/48 is reserved for Benchmarking [RFC5180][RFC Errata 
-          1752].
+2001:1::2/128 is reserved for Traversal Using Relays around NAT Anycast [RFC8155]. 
+2001:1::3/128 is reserved for DNS-SD Service Registration Protocol Anycast [RFC-ietf-dnssd-srp-25].
+2001:2::/48 is reserved for Benchmarking [RFC5180][RFC Errata 1752].
 2001:3::/32 is reserved for AMT [RFC7450].
 2001:4:112::/48 is reserved for AS112-v6 [RFC7535].
 2001:10::/28 is deprecated (previously ORCHID) [RFC4843]. 
 2001:20::/28 is reserved for ORCHIDv2 [RFC7343].
-2001:db8::/32 is reserved for Documentation [RFC3849].
+2001:30::/28 is reserved for Drone Remote ID Protocol Entity Tags (DETs) [RFC9374].
 For complete registration details, see [IANA registry iana-ipv6-special-registry]."
 2001:0200::/23,APNIC,1999-07-01,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
 2001:0400::/23,ARIN,1999-07-01,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",ALLOCATED,
 2001:0600::/23,RIPE NCC,1999-07-01,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,
-2001:0800::/22,RIPE NCC,2002-11-02,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,"2001:0800::/23 was allocated on 2002-05-02. The more recent 
-      allocation (2002-11-02) incorporates the previous allocation."
+2001:0800::/22,RIPE NCC,2002-11-02,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,2001:0800::/23 was allocated on 2002-05-02. The more recent allocation (2002-11-02) incorporates the previous allocation.
 2001:0c00::/23,APNIC,2002-05-02,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,"2001:db8::/32 reserved for Documentation [RFC3849]. 
 For complete registration details, see [IANA registry iana-ipv6-special-registry]."
 2001:0e00::/23,APNIC,2003-01-01,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
 2001:1200::/23,LACNIC,2002-11-01,whois.lacnic.net,https://rdap.lacnic.net/rdap/,ALLOCATED,
-2001:1400::/22,RIPE NCC,2003-07-01,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,"2001:1400::/23 was allocated on 2003-02-01. The more recent 
-      allocation (2003-07-01) incorporates the previous allocation."
+2001:1400::/22,RIPE NCC,2003-07-01,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,2001:1400::/23 was allocated on 2003-02-01. The more recent allocation (2003-07-01) incorporates the previous allocation.
 2001:1800::/23,ARIN,2003-04-01,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",ALLOCATED,
 2001:1a00::/23,RIPE NCC,2004-01-01,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,
 2001:1c00::/22,RIPE NCC,2004-05-04,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,
-2001:2000::/19,RIPE NCC,2019-03-12,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,"2001:2000::/20, 2001:3000::/21, and 2001:3800::/22 
-      were allocated on 2004-05-04. The more recent allocation 
-      (2019-03-12) incorporates all these previous allocations."
+2001:2000::/19,RIPE NCC,2019-03-12,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,"2001:2000::/20, 2001:3000::/21, and 2001:3800::/22 were allocated on 2004-05-04. The more recent allocation (2019-03-12) incorporates all these previous allocations."
 2001:4000::/23,RIPE NCC,2004-06-11,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,
 2001:4200::/23,AFRINIC,2004-06-01,whois.afrinic.net,"https://rdap.afrinic.net/rdap/
 http://rdap.afrinic.net/rdap/",ALLOCATED,
@@ -71,4 +68,13 @@ http://rdap.afrinic.net/rdap/",ALLOCATED,
 3ffe::/16,IANA,2008-04,,,RESERVED,"3ffe:831f::/32 was used for Teredo in some old but widely distributed networking stacks. This usage is 
 deprecated in favor of 2001::/32, which was allocated for the purpose in [RFC4380].
 3ffe::/16 and 5f00::/8 were used for the 6bone but were returned. [RFC5156]"
-5f00::/8,IANA,2008-04,,,RESERVED,3ffe::/16 and 5f00::/8 were used for the 6bone but were returned. [RFC5156]
+5f00::/16,Segment Routing (SRv6) SIDs,2024-04-23,,,ALLOCATED,"5f00::/16 is reserved for Segment Routing (SRv6) SIDs [RFC-ietf-6man-sids-06]. 
+For complete registration details, see [IANA registry iana-ipv6-special-registry]."
+5f01::/16,IANA,2008-04,,,RESERVED,3ffe::/16 and 5f00::/8 were used for the 6bone but were returned. [RFC5156].
+5f02::/15,IANA,2008-04,,,RESERVED,3ffe::/16 and 5f00::/8 were used for the 6bone but were returned. [RFC5156].
+5f04::/14,IANA,2008-04,,,RESERVED,3ffe::/16 and 5f00::/8 were used for the 6bone but were returned. [RFC5156].
+5f08::/13,IANA,2008-04,,,RESERVED,3ffe::/16 and 5f00::/8 were used for the 6bone but were returned. [RFC5156].
+5f10::/12,IANA,2008-04,,,RESERVED,3ffe::/16 and 5f00::/8 were used for the 6bone but were returned. [RFC5156].
+5f20::/11,IANA,2008-04,,,RESERVED,3ffe::/16 and 5f00::/8 were used for the 6bone but were returned. [RFC5156].
+5f40::/10,IANA,2008-04,,,RESERVED,3ffe::/16 and 5f00::/8 were used for the 6bone but were returned. [RFC5156].
+5f80::/9,IANA,2008-04,,,RESERVED,3ffe::/16 and 5f00::/8 were used for the 6bone but were returned. [RFC5156].

@@ -1,0 +1,32 @@
+name: "Test"
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        sudo apt-get install python3-maxminddb python3-yaml wget
+        python -m pip install --upgrade pip
+        pip install .
+    - name: Test
+      run: |
+        cd tests
+        rm ipv4-address-space.csv ipv6-unicast-address-assignments.csv
+        wget https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.csv
+        wget https://www.iana.org/assignments/ipv6-unicast-address-assignments/ipv6-unicast-address-assignments.csv
+        ./test.sh

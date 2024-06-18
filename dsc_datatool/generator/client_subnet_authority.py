@@ -4,7 +4,7 @@ See `man dsc-datatool-generator client_subnet_authority`.
 
 Part of dsc_datatool.
 
-:copyright: 2023 OARC, Inc.
+:copyright: 2024 OARC, Inc.
 """
 
 import csv
@@ -63,6 +63,9 @@ class client_subnet_authority(Generator):
                         rir = found
                     else:
                         if status == 'RESERVED':
+                            rir = 'IANA'
+                        elif designation == 'Segment Routing (SRv6) SIDs':
+                            # TODO: How to better handle this weird allocation?
                             rir = 'IANA'
                         else:
                             raise Exception('Unknown whois/designation: %r/%r' % (whois, designation))

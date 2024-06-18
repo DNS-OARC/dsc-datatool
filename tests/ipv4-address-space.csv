@@ -1,5 +1,5 @@
 Prefix,Designation,Date,WHOIS,RDAP,Status [1],Note
-000/8,IANA - Local Identification,1981-09,,,RESERVED,[2]
+000/8,IANA - Local Identification,1981-09,,,RESERVED,[2][3]
 001/8,APNIC,2010-01,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
 002/8,RIPE NCC,2009-09,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,
 003/8,Administered by ARIN,1994-05,whois.arin.net,"https://rdap.arin.net/registry
@@ -15,14 +15,14 @@ http://rdap.arin.net/registry",LEGACY,
 http://rdap.arin.net/registry",LEGACY,
 009/8,Administered by ARIN,1992-08,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",LEGACY,
-010/8,IANA - Private Use,1995-06,,,RESERVED,[3]
+010/8,IANA - Private Use,1995-06,,,RESERVED,[4]
 011/8,DoD Intel Information Systems,1993-05,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",LEGACY,
 012/8,AT&T Bell Laboratories,1995-06,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",LEGACY,
 013/8,Administered by ARIN,1991-09,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",LEGACY,
-014/8,APNIC,2010-04,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,[4]
+014/8,APNIC,2010-04,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,[5]
 015/8,Administered by ARIN,1994-07,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",LEGACY,
 016/8,Administered by ARIN,1994-11,whois.arin.net,"https://rdap.arin.net/registry
@@ -80,7 +80,7 @@ http://rdap.arin.net/registry",LEGACY,
 046/8,RIPE NCC,2009-09,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,
 047/8,Administered by ARIN,1991-01,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",LEGACY,
-048/8,Prudential Securities Inc.,1995-05,whois.arin.net,"https://rdap.arin.net/registry
+048/8,Administered by ARIN,1995-05,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",LEGACY,
 049/8,APNIC,2010-08,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
 050/8,ARIN,2010-02,whois.arin.net,"https://rdap.arin.net/registry
@@ -93,7 +93,7 @@ http://rdap.arin.net/registry",LEGACY,
 http://rdap.arin.net/registry",LEGACY,
 055/8,DoD Network Information Center,1995-04,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",LEGACY,
-056/8,US Postal Service,1994-06,whois.arin.net,"https://rdap.arin.net/registry
+056/8,Administered by ARIN,1994-06,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",LEGACY,
 057/8,Administered by RIPE NCC,1995-05,whois.ripe.net,https://rdap.db.ripe.net/,LEGACY,
 058/8,APNIC,2004-04,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
@@ -157,7 +157,7 @@ http://rdap.arin.net/registry",ALLOCATED,
 099/8,ARIN,2006-10,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",ALLOCATED,
 100/8,ARIN,2010-11,whois.arin.net,"https://rdap.arin.net/registry
-http://rdap.arin.net/registry",ALLOCATED,[5]
+http://rdap.arin.net/registry",ALLOCATED,[6]
 101/8,APNIC,2010-08,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
 102/8,AFRINIC,2011-02,whois.afrinic.net,"https://rdap.afrinic.net/rdap/
 http://rdap.afrinic.net/rdap/",ALLOCATED,
@@ -189,7 +189,7 @@ http://rdap.arin.net/registry",ALLOCATED,
 124/8,APNIC,2005-01,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
 125/8,APNIC,2005-01,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
 126/8,APNIC,2005-01,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
-127/8,IANA - Loopback,1981-09,,,RESERVED,[6]
+127/8,IANA - Loopback,1981-09,,,RESERVED,[7]
 128/8,Administered by ARIN,1993-05,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",LEGACY,
 129/8,Administered by ARIN,1993-05,whois.arin.net,"https://rdap.arin.net/registry
@@ -266,12 +266,12 @@ http://rdap.arin.net/registry",LEGACY,
 168/8,Administered by ARIN,1993-05,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",LEGACY,
 169/8,Administered by ARIN,1993-05,whois.arin.net,"https://rdap.arin.net/registry
-http://rdap.arin.net/registry",LEGACY,[7]
+http://rdap.arin.net/registry",LEGACY,[8]
 170/8,Administered by ARIN,1993-05,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",LEGACY,
 171/8,Administered by APNIC,1993-05,whois.apnic.net,https://rdap.apnic.net/,LEGACY,
 172/8,Administered by ARIN,1993-05,whois.arin.net,"https://rdap.arin.net/registry
-http://rdap.arin.net/registry",LEGACY,[8]
+http://rdap.arin.net/registry",LEGACY,[9]
 173/8,ARIN,2008-02,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",ALLOCATED,
 174/8,ARIN,2008-02,whois.arin.net,"https://rdap.arin.net/registry
@@ -295,7 +295,7 @@ http://rdap.arin.net/registry",ALLOCATED,
 190/8,LACNIC,1995-06,whois.lacnic.net,https://rdap.lacnic.net/rdap/,ALLOCATED,
 191/8,Administered by LACNIC,1993-05,whois.lacnic.net,https://rdap.lacnic.net/rdap/,LEGACY,
 192/8,Administered by ARIN,1993-05,whois.arin.net,"https://rdap.arin.net/registry
-http://rdap.arin.net/registry",LEGACY,[9][10]
+http://rdap.arin.net/registry",LEGACY,[10][11]
 193/8,RIPE NCC,1993-05,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,
 194/8,RIPE NCC,1993-05,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,
 195/8,RIPE NCC,1993-05,whois.ripe.net,https://rdap.db.ripe.net/,ALLOCATED,
@@ -304,13 +304,13 @@ http://rdap.afrinic.net/rdap/",LEGACY,
 197/8,AFRINIC,2008-10,whois.afrinic.net,"https://rdap.afrinic.net/rdap/
 http://rdap.afrinic.net/rdap/",ALLOCATED,
 198/8,Administered by ARIN,1993-05,whois.arin.net,"https://rdap.arin.net/registry
-http://rdap.arin.net/registry",LEGACY,[11]
+http://rdap.arin.net/registry",LEGACY,[12]
 199/8,ARIN,1993-05,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",ALLOCATED,
 200/8,LACNIC,2002-11,whois.lacnic.net,https://rdap.lacnic.net/rdap/,ALLOCATED,
 201/8,LACNIC,2003-04,whois.lacnic.net,https://rdap.lacnic.net/rdap/,ALLOCATED,
 202/8,APNIC,1993-05,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
-203/8,APNIC,1993-05,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,[12]
+203/8,APNIC,1993-05,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,[13]
 204/8,ARIN,1994-03,whois.arin.net,"https://rdap.arin.net/registry
 http://rdap.arin.net/registry",ALLOCATED,
 205/8,ARIN,1994-03,whois.arin.net,"https://rdap.arin.net/registry
@@ -340,35 +340,35 @@ http://rdap.arin.net/registry",ALLOCATED,
 221/8,APNIC,2002-07,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
 222/8,APNIC,2003-02,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
 223/8,APNIC,2010-04,whois.apnic.net,https://rdap.apnic.net/,ALLOCATED,
-224/8,Multicast,1981-09,,,RESERVED,[13]
-225/8,Multicast,1981-09,,,RESERVED,[13]
-226/8,Multicast,1981-09,,,RESERVED,[13]
-227/8,Multicast,1981-09,,,RESERVED,[13]
-228/8,Multicast,1981-09,,,RESERVED,[13]
-229/8,Multicast,1981-09,,,RESERVED,[13]
-230/8,Multicast,1981-09,,,RESERVED,[13]
-231/8,Multicast,1981-09,,,RESERVED,[13]
-232/8,Multicast,1981-09,,,RESERVED,[13]
-233/8,Multicast,1981-09,,,RESERVED,[13]
-234/8,Multicast,1981-09,,,RESERVED,[13][14]
-235/8,Multicast,1981-09,,,RESERVED,[13]
-236/8,Multicast,1981-09,,,RESERVED,[13]
-237/8,Multicast,1981-09,,,RESERVED,[13]
-238/8,Multicast,1981-09,,,RESERVED,[13]
-239/8,Multicast,1981-09,,,RESERVED,[13][15]
-240/8,Future use,1981-09,,,RESERVED,[16]
-241/8,Future use,1981-09,,,RESERVED,[16]
-242/8,Future use,1981-09,,,RESERVED,[16]
-243/8,Future use,1981-09,,,RESERVED,[16]
-244/8,Future use,1981-09,,,RESERVED,[16]
-245/8,Future use,1981-09,,,RESERVED,[16]
-246/8,Future use,1981-09,,,RESERVED,[16]
-247/8,Future use,1981-09,,,RESERVED,[16]
-248/8,Future use,1981-09,,,RESERVED,[16]
-249/8,Future use,1981-09,,,RESERVED,[16]
-250/8,Future use,1981-09,,,RESERVED,[16]
-251/8,Future use,1981-09,,,RESERVED,[16]
-252/8,Future use,1981-09,,,RESERVED,[16]
-253/8,Future use,1981-09,,,RESERVED,[16]
-254/8,Future use,1981-09,,,RESERVED,[16]
-255/8,Future use,1981-09,,,RESERVED,[16][17]
+224/8,Multicast,1981-09,,,RESERVED,[14]
+225/8,Multicast,1981-09,,,RESERVED,[14]
+226/8,Multicast,1981-09,,,RESERVED,[14]
+227/8,Multicast,1981-09,,,RESERVED,[14]
+228/8,Multicast,1981-09,,,RESERVED,[14]
+229/8,Multicast,1981-09,,,RESERVED,[14]
+230/8,Multicast,1981-09,,,RESERVED,[14]
+231/8,Multicast,1981-09,,,RESERVED,[14]
+232/8,Multicast,1981-09,,,RESERVED,[14]
+233/8,Multicast,1981-09,,,RESERVED,[14]
+234/8,Multicast,1981-09,,,RESERVED,[14][15]
+235/8,Multicast,1981-09,,,RESERVED,[14]
+236/8,Multicast,1981-09,,,RESERVED,[14]
+237/8,Multicast,1981-09,,,RESERVED,[14]
+238/8,Multicast,1981-09,,,RESERVED,[14]
+239/8,Multicast,1981-09,,,RESERVED,[14][16]
+240/8,Future use,1981-09,,,RESERVED,[17]
+241/8,Future use,1981-09,,,RESERVED,[17]
+242/8,Future use,1981-09,,,RESERVED,[17]
+243/8,Future use,1981-09,,,RESERVED,[17]
+244/8,Future use,1981-09,,,RESERVED,[17]
+245/8,Future use,1981-09,,,RESERVED,[17]
+246/8,Future use,1981-09,,,RESERVED,[17]
+247/8,Future use,1981-09,,,RESERVED,[17]
+248/8,Future use,1981-09,,,RESERVED,[17]
+249/8,Future use,1981-09,,,RESERVED,[17]
+250/8,Future use,1981-09,,,RESERVED,[17]
+251/8,Future use,1981-09,,,RESERVED,[17]
+252/8,Future use,1981-09,,,RESERVED,[17]
+253/8,Future use,1981-09,,,RESERVED,[17]
+254/8,Future use,1981-09,,,RESERVED,[17]
+255/8,Future use,1981-09,,,RESERVED,[17][18]
