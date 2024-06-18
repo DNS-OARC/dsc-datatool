@@ -1,3 +1,18 @@
+2024-06-18 Jerry Lundström
+
+    Release 1.4.2
+
+    This release fixes issues with IANA's IPv6 parameters file,
+    dsc-datatool expected a RIR in the Designation field but IANA recently
+    added a title for SRv6 reservation which caused an exception.
+
+    Other updates are related to packages and GitHub workflows.
+
+    7560d82 Tests
+    8568c84 Fix client subnet authority
+    a8c58a9 Workflow
+    fd8915c RPM SUSE
+
 2023-12-06 Jerry Lundström
 
     Release 1.4.1

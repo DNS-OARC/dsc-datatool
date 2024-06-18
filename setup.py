@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='dsc_datatool',
-    version='1.4.1',
+    version='1.4.2',
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,

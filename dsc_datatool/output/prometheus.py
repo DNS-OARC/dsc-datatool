@@ -4,7 +4,7 @@ See `man dsc-datatool-output prometheus`.
 
 Part of dsc_datatool.
 
-:copyright: 2023 OARC, Inc.
+:copyright: 2024 OARC, Inc.
 """
 
 import re
