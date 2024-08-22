@@ -1,6 +1,6 @@
 # DSC DataTool
 
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/DNS-OARC/dsc-datatool.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DNS-OARC/dsc-datatool/alerts/) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=dns-oarc%3Adsc-datatool&metric=bugs)](https://sonarcloud.io/dashboard?id=dns-oarc%3Adsc-datatool) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=dns-oarc%3Adsc-datatool&metric=security_rating)](https://sonarcloud.io/dashboard?id=dns-oarc%3Adsc-datatool)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=dns-oarc%3Adsc-datatool&metric=bugs)](https://sonarcloud.io/summary/new_code?id=dns-oarc%3Adsc-datatool) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=dns-oarc%3Adsc-datatool&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=dns-oarc%3Adsc-datatool)
 
 Tool for converting, exporting, merging and transforming DSC data.
 
