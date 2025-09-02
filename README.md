@@ -5,7 +5,7 @@
 Tool for converting, exporting, merging and transforming DSC data.
 
 Please have a look at the man-page(s) `dsc-datatool` (1) on how to use or
-[the wiki article](https://github.com/DNS-OARC/dsc-datatool/wiki/Setting-up-a-test-Grafana)
+[the wiki article](https://codeberg.org/DNS-OARC/dsc-datatool/wiki/Setting-up-a-test-Grafana)
 on how to set this up using Influx DB and Grafana.
 
 More information about DSC may be found here:
@@ -13,7 +13,7 @@ More information about DSC may be found here:
 - https://www.dns-oarc.net/oarc/data/dsc
 
 Issues should be reported here:
-- https://github.com/DNS-OARC/dsc-datatool/issues
+- https://codeberg.org/DNS-OARC/dsc-datatool/issues
 
 General support and discussion:
 - Mattermost: https://chat.dns-oarc.net/community/channels/oarc-software
